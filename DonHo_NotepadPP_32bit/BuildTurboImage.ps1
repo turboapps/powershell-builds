@@ -1,0 +1,98 @@
+## This script will download the latest installer and create a Turbo SVM image in @DESKTOP@\Package\TurboCapture.
+## The script is logged to @DESKTOP@\Package\Log.
+## The turbo project and build are saved  to @DESKTOP@\Package\TurboCapture.
+## Usage:
+## Run this script from an elevated cmd prompt: Powershell -ExecutionPolicy Bypass -File <path>\scriptname.ps1
+## Required:  You must have your Turbo Studio license in a "License.txt" file in an "Include" folder in the same folder as this script.
+## Required:  You must have the "GlobalBuildScript.ps1" file in an "Include" folder in the same folder as this script.
+## Required:  Any files used to customize the configuration should be a "Support Files" folder located in the same folder as this script.
+
+. "$PSScriptRoot\Include\GlobalBuildScript.ps1"  # Include the script that contains global variables and functions
+$scriptPath = $PSScriptRoot  # The folder path the script was launched from
+$SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files specific to this application build
+
+
+###################################
+## Define app specific variables ##
+###################################
+# These values will used to set the Metadata for the turbo image.
+
+$HubOrg = "npp/notepadplusplus"  # Set this for each package
+$Vendor = "Don Ho"
+$AppDesc = "Notepad++ is a free source code editor which supports several programming languages."
+$AppName = "Notepad++ (32-bit)"
+$VendorURL = "https://notepad-plus-plus.org/"
+
+
+##########################################
+## Download latest version of installer ##
+##########################################
+WriteLog "Downloading the latest MSI installer."
+
+# Get main download page for application.
+$Page = Invoke-WebRequest -Uri 'https://notepad-plus-plus.org/downloads/' -UseBasicParsing
+
+# Get download page for latest version.
+$Page2 = Invoke-WebRequest -Uri ('https://notepad-plus-plus.org' + ($Page.Links | Where-Object {$_.outerHTML -like "*Current Version*"}).href) -UseBasicParsing
+
+# Get installer link for latest version.
+$DownloadLink = ($Page2.Links | Where-Object {$_.href -like "*Installer.exe*"})[0]
+
+# Folder the installer will be downloaded to
+$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
+# Name of the downloaded installer file
+$InstallerName = [System.IO.Path]::GetFileName($DownloadLink.href)
+
+$Installer = wget $DownloadLink.href -O $DownloadPath\$InstallerName
+
+#########################
+## Start Turbo Capture ##
+#########################
+
+StartTurboCapture
+
+#############################
+## Install the application ##
+#############################
+WriteLog "Installing the application."
+
+$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/S" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
+################################
+## Customize the application  ##
+################################
+WriteLog "Performing post-install customizations."
+
+## Copy config.model.xml which will disable updates
+& cmd.exe /c xcopy /Y "$SupportFiles\config.model.xml" "C:\Program Files (x86)\Notepad++"
+
+## Unregister "Edit With Notepad++" context menu DLL
+& cmd.exe /c regsvr32 /s /u "C:\Program Files (x86)\Notepad++\NppShell_06.dll"
+
+# Get the installed version from the registry
+foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
+    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
+    if ($name -eq "Notepad++ (32-bit x86)") {
+        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
+    }
+}
+
+#########################
+## Stop Turbo Capture  ##
+#########################
+
+StopTurboCapture
+
+######################
+## Customize XAPPL  ##
+######################
+
+CustomizeTurboXappl "$SupportFiles\PostCaptureModifications.ps1"  # Helper script for XML changes to Xappl"
+
+#########################
+## Build Turbo Image   ##
+#########################
+
+BuildTurboSvmImage
+
