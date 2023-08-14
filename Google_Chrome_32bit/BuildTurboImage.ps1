@@ -62,6 +62,9 @@ Copy-Item "$SupportFiles\initial_preferences" -Destination "C:\Program Files (x8
 # Copy Google folder to localappdata - this folder contains files to prevent the Google Welcome page on first launch.
 Copy-Item -Path "$SupportFiles\Google" -Destination "$env:LOCALAPPDATA\" -Recurse -Force
 
+# Create "Chrome Apps" folder in Start Menu - creating this folder will prevent google app shortcuts from getting created
+Copy-Item -Path "$SupportFiles\Chrome Apps" -Destination "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\" -Recurse -Force
+
 # Delete Google Update
 &sc.exe stop gupdate
 &sc.exe delete gupdate

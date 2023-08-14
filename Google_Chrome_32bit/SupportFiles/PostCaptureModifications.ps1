@@ -217,3 +217,7 @@ AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.webp']" "UserChoice" "Hide" "False" "False" "False"
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.xht']" "UserChoice" "Hide" "False" "False" "False"
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.xhtml']" "UserChoice" "Hide" "False" "False" "False"
+
+# Add reg key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
+# This will prevent Chrome Apps from creating Programs and Features entries
+AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
