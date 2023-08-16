@@ -7,8 +7,9 @@
 ## Required:  You must have the "GlobalBuildScript.ps1" file in an "Include" folder in the same folder as this script.
 ## Required:  Any files used to customize the configuration should be a "Support Files" folder located in the same folder as this script.
 
-. "$PSScriptRoot\Include\GlobalBuildScript.ps1"  # Include the script that contains global variables and functions
 $scriptPath = $PSScriptRoot  # The folder path the script was launched from
+$GlobalScriptPath = Join-Path -Path $scriptPath -ChildPath "..\_INCLUDE\GlobalBuildScript.ps1"  #Get the path to the GlobalBuildScript.ps1
+. $GlobalScriptPath  # Include the script that contains global variables and functions
 $SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files specific to this application build
 
 
