@@ -4,19 +4,56 @@
     <title>Turbo.net Image Builder</title>
     <hta:application id="folderSelector" scroll="no" />
     <script language="VBScript">
-        Sub RunScript()
-            Dim selectedFolder, scriptPath
-            selectedFolder = folderSelect.value
-            If selectedFolder <> "" Then
-                scriptPath = folder &"\" & selectedFolder & "\BuildTurboImage.ps1"
-                Set objShell = CreateObject("Shell.Application")
-            	objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
-            End If
-        End Sub
-    </script>
+
+   Sub RunScript()
+         Dim selectedFolder, scriptPath
+         selectedFolder = folderSelect.value
+         If selectedFolder <> "" Then
+             scriptPath = folder &"\" & selectedFolder & "\BuildTurboImage.ps1"
+             Set objShell = CreateObject("Shell.Application")
+             objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
+         End If
+    End Sub
+
+    Sub updateLicense
+      Dim licenseText, fso, licenseFile, filePath, htaPath
+      licenseText = document.getElementById("licenseText").value
+      
+      Set fso = CreateObject("Scripting.FileSystemObject")
+      htaPath = GetHTAPath()
+      filePath = fso.BuildPath(htaPath, "_INCLUDE\License.txt")
+      
+      On Error Resume Next
+      Set licenseFile = fso.OpenTextFile(filePath, 2, True)
+      
+      If Err.Number = 0 Then
+        licenseFile.Write licenseText
+        licenseFile.Close
+        MsgBox "License updated successfully!", vbInformation, "Success"
+      Else
+        MsgBox "Error updating license: " & Err.Description, vbExclamation, "Error"
+      End If
+      
+      On Error GoTo 0
+    End Sub
+    
+    Function GetHTAPath()
+      Dim fso, scriptPath
+      Set fso = CreateObject("Scripting.FileSystemObject")
+      scriptPath = fso.GetParentFolderName(document.location.href)
+      GetHTAPath = Replace(Replace(scriptPath,"/","\"),"file:\\\","")
+    End Function
+  </script>
 </head>
 <body>
     <h1>Turbo.net Image Builder</h1>
+    <div style="padding: 10px;">
+      <h2>Turbo Studio License</h2>
+      <textarea id="licenseText" rows="20" cols="100"></textarea>
+      <br>
+      <button onclick="updateLicense()">Update</button>
+    </div>
+    <br>
     <label for="folderSelect">Select an application folder:</label>
     <select id="folderSelect" style="width: 300px;">
         <option value="">-- Select a application folder--</option>
