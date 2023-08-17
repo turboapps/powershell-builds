@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turbo.net Image Builder</title>
+    <hta:application id="folderSelector" scroll="no" />
+    <script language="VBScript">
+        Sub RunScript()
+            Dim selectedFolder, scriptPath
+            selectedFolder = folderSelect.value
+            If selectedFolder <> "" Then
+                scriptPath = folder &"\" & selectedFolder & "\BuildTurboImage.ps1"
+                Set objShell = CreateObject("Shell.Application")
+            	objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
+            End If
+        End Sub
+    </script>
+</head>
+<body>
+    <h1>Turbo.net Image Builder</h1>
+    <label for="folderSelect">Select an application folder:</label>
+    <select id="folderSelect" style="width: 300px;">
+        <option value="">-- Select a application folder--</option>
+        <script language="VBScript">
+            Dim fso, folder, subfolder
+            Set fso = CreateObject("Scripting.FileSystemObject")
+            Set folder = fso.GetFolder(".")
+            For Each subfolder In folder.SubFolders
+		If Not UCase(subfolder.Name) = "_INCLUDE" Then
+                	document.write "<option value='" & subfolder.Name & "'>" & subfolder.Name & "</option>"
+		End If
+            Next
+        </script>
+    </select>
+    <br>
+    <button onclick="RunScript()">Build Image</button>
+</body>
+</html>
