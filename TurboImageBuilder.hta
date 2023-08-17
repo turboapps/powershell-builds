@@ -12,6 +12,7 @@
              scriptPath = folder &"\" & selectedFolder & "\BuildTurboImage.ps1"
              Set objShell = CreateObject("Shell.Application")
              objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
+	     window.close
          End If
     End Sub
 
@@ -46,15 +47,16 @@
   </script>
 </head>
 <body>
-    <h1>Turbo.net Image Builder</h1>
+    
+    <h1><font face="Arial">Turbo.net Image Builder</font></h1>
     <div style="padding: 10px;">
-      <h2>Turbo Studio License</h2>
+      <h2><font face="Arial">Turbo Studio License</font></h2>
       <textarea id="licenseText" rows="20" cols="100"></textarea>
       <br>
       <button onclick="updateLicense()">Update</button>
     </div>
     <br>
-    <label for="folderSelect">Select an application folder:</label>
+    <label for="folderSelect"><font face="Arial">Select an application folder:</font></label>
     <select id="folderSelect" style="width: 300px;">
         <option value="">-- Select a application folder--</option>
         <script language="VBScript">
@@ -68,7 +70,7 @@
             Next
         </script>
     </select>
-    <br>
     <button onclick="RunScript()">Build Image</button>
+
 </body>
 </html>
