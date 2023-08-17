@@ -74,7 +74,7 @@ WriteLog "Performing post-install customizations."
 # Get the installed version from the registry
 foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
     $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Notepad++ (64-bit x64)") {
+    if ($name -match "Notepad") {
         $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
     }
 }
