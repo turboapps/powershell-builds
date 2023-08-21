@@ -16,6 +16,21 @@
          End If
     End Sub
 
+    Sub RetrieveValue
+            Dim keyPath, valueName, regCommand, shell, exec, output
+            
+	    cmd = "%SystemRoot%\sysnative\WindowsPowerShell\v1.0\powershell.exe " &chr(40) &"Get-ItemProperty -Path 'HKLM:\SOFTWARE\Code Systems\Turbo Studio 23' -Name 'LicenseCertificate'" &chr(41) &".LicenseCertificate"
+            Set shell = CreateObject("WScript.Shell")
+            Set exec = shell.Exec(cmd)
+            
+            output = ""
+            Do While Not exec.StdOut.AtEndOfStream
+                output = output & exec.StdOut.ReadLine()
+            Loop
+           
+            document.getElementById("licenseText").innerText = output
+    End Sub
+
     Sub updateLicense
       Dim licenseText, fso, licenseFile, filePath, htaPath
       licenseText = document.getElementById("licenseText").value
@@ -46,7 +61,7 @@
     End Function
   </script>
 </head>
-<body>
+<body onload="RetrieveValue()">
     
     <h1><font face="Arial">Turbo.net Image Builder</font></h1>
     <div style="padding: 10px;">
