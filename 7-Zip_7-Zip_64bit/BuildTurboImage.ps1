@@ -65,17 +65,17 @@ WriteLog "Performing post-install customizations."
 
 # Associate file types with 7zFM.exe
   &cmd.exe /C assoc .7z=7-Zip.7z
-  &cmd.exe /C --% ftype 7-Zip.7z="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &cmd.exe /C --% ftype 7-Zip.7z="C:\Program Files\7-Zip\7zFM.exe" "%1"
   &cmd.exe /C assoc .zip=7-Zip.zip
-  &cmd.exe /C --% ftype 7-Zip.zip="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &cmd.exe /C --% ftype 7-Zip.zip="C:\Program Files\7-Zip\7zFM.exe" "%1"
   &cmd.exe /C assoc .bz2=7-Zip.bz2
-  &cmd.exe /C --% ftype 7-Zip.bz2="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &cmd.exe /C --% ftype 7-Zip.bz2="C:\Program Files\7-Zip\7zFM.exe" "%1"
   &cmd.exe /C assoc .gz=7-Zip.gz
-  &cmd.exe /C --% ftype 7-Zip.gz="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &cmd.exe /C --% ftype 7-Zip.gz="C:\Program Files\7-Zip\7zFM.exe" "%1"
   &cmd.exe /C assoc .tar=7-Zip.tar
-  &cmd.exe /C --% ftype 7-Zip.tar="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &cmd.exe /C --% ftype 7-Zip.tar="C:\Program Files\7-Zip\7zFM.exe" "%1"
   &cmd.exe /C assoc .tgz=7-Zip.tgz
-  &cmd.exe /C --% ftype 7-Zip.tgz="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &cmd.exe /C --% ftype 7-Zip.tgz="C:\Program Files\7-Zip\7zFM.exe" "%1"
   
 # Get the installed version from the registry
 foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
