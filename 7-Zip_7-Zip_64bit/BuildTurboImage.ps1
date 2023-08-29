@@ -63,7 +63,20 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-
+# Associate file types with 7zFM.exe
+  &assoc.exe .7z=7-Zip.7z
+  &ftype.exe 7-Zip.7z="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &assoc.exe .zip=7-Zip.zip
+  &ftype.exe 7-Zip.zip="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &assoc.exe .bz2=7-Zip.bz2
+  &ftype.exe 7-Zip.bz2="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &assoc.exe .gz=7-Zip.gz
+  &ftype.exe 7-Zip.gz="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &assoc.exe .tar=7-Zip.tar
+  &ftype.exe 7-Zip.tar="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  &assoc.exe .tgz=7-Zip.tgz
+  &ftype.exe 7-Zip.tgz="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  
 # Get the installed version from the registry
 foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
     $name = (Get-ItemProperty $subkey.PSPath).DisplayName
