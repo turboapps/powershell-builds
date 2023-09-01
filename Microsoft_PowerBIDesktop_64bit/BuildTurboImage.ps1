@@ -59,9 +59,9 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Register .net registration-free COM objects 
-&reg.exe import "$SupportFiles\RegCOMObjects.reg"
+&reg.exe import "$SupportFiles\RegCOMObjects.reg" /reg:64
 
-# This prevents a ìGet the most out of PowerBIî dialog on second launch of PowerBI 
+# This prevents a ‚ÄúGet the most out of PowerBI‚Äù dialog on second launch of PowerBI 
 &reg.exe ADD "HKCU\SOFTWARE\Microsoft\Microsoft Power BI Desktop" /v ShowLeadGenDialog /t REG_DWORD /d 0 /f
 
 # This prevents virtual spawned msedge.exe processes from staying running when Edge is closed and keeping the container running
