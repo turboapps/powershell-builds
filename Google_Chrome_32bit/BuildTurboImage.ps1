@@ -85,18 +85,8 @@ foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows
 # Delete installer files
 Remove-Item -Path "C:\Program Files (x86)\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
 
-# Uncomment this section to prevent the default browser prompt on first launch
-# Add -no-default-browser-check argument to the Chrome shortcuts
-<# $shortcutPath = "C:\Users\Public\Desktop\Google Chrome.lnk"
-$shell = New-Object -ComObject WScript.Shell
-$shortcut = $shell.CreateShortcut($shortcutPath)
-$shortcut.Arguments = "-no-default-browser-check"
-$shortcut.Save()
-$shortcutPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Google Chrome.lnk"
-$shell = New-Object -ComObject WScript.Shell
-$shortcut = $shell.CreateShortcut($shortcutPath)
-$shortcut.Arguments = "-no-default-browser-check"
-$shortcut.Save() #>
+# Set the policy key to prevent the default browser banner
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
 
 #########################
 ## Stop Turbo Capture  ##
