@@ -89,10 +89,13 @@ If ($InstalledVersion -ne $null){
 ######################
 # Edit Startup Files #
 ######################
-
+## Change the container startup file to SSMS.exe
 $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
 $StartupFiles.SelectSingleNode("StartupFile[@node='@PROGRAMFILESX86@\Microsoft SQL Server Management Studio 19\Common7\IDE\Microsoft.AnalysisServices.Deployment.exe']").default = 'False'
-$StartupFiles.SelectSingleNode("StartupFile[@node='@PROGRAMFILESX86@\Microsoft SQL Server Management Studio 19\Common7\IDE\Ssms.exe']").default = 'True'
+$parentNode = $StartupFiles.SelectNodes("StartupFile[@node='@PROGRAMFILESX86@\Microsoft SQL Server Management Studio 19\Common7\IDE\Ssms.exe']")
+ForEach ($childNodes in $parentNode) {
+    $childNodes.SetAttribute("default", "True")
+}
 
 
 ###################
