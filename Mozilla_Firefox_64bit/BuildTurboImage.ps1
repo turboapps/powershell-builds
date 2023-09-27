@@ -20,7 +20,7 @@ $SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files spe
 
 $HubOrg = "mozilla/firefox-x64"  # Set this for each package
 $Vendor = "Mozilla"
-$AppDesc = "Mozilla’s popular open source browser enhanced for performance, privacy, and functionality."
+$AppDesc = "Mozillaâ€™s popular open source browser enhanced for performance, privacy, and functionality."
 $AppName = "Firefox (64-bit)"
 $VendorURL = "https://www.mozilla.org/en-US/firefox/new/"
 
@@ -77,10 +77,16 @@ WriteLog "Performing post-install customizations."
 
 
 # Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "Firefox") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
+$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
+$subKeyNames = $subKey.GetSubKeyNames()
+foreach($name in $subKeyNames) {
+    $sub = $subKey.OpenSubKey($name)
+    $displayName = $sub.GetValue("DisplayName")
+    if($displayName -like "*Firefox*") {
+        # Output the key name and display name
+        $InstalledVersion = $sub.GetValue("DisplayVersion")
+        Write-Output "Key: $name, Display Version: $InstalledVersion"
     }
 }
 
