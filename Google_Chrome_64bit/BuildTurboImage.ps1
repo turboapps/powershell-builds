@@ -80,10 +80,11 @@ foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVers
     $name = (Get-ItemProperty $subkey.PSPath).DisplayName
     if ($name -match "Google Chrome") {
         $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
+        WriteLog "Installed Version: " $InstalledVersion
     }
 }
 # Delete installer files
-Remove-Item -Path "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
+Remove-Item -Path 'C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*' -Recurse -Force
 
 # Set the policy key to prevent the default browser banner
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
