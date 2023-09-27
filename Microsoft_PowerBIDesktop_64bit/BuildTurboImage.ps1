@@ -72,13 +72,18 @@ WriteLog "Performing post-install customizations."
 # &reg.exe ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS /t REG_SZ /d --no-sandbox /f
 
 # Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Microsoft Power BI Desktop (x64)") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
+$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
+$subKeyNames = $subKey.GetSubKeyNames()
+foreach($name in $subKeyNames) {
+    $sub = $subKey.OpenSubKey($name)
+    $displayName = $sub.GetValue("DisplayName")
+    if($displayName -like "*Microsoft Power BI Desktop*") {
+        # Output the key name and display name
+        $InstalledVersion = $sub.GetValue("DisplayVersion")
+        Write-Output "Key: $name, Display Version: $InstalledVersion"
     }
 }
-
 #########################
 ## Stop Turbo Capture  ##
 #########################
