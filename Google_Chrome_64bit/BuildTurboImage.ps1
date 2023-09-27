@@ -76,15 +76,20 @@ Copy-Item -Path "$SupportFiles\Chrome Apps" -Destination "$env:APPDATA\Microsoft
 Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
 
 # Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "Google Chrome") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-        WriteLog "Installed Version: " $InstalledVersion
+$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
+$subKeyNames = $subKey.GetSubKeyNames()
+foreach($name in $subKeyNames) {
+    $sub = $subKey.OpenSubKey($name)
+    $displayName = $sub.GetValue("DisplayName")
+    if($displayName -like "*Google Chrome*") {
+        # Output the key name and display name
+        $InstalledVersion = $sub.GetValue("DisplayVersion")
+        Write-Output "Key: $name, Display Version: $InstalledVersion"
     }
 }
 # Delete installer files
-Remove-Item -Path 'C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*' -Recurse -Force
+Remove-Item -Path "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
 
 # Set the policy key to prevent the default browser banner
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
