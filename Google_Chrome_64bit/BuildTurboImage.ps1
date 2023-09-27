@@ -78,7 +78,7 @@ Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
 # Get the installed version from the registry
 foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
     $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Google Chrome") {
+    if ($name -match "Google Chrome") {
         $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
     }
 }
