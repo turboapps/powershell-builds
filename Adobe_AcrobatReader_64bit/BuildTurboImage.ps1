@@ -99,8 +99,9 @@ WriteLog "Performing post-install customizations."
 &cmd.exe /c rmdir /S /Q "C:\program files\common files\adobe\acrobat\setup"
 
 # Rename shortcuts from "Adobe Acrobat" to "Acrobat Reader"
-& cmd.exe /c rename "C:\Users\Public\Desktop\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
-& cmd.exe /c rename "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
+# Only required if Acrobat Pro will also be installed as they share the same shortcut names
+# & cmd.exe /c rename "C:\Users\Public\Desktop\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
+# & cmd.exe /c rename "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
 
 # Get the installed version from the registry
 $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
