@@ -20,7 +20,7 @@ $SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files spe
 
 $HubOrg = "mozilla/firefox"  # Set this for each package
 $Vendor = "Mozilla"
-$AppDesc = "Mozilla’s popular open source browser enhanced for performance, privacy, and functionality."
+$AppDesc = "Mozillaâ€™s popular open source browser enhanced for performance, privacy, and functionality."
 $AppName = "Firefox (32-bit)"
 $VendorURL = "https://www.mozilla.org/en-US/firefox/new/"
 
@@ -61,8 +61,12 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $False # Proceed 
 $ProcessExitCode = RunProcess "C:\Program Files (x86)\Mozilla Firefox\uninstall\helper.exe" "/SetAsDefaultAppGlobal" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $False # Proceed on install error
 
-# Copy policies.json - to C:\Program Files\Mozilla Firefox\distribution
+# Copy policies.json - to C:\Program Files (x86)\Mozilla Firefox\distribution
 Copy-Item "$SupportFiles\distribution" -Destination "C:\Program Files (x86)\Mozilla Firefox\"  -Recurse -Force
+# Copy mozilla.cfg - to C:\Program Files (x86)\Mozilla Firefox
+Copy-Item "$SupportFiles\mozilla.cfg" -Destination "C:\Program Files (x86)\Mozilla Firefox\"  -Recurse -Force
+# Copy local-settings.js - to C:\Program Files (x86)\Mozilla Firefox\defaults\pref
+Copy-Item "$SupportFiles\defaults" -Destination "C:\Program Files (x86)\Mozilla Firefox\"  -Recurse -Force
 
 # Delete all values under HKCU\SOFTWARE\Mozilla\Firefox\Launcher
 &reg.exe delete "HKCU\SOFTWARE\Mozilla\Firefox\Launcher" /va /f
