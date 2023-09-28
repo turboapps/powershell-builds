@@ -22,7 +22,7 @@ $HubOrg = "adobe/adobereader-x64"  # Set this for each package
 $Vendor = "Adobe"
 $AppDesc = "View, print, search, sign, verify, and collaborate on PDF documents."
 $AppName = "Acrobat Reader (64-bit)"
-$VendorURL = "https://adboe.com"
+$VendorURL = "https://adobe.com"
 
 
 ##########################################
@@ -97,6 +97,10 @@ WriteLog "Performing post-install customizations."
 &schtasks /delete /tn "adobe acrobat update task" /f
 # Cleanup installer files
 &cmd.exe /c rmdir /S /Q "C:\program files\common files\adobe\acrobat\setup"
+
+# Rename shortcuts from "Adobe Acrobat" to "Adobe Acrobat Reader"
+Rename-Item -Path "C:\Users\Public\Desktop\Adobe Acrobat.lnk" -NewName "C:\Users\Public\Desktop\Adobe Acrobat Reader.lnk" -ErrorAction SilentlyContinue
+Rename-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat.lnk" -NewName "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Reader.lnk" -ErrorAction SilentlyContinue
 
 # Get the installed version from the registry
 $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
