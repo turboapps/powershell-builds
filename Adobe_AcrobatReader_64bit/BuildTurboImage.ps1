@@ -100,6 +100,7 @@ WriteLog "Performing post-install customizations."
 
 # Rename shortcuts from "Adobe Acrobat" to "Acrobat Reader"
 Rename-Item -Path "C:\Users\Public\Desktop\Adobe Acrobat.lnk" -NewName "C:\Users\Public\Desktop\Acrobat Reader.lnk" -ErrorAction SilentlyContinue
+Rename-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat.lnk" -NewName "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Acrobat Reader.lnk" -ErrorAction SilentlyContinue
 
 # Get the installed version from the registry
 $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
