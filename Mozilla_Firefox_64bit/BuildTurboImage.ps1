@@ -63,6 +63,10 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $False # Proceed 
 
 # Copy policies.json - to C:\Program Files\Mozilla Firefox\distribution
 Copy-Item "$SupportFiles\distribution" -Destination "C:\Program Files\Mozilla Firefox\"  -Recurse -Force
+# Copy mozilla.cfg - to C:\Program Files\Mozilla Firefox
+Copy-Item "$SupportFiles\mozilla.cfg" -Destination "C:\Program Files\Mozilla Firefox\"  -Recurse -Force
+# Copy local-settings.js - to C:\Program Files\Mozilla Firefox\defaults\pref
+Copy-Item "$SupportFiles\defaults" -Destination "C:\Program Files\Mozilla Firefox\"  -Recurse -Force
 
 # Delete all values under HKCU\SOFTWARE\Mozilla\Firefox\Launcher
 &reg.exe delete "HKCU\SOFTWARE\Mozilla\Firefox\Launcher" /va /f
