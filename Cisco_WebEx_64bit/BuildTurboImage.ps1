@@ -62,6 +62,13 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
+# Launch Webex then send the Enter key to accept the agreement
+$ProcessExitCode = RunProcess "C:\Program Files\Cisco Spark\CiscoCollabHost.exe" $False
+Start-Sleep -Seconds 5
+$wshell = New-Object -ComObject wscript.shell;
+$wshell.AppActivate('Webex End User License Agreement')
+Start-Sleep -Seconds 1
+$wshell.SendKeys('{ENTER}')
 
 # Get the installed version from the registry
 $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
