@@ -39,8 +39,6 @@ $Page2 = Invoke-WebRequest -Uri ('https://notepad-plus-plus.org' + ($Page.Links 
 # Get installer link for latest version.
 $DownloadLink = ($Page2.Links | Where-Object {$_.href -like "*Installer.exe*"})[0]
 
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
 # Name of the downloaded installer file
 $InstallerName = [System.IO.Path]::GetFileName($DownloadLink.href)
 
