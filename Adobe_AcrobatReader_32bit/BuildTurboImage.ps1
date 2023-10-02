@@ -55,8 +55,7 @@ $version = $version.replace('.','')
 
 # Get installer link for latest version
 $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $version + "/AcroRdrDC" + $version + "_MUI.exe"
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
+
 # Name of the downloaded installer file
 $InstallerName = "AcroRdrDC.exe"
 
