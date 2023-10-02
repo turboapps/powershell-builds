@@ -33,8 +33,6 @@ WriteLog "Downloading the latest MSI installer."
 # Get installer link for latest version
 $DownloadLink = "https://download.mozilla.org/?product=firefox-latest&os=win&lang=en-US"
 
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
 # Name of the downloaded installer file
 $InstallerName = "FirefoxSetup.exe"
 
