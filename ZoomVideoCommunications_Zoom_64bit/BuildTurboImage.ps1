@@ -32,8 +32,7 @@ WriteLog "Downloading the latest MSI installer."
 
 # Get installer link for latest version
 $DownloadLink = "https://zoom.us/client/latest/ZoomInstallerFull.msi?archType=x64"
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
+
 # Name of the downloaded installer file
 $InstallerName = "ZoomInstallerFull.msi"
 
