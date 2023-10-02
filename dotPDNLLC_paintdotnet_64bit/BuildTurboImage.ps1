@@ -40,8 +40,6 @@ $InstalledVersion = $VersionTag.Substring(1)
 # Get installer link for latest version.
 $DownloadLink = "https://github.com/paintdotnet/release/releases/download/" + $VersionTag + "/paint.net." + $InstalledVersion + ".winmsi.x64.zip"
 
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
 # Name of the downloaded installer file
 $InstallerName = [System.IO.Path]::GetFileName($DownloadLink)
 
