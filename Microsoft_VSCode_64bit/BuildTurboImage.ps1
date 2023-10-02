@@ -32,8 +32,7 @@ WriteLog "Downloading the latest MSI installer."
 
 # Get installer link for latest version
 $DownloadLink = "https://update.code.visualstudio.com/latest/win32-x64/stable"
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
+
 # Name of the downloaded installer file
 $InstallerName = "VSCodeSetup-x64.exe"
 
