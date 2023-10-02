@@ -8,7 +8,7 @@ $packagePath = New-Item -Path "$env:USERPROFILE\Desktop" -Name "Package" -ItemTy
 $LogPath = New-Item -Path $packagePath -Name "Log" -ItemType "directory" -Force  #  create a Log folder in the Package folder
 $LogFile = "$LogPath\log-$LogTimeStamp.log"  # Set path of log file
 $NewLine = "`r`n"  #  Adds a blank line to the Log file
-
+$DownloadPath = New-Item -Path $packagePath -Name "Installer" -ItemType "directory" -Force # create an Installer directory in the Desktop Package folder
 
 
 #####################
