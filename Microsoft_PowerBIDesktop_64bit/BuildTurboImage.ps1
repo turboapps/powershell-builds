@@ -32,8 +32,7 @@ WriteLog "Downloading the latest MSI installer."
 
 # Get installer link for latest version
 $DownloadLink = "https://download.microsoft.com/download/8/8/0/880BCA75-79DD-466A-927D-1ABF1F5454B0/PBIDesktopSetup_x64.exe"
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
+
 # Name of the downloaded installer file
 $InstallerName = "PBIDesktopSetup_x64.exe"
 
