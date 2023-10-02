@@ -32,8 +32,7 @@ WriteLog "Downloading the latest MSI installer."
 
 # Get installer link for latest version
 $DownloadLink = "https://download.microsoft.com/download/8/8/0/880BCA75-79DD-466A-927D-1ABF1F5454B0/PBIDesktopSetup.exe"
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
+
 # Name of the downloaded installer file
 $InstallerName = "PBIDesktopSetup.exe"
 
@@ -61,7 +60,7 @@ WriteLog "Performing post-install customizations."
 # Register .net registration-free COM objects 
 &reg.exe import "$SupportFiles\RegCOMObjects.reg"
 
-# This prevents a ìGet the most out of PowerBIî dialog on second launch of PowerBI
+# This prevents a ‚ÄúGet the most out of PowerBI‚Äù dialog on second launch of PowerBI
 &reg.exe ADD "HKCU\SOFTWARE\Microsoft\Microsoft Power BI Desktop" /v ShowLeadGenDialog /t REG_DWORD /d 0 /f
 
 # Add system env var to launch msedgewebview2 with --no-sandbox parameter ** ONLY REQUIRED WITH TURBO VM LOWER THAN 23.4.3 **
