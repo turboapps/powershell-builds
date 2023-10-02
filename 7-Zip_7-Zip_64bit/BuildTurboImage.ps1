@@ -36,9 +36,6 @@ $Page = Invoke-WebRequest -Uri 'https://www.7-zip.org/download.html' -UseBasicPa
 $LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*-x64.msi"})[0].href
 $DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
 
-# Folder the installer will be downloaded to
-$DownloadPath = New-Item -Path $scriptPath -Name "Installer" -ItemType "directory" -Force # create an Installer directory on the desktop for the donwnload
-
 # Name of the downloaded installer file
 $InstallerName = $LatestInstaller.Split("/")[1]
 
