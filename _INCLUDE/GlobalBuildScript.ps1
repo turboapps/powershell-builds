@@ -97,11 +97,38 @@ Function CustomizeTurboXappl($PostCaptureModificationsPath) {
 
 ## Build SVM image
 Function BuildTurboSvmImage() {
+
     WriteLog "Building Turbo SVM Image."
     $ProcessExitCode = RunProcess $XStudio "$FinalXapplPath /o $SVM /l $TurboLicense" $True
     CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo capture failure
     WriteLog "Waiting for .svm file to be created..."
     Wait-ForFileExistence $SVM -Iterations 3600 -SleepTime 1   # Exit if file doesn't exist after 60 minutes
+
+    WriteLog "Import parameter = $Import"
+    WriteLog "Push URL parameter = $PushURL"
+    WriteLog "ApiKey parameter = $ApiKey"
+
+    If ($Import -eq $true) {TurboPublish}
+        
+}
+
+# Imports the image, checks the launch and publishes to the Turbo Hub
+Function TurboPublish() {
+    WriteLog "Importing image: $HubOrg"
+    $ProcessExitCode = RunProcess $Turbo "import svm $SVM --name=$HubOrg" $True
+    CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo import failure
+    $ProcessExitCode = RunProcess $Turbo "check $HubOrg" $True
+    CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo check failure
+
+    If ($PushURL -like 'http*') {
+        WriteLog "Pushing image to Turbo Server: $PushURL"
+        $ProcessExitCode = RunProcess $Turbo "config --domain=$PushURL" $True
+        CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo config failure
+        $ProcessExitCode = RunProcess $Turbo "login --api-key $ApiKey" $True
+        CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo login failure
+        $ProcessExitCode = RunProcess $Turbo "push $HubOrg $HubOrg`:$InstalledVersion" $True
+        CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo login failure
+    }
 }
 
 
