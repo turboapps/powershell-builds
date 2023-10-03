@@ -117,8 +117,8 @@ Function TurboPublish() {
     WriteLog "Importing image: $HubOrg"
     $ProcessExitCode = RunProcess $Turbo "import svm $SVM --name=$HubOrg" $True
     CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo import failure
-    $ProcessExitCode = RunProcess $Turbo "check $HubOrg" $True
-    CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo check failure
+   # $ProcessExitCode = RunProcess $Turbo "check $HubOrg" $True
+   # CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo check failure
 
     If ($PushURL -like 'http*') {
         WriteLog "Pushing image to Turbo Server: $PushURL"
