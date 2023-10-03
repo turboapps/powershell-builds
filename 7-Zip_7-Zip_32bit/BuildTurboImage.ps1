@@ -48,7 +48,7 @@ $VendorURL = "https://7-zip.org/"
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-$Page = Invoke-WebRequest -Uri 'https://www.7-zip.org/download.html' -UseBasicParsing
+$Page = curl 'https://www.7-zip.org/download.html' -UseBasicParsing
 
 # Get installer link for latest version
 $LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*.msi"})[1].href
