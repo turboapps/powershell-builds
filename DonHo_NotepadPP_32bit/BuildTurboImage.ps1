@@ -49,10 +49,10 @@ $VendorURL = "https://notepad-plus-plus.org/"
 WriteLog "Downloading the latest MSI installer."
 
 # Get main download page for application.
-$Page = Invoke-WebRequest -Uri 'https://notepad-plus-plus.org/downloads/' -UseBasicParsing
+$Page = curl 'https://notepad-plus-plus.org/downloads/' -UseBasicParsing
 
 # Get download page for latest version.
-$Page2 = Invoke-WebRequest -Uri ('https://notepad-plus-plus.org' + ($Page.Links | Where-Object {$_.outerHTML -like "*Current Version*"}).href) -UseBasicParsing
+$Page2 = curl ('https://notepad-plus-plus.org' + ($Page.Links | Where-Object {$_.outerHTML -like "*Current Version*"}).href) -UseBasicParsing
 
 # Get installer link for latest version.
 $DownloadLink = ($Page2.Links | Where-Object {$_.href -like "*Installer.exe*"})[0]
