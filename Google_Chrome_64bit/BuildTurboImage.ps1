@@ -1,3 +1,12 @@
+param(
+    [Parameter(Mandatory=$false)]
+    [string]$Import,  # If -Import is $true the image will be imported after built
+    [Parameter(Mandatory=$false)]
+    [string]$PushURL,    # If -Push is a URL, the image will be pushed to the Turbo Server
+    [Parameter(Mandatory=$false)]
+    [string]$ApiKey   # If -ApiKey is provided it will be used for the image push
+)
+
 ## This script will download the latest installer and create a Turbo SVM image in @DESKTOP@\Package\TurboCapture.
 ## The script is logged to @DESKTOP@\Package\Log.
 ## The turbo project and build are saved  to @DESKTOP@\Package\TurboCapture.
@@ -12,6 +21,15 @@ $GlobalScriptPath = Join-Path -Path $scriptPath -ChildPath "..\_INCLUDE\GlobalBu
 . $GlobalScriptPath  # Include the script that contains global variables and functions
 $SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files specific to this application build
 
+# Check if the current script is running with elevated privileges
+$elevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+# If not running with elevated privileges, Log and Exit
+if (-not $elevated) {
+   WriteLog "This script must run elevated.  Please re-run as Administrator"
+    # Exit the current script
+    exit
+}
 
 ###################################
 ## Define app specific variables ##
