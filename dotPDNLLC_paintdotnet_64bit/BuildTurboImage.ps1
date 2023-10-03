@@ -49,7 +49,7 @@ $VendorURL = "https://www.getpaint.net/"
 WriteLog "Downloading the latest MSI installer."
 
 # Get main download page for application.
-$Page = Invoke-WebRequest -Uri https://github.com/paintdotnet/release/releases/latest -UseBasicParsing
+$Page = curl https://github.com/paintdotnet/release/releases/latest -UseBasicParsing
 
 # Get the latest tag (used to build download link) and installed version (used to build download link and svm image meta).
 $VersionTag = (($Page.Links | Where-Object {$_.href -like "*/releases/tag*"}).href).split("/")[-1]
