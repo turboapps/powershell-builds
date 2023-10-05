@@ -65,7 +65,7 @@ Function StartTurboCapture() {
     WriteLog "Starting Turbo Capture."
     $ProcessExitCode = RunProcess $XStudio "/capture start /destination $TurboCaptureDir" $False
     WriteLog "Waiting for Turbo Capture to intialize..."
-    Start-Sleep -Seconds 10
+    Start-Sleep -Seconds 30
 
 }
 
