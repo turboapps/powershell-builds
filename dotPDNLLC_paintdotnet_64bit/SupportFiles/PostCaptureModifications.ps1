@@ -122,6 +122,6 @@ $node.SetAttribute("noSync","False")
 $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']").AppendChild($node)
 
 ## Set HKLM\Software\paint.net registry key and its children to full isolation
-$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='paint.net'").isolation = "Full"
-$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='paint.net'/Key[@name='Capabilities'").isolation = "Full"
-$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='paint.net'/Key[@name='Capabilities'/Key[@name='FileAssociations'").isolation = "Full"
+$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='paint.net']").isolation = "Full"
+$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='paint.net']/Key[@name='Capabilities']").isolation = "Full"
+$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='paint.net']/Key[@name='Capabilities']/Key[@name='FileAssociations']").isolation = "Full"
