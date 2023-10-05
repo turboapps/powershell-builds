@@ -49,6 +49,7 @@ $VendorURL = "https://adobe.com"
 WriteLog "Downloading the latest MSI installer."
 
 ## Determine the latest version of installer
+$url = "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html"
 $output = Start-Process -FilePath 'c:\windows\system32\curl.exe' -ArgumentList $url -Wait -RedirectStandardOutput "$ENV:Temp\WebContent.txt"
 $webContent = Get-Content "$ENV:Temp\WebContent.txt"
 $lines = $webContent.Split("`n")
