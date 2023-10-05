@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "npp/notepadplusplus"  # Set this for each package
 $Vendor = "Don Ho"
 $AppDesc = "Notepad++ is a free source code editor which supports several programming languages."
-$AppName = "Notepad++ (32-bit)"
+$AppName = "Notepad++"
 $VendorURL = "https://notepad-plus-plus.org/"
 
 
