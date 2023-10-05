@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "adobe/adobereader"  # Set this for each package
 $Vendor = "Adobe"
 $AppDesc = "View, print, search, sign, verify, and collaborate on PDF documents."
-$AppName = "Acrobat Reader (32-bit)"
+$AppName = "Acrobat Reader"
 $VendorURL = "https://adobe.com"
 
 
