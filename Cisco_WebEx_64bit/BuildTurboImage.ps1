@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "cisco/webex-x64"  # Set this for each package
 $Vendor = "Cisco Systems"
 $AppDesc = "Webex is your one place to call, message, meet."
-$AppName = "Webex (64-bit)"
+$AppName = "Webex 64-bit"
 $VendorURL = "https://www.webex.com/"
 
 
