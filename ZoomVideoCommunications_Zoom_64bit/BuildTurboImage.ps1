@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "zoomvideocommunications/zoom-x64"  # Set this for each package
 $Vendor = "Zoom Video Communications"
 $AppDesc = "Zoom's secure, reliable video platform powers all of your communication needs, including meetings, chat, phone, webinars, and online events."
-$AppName = "Zoom (64-bit)"
+$AppName = "Zoom 64-bit"
 $VendorURL = "https://zoom.us/"
 
 
