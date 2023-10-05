@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "microsoft/vscode-x64"  # Set this for each package
 $Vendor = "Microsoft"
 $AppDesc = "Build and debug modern web and cloud applications."
-$AppName = "Microsoft VSCode (64-bit)"
+$AppName = "Microsoft VSCode 64-bit"
 $VendorURL = "https://code.visualstudio.com/"
 
 
