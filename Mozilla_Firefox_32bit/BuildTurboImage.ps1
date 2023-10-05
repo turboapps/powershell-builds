@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "mozilla/firefox"  # Set this for each package
 $Vendor = "Mozilla"
 $AppDesc = "Mozilla’s popular open source browser enhanced for performance, privacy, and functionality."
-$AppName = "Firefox (32-bit)"
+$AppName = "Firefox"
 $VendorURL = "https://www.mozilla.org/en-US/firefox/new/"
 
 
