@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "7-zip/7-zip"  # Set this for each package
 $Vendor = "7-Zip"
 $AppDesc = "Open source file archiver and compression tool."
-$AppName = "7-Zip (32-bit)"
+$AppName = "7-Zip"
 $VendorURL = "https://7-zip.org/"
 
 
