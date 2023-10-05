@@ -80,7 +80,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/S" $True
+$ProcessExitCode = RunProcess "msiexec.exe" "/I $DownloadPath\$InstallerName ALLUSERS=1 /qn" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
