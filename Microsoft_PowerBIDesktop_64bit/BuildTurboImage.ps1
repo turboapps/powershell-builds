@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "microsoft/powerbi-x64"  # Set this for each package
 $Vendor = "Microsoft"
 $AppDesc = "Power BI Desktop is a business analytics application that provides interactive visualizations, and self-service business intelligence capabilities."
-$AppName = "PowerBI Desktop (64-bit)"
+$AppName = "PowerBI Desktop 64-bit"
 $VendorURL = "https://powerbi.microsoft.com/en-us/desktop/"
 
 
