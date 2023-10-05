@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "google/chrome-x64"  # Set this for each package
 $Vendor = "Google"
 $AppDesc = "Free web browser developed by Google, enhanced for performance and privacy."
-$AppName = "Chrome (64-bit)"
+$AppName = "Chrome 64-bit"
 $VendorURL = "https://google.com/chrome"
 
 
