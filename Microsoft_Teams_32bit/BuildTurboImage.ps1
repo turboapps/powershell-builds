@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "microsoft/teams"  # Set this for each package
 $Vendor = "Microsoft"
 $AppDesc = "Meet, chat, and share content with anyone from anywhere in an easy and reliable way."
-$AppName = "Teams (32-bit)"
+$AppName = "Teams"
 $VendorURL = "https://teams.microsoft.com/"
 
 
