@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "google/chrome"  # This is used to get the current hub version
 $Vendor = "Google"
 $AppDesc = "Free web browser developed by Google, enhanced for performance and privacy."
-$AppName = "Chrome (32-bit)"
+$AppName = "Chrome"
 $VendorURL = "https://google.com/chrome"
 
 
