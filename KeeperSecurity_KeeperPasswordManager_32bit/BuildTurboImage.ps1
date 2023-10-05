@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = "keepersecurity/keeperpasswordmanager"  # Set this for each package
 $Vendor = "Keeper Security"
 $AppDesc = "Keeper is the leading cybersecurity platform for preventing password-related data breaches and cyberthreats."
-$AppName = "Keeper Password Manager (32-bit)"
+$AppName = "Keeper Password Manager"
 $VendorURL = "https://www.keepersecurity.com/"
 
 
