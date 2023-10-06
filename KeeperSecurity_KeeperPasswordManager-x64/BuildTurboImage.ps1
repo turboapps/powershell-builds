@@ -36,11 +36,11 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "7-Zip"
-$AppDesc = "Open source file archiver and compression tool."
-$AppName = "7-Zip"
-$VendorURL = "https://7-zip.org/"
+$HubOrg = "keepersecurity/keeperpasswordmanager-x64"  # Set this for each package
+$Vendor = "Keeper Security"
+$AppDesc = "Keeper is the leading cybersecurity platform for preventing password-related data breaches and cyberthreats."
+$AppName = "Keeper Password Manager 64-bit"
+$VendorURL = "https://www.keepersecurity.com/"
 
 
 ##########################################
@@ -48,20 +48,20 @@ $VendorURL = "https://7-zip.org/"
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-$Page = curl 'https://www.7-zip.org/download.html' -UseBasicParsing
-
 # Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*.msi"})[1].href
-$DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
+$DownloadLink = "https://www.keepersecurity.com/desktop_electron/packages/KeeperPasswordManager.msixbundle"
 
 # Name of the downloaded installer file
-$InstallerName = $LatestInstaller.Split("/")[1]
+$InstallerName = "KeeperPasswordManager.msixbundle"
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 #########################
 ## Start Turbo Capture ##
 #########################
+
+# Replace the SnapshotSettings_21.xml file to include C:\WindowsApps folder in the capture
+Copy-Item -Path "$SupportFiles\Turbo Studio 23" -Destination "$env:LOCALAPPDATA\Turbo.net" -Recurse -Force
 
 StartTurboCapture
 
@@ -70,35 +70,54 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "msiexec.exe" "/I $Installer ALLUSERS=1 /qn" $True
+# Install the VCRedist pre-req
+$ProcessExitCode = RunProcess "$SupportFiles\VC_redist.x64.exe" "/S" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
+# Install the MSIX Keeper application
+$ProcessExitCode = RunProcess "powershell.exe" "Add-AppxPackage -Path $Installer" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
+
 
 ################################
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
 
-# Associate file types with 7zFM.exe
-  &cmd.exe /C assoc .7z=7-Zip.7z
-  &cmd.exe /C --% ftype 7-Zip.7z="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .zip=7-Zip.zip
-  &cmd.exe /C --% ftype 7-Zip.zip="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .bz2=7-Zip.bz2
-  &cmd.exe /C --% ftype 7-Zip.bz2="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .gz=7-Zip.gz
-  &cmd.exe /C --% ftype 7-Zip.gz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .tar=7-Zip.tar
-  &cmd.exe /C --% ftype 7-Zip.tar="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .tgz=7-Zip.tgz
-  &cmd.exe /C --% ftype 7-Zip.tgz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "7-Zip") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
+
+# Get the installed version from the executable
+$targetFile = "keeperpasswordmanager.exe"
+$searchPath = "C:\Program Files\WindowsApps"
+
+# Recursively search for the target file
+$foundFolders = Get-ChildItem -Path $searchPath -Recurse -Directory |
+    Where-Object { Test-Path (Join-Path $_.FullName $targetFile) } |
+    Select-Object -ExpandProperty FullName
+
+# Display the found executable and get the product version
+if ($foundFolders.Count -gt 0) { 
+    $foundFolders | ForEach-Object {
+        $exePath = "$_\keeperpasswordmanager.exe"
+        $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exePath)
+        $InstalledVersion = $versionInfo.ProductVersion
+        WriteLog "Executable found: $exePath"
+        WriteLog "Product Version: $InstalledVersion"
     }
+} else {
+    WriteLog "No folders containing '$targetFile' were found."
 }
+
+#Create Start Menu shortcut
+$shortcutPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Keeper Password Manager.lnk"
+
+$WshShell = New-Object -ComObject WScript.Shell
+$shortcut = $WshShell.CreateShortcut($shortcutPath)
+$shortcut.TargetPath = $exePath
+$shortcut.Save()
+
+WriteLog "Start menu shortcut created: $shortcutPath"
+
 
 #########################
 ## Stop Turbo Capture  ##

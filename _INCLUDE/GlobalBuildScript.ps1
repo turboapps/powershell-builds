@@ -194,3 +194,29 @@ Function CheckForError($ErrMessage, $ExpectedValue, $ResultValue, $ShouldTermina
     }
   }
 }
+
+Function GetVersionFromRegistry($AppPartName) {
+
+ # Get the installed version from the 64 bit registry
+ $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+ $subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
+ $subKeyNames = $subKey.GetSubKeyNames()
+ foreach($name in $subKeyNames) {
+     $sub = $subKey.OpenSubKey($name)
+     $displayName = $sub.GetValue("DisplayName")
+     if($displayName -match "$AppPartName") {
+         # Output the key name and display name
+         $InstalledVersion = $sub.GetValue("DisplayVersion").TrimEnd('.0')
+     }
+ }
+
+ if ([string]::IsNullOrWhiteSpace($InstalledVersion)) { # Check the 32bit reg keys if no version found
+      foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
+        $name = (Get-ItemProperty $subkey.PSPath).DisplayName
+        if ($name -match "$AppPartName") {
+            $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
+        }
+      }
+ }
+ Write-Output "Key: $name, Display Version: $InstalledVersion"
+}

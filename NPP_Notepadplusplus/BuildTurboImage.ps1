@@ -36,11 +36,11 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "7-Zip"
-$AppDesc = "Open source file archiver and compression tool."
-$AppName = "7-Zip"
-$VendorURL = "https://7-zip.org/"
+$HubOrg = "npp/notepadplusplus"  # Set this for each package
+$Vendor = "Don Ho"
+$AppDesc = "Notepad++ is a free source code editor which supports several programming languages."
+$AppName = "Notepad++"
+$VendorURL = "https://notepad-plus-plus.org/"
 
 
 ##########################################
@@ -48,16 +48,19 @@ $VendorURL = "https://7-zip.org/"
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-$Page = curl 'https://www.7-zip.org/download.html' -UseBasicParsing
+# Get main download page for application.
+$Page = curl 'https://notepad-plus-plus.org/downloads/' -UseBasicParsing
 
-# Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*.msi"})[1].href
-$DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
+# Get download page for latest version.
+$Page2 = curl ('https://notepad-plus-plus.org' + ($Page.Links | Where-Object {$_.outerHTML -like "*Current Version*"}).href) -UseBasicParsing
+
+# Get installer link for latest version.
+$DownloadLink = ($Page2.Links | Where-Object {$_.href -like "*Installer.exe*"})[0]
 
 # Name of the downloaded installer file
-$InstallerName = $LatestInstaller.Split("/")[1]
+$InstallerName = [System.IO.Path]::GetFileName($DownloadLink.href)
 
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+$Installer = wget $DownloadLink.href -O $DownloadPath\$InstallerName
 
 #########################
 ## Start Turbo Capture ##
@@ -70,7 +73,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "msiexec.exe" "/I $Installer ALLUSERS=1 /qn" $True
+$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/S" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
@@ -78,25 +81,17 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-# Associate file types with 7zFM.exe
-  &cmd.exe /C assoc .7z=7-Zip.7z
-  &cmd.exe /C --% ftype 7-Zip.7z="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .zip=7-Zip.zip
-  &cmd.exe /C --% ftype 7-Zip.zip="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .bz2=7-Zip.bz2
-  &cmd.exe /C --% ftype 7-Zip.bz2="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .gz=7-Zip.gz
-  &cmd.exe /C --% ftype 7-Zip.gz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .tar=7-Zip.tar
-  &cmd.exe /C --% ftype 7-Zip.tar="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .tgz=7-Zip.tgz
-  &cmd.exe /C --% ftype 7-Zip.tgz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  
+## Copy config.model.xml which will disable updates
+& cmd.exe /c xcopy /Y "$SupportFiles\config.model.xml" "C:\Program Files (x86)\Notepad++"
+
+## Unregister "Edit With Notepad++" context menu DLL
+& cmd.exe /c regsvr32 /s /u "C:\Program Files (x86)\Notepad++\NppShell_06.dll"
+
 # Get the installed version from the registry
 foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
     $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "7-Zip") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
+    if ($name -match "Notepad") {
+        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
     }
 }
 

@@ -36,11 +36,11 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "7-Zip"
-$AppDesc = "Open source file archiver and compression tool."
-$AppName = "7-Zip"
-$VendorURL = "https://7-zip.org/"
+$HubOrg = "zoomvideocommunications/zoom-x64"  # Set this for each package
+$Vendor = "Zoom Video Communications"
+$AppDesc = "Zoom's secure, reliable video platform powers all of your communication needs, including meetings, chat, phone, webinars, and online events."
+$AppName = "Zoom 64-bit"
+$VendorURL = "https://zoom.us/"
 
 
 ##########################################
@@ -48,14 +48,11 @@ $VendorURL = "https://7-zip.org/"
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-$Page = curl 'https://www.7-zip.org/download.html' -UseBasicParsing
-
 # Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*.msi"})[1].href
-$DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
+$DownloadLink = "https://zoom.us/client/latest/ZoomInstallerFull.msi?archType=x64"
 
 # Name of the downloaded installer file
-$InstallerName = $LatestInstaller.Split("/")[1]
+$InstallerName = "ZoomInstallerFull.msi"
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
@@ -78,25 +75,18 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-# Associate file types with 7zFM.exe
-  &cmd.exe /C assoc .7z=7-Zip.7z
-  &cmd.exe /C --% ftype 7-Zip.7z="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .zip=7-Zip.zip
-  &cmd.exe /C --% ftype 7-Zip.zip="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .bz2=7-Zip.bz2
-  &cmd.exe /C --% ftype 7-Zip.bz2="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .gz=7-Zip.gz
-  &cmd.exe /C --% ftype 7-Zip.gz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .tar=7-Zip.tar
-  &cmd.exe /C --% ftype 7-Zip.tar="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  &cmd.exe /C assoc .tgz=7-Zip.tgz
-  &cmd.exe /C --% ftype 7-Zip.tgz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
-  
+
 # Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "7-Zip") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
+$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
+$subKeyNames = $subKey.GetSubKeyNames()
+foreach($name in $subKeyNames) {
+    $sub = $subKey.OpenSubKey($name)
+    $displayName = $sub.GetValue("DisplayName")
+    if($displayName -like "*Zoom*") {
+        # Output the key name and display name
+        $InstalledVersion = $sub.GetValue("DisplayVersion")
+        Write-Output "Key: $name, Display Version: $InstalledVersion"
     }
 }
 
