@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "cisco/webex-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Cisco Systems"
 $AppDesc = "Webex is your one place to call, message, meet."
 $AppName = "Webex 64-bit"
@@ -86,19 +86,8 @@ $wshell.AppActivate('Webex End User License Agreement')
 Start-Sleep -Seconds 1
 $wshell.SendKeys('{ENTER}')
 
-# Get the installed version from the registry
-$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
-$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
-$subKeyNames = $subKey.GetSubKeyNames()
-foreach($name in $subKeyNames) {
-    $sub = $subKey.OpenSubKey($name)
-    $displayName = $sub.GetValue("DisplayName")
-    if($displayName -like "*Webex*") {
-        # Output the key name and display name
-        $InstalledVersion = $sub.GetValue("DisplayVersion")
-        Write-Output "Key: $name, Display Version: $InstalledVersion"
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Webex"
+
 #########################
 ## Stop Turbo Capture  ##
 #########################

@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "google/chrome-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Google"
 $AppDesc = "Free web browser developed by Google, enhanced for performance and privacy."
 $AppName = "Chrome 64-bit"
@@ -92,19 +92,8 @@ Copy-Item -Path "$SupportFiles\Chrome Apps" -Destination "$env:APPDATA\Microsoft
 &sc.exe delete GoogleChromeElevationService
 Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
 
-# Get the installed version from the registry
-$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
-$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
-$subKeyNames = $subKey.GetSubKeyNames()
-foreach($name in $subKeyNames) {
-    $sub = $subKey.OpenSubKey($name)
-    $displayName = $sub.GetValue("DisplayName")
-    if($displayName -like "*Google Chrome*") {
-        # Output the key name and display name
-        $InstalledVersion = $sub.GetValue("DisplayVersion")
-        Write-Output "Key: $name, Display Version: $InstalledVersion"
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Google Chrome"
+
 # Delete installer files
 Remove-Item -Path "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
 

@@ -117,13 +117,8 @@ WriteLog "Performing post-install customizations."
 # Cleanup installer files
 &cmd.exe /c rmdir /S /Q "C:\program files (x86)\common files\adobe\acrobat\setup"
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Adobe Acrobat Reader MUI") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
-    }
-}
+
+$InstalledVersion = GetVersionFromRegistry "Adobe Acrobat Reader MUI"
 
 #########################
 ## Stop Turbo Capture  ##

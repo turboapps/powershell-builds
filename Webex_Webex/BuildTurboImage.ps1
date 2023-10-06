@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "cisco/webex"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Cisco Systems"
 $AppDesc = "Webex is your one place to call, message, meet."
 $AppName = "Webex"
@@ -87,13 +87,7 @@ $wshell.AppActivate('Webex End User License Agreement')
 Start-Sleep -Seconds 1
 $wshell.SendKeys('{ENTER}')
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Webex") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Webex"
 
 #########################
 ## Stop Turbo Capture  ##

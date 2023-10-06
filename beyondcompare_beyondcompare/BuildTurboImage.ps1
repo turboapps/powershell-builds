@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "beyondcompare/beyondcompare"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Scooter Software, Inc"
 $AppDesc = "Software application used by developers, system administrators and others to compare, merge, and synchronize data."
 $AppName = "Beyond Compare"
@@ -83,13 +83,8 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
   
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "Beyond Compare") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+
+$InstalledVersion = GetVersionFromRegistry "Beyond Compare"
 
 # Disable Updates
 # Per publisher response on forum post, automatic updates are disabled when using MSI installer: https://forum.scootersoftware.com/forum/beyond-compare-4-discussion/general/14569-disable-check-for-updates-for-all-users

@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "microsoft/vscode"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Microsoft"
 $AppDesc = "Build and debug modern web and cloud applications."
 $AppName = "Microsoft VSCode"
@@ -78,13 +78,7 @@ WriteLog "Performing post-install customizations."
 # Copy Code folder to appdata - this folder contains the settings.json configuration file that disables updates and telemetry
 Copy-Item -Path "$SupportFiles\Code" -Destination "$env:APPDATA\" -Recurse -Force
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Microsoft Visual Studio Code") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Microsoft Visual Studio Code"
 
 #########################
 ## Stop Turbo Capture  ##

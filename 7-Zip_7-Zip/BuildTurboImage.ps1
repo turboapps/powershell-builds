@@ -92,13 +92,7 @@ WriteLog "Performing post-install customizations."
   &cmd.exe /C assoc .tgz=7-Zip.tgz
   &cmd.exe /C --% ftype 7-Zip.tgz="C:\Program Files (x86)\7-Zip\7zFM.exe" "%1"
   
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "7-Zip") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "7-zip"
 
 #########################
 ## Stop Turbo Capture  ##

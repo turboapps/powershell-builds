@@ -35,7 +35,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "microsoft/teams-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Microsoft"
 $AppDesc = "Meet, chat, and share content with anyone from anywhere in an easy and reliable way."
 $AppName = "Teams 64-bit"
@@ -99,13 +99,7 @@ while (Get-Process -Name $processName -ErrorAction SilentlyContinue) {
 WriteLog "Performing post-install customizations."
 
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Teams Machine-Wide Installer") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Teams Machine-Wide Installer"
 
 #########################
 ## Stop Turbo Capture  ##

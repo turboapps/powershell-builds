@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "keepersecurity/keeperpasswordmanager"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Keeper Security"
 $AppDesc = "Keeper is the leading cybersecurity platform for preventing password-related data breaches and cyberthreats."
 $AppName = "Keeper Password Manager"
@@ -76,13 +76,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Keeper Password Manager") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Keeper"
 
 #########################
 ## Stop Turbo Capture  ##

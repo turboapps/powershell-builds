@@ -69,6 +69,37 @@ Function StartTurboCapture() {
 
 }
 
+Function GetVersionFromRegistry($AppPartName) {
+ # Get the installed version from the 64 bit registry
+ $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+ $subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
+ $subKeyNames = $subKey.GetSubKeyNames()
+ foreach($name in $subKeyNames) {
+     $sub = $subKey.OpenSubKey($name)
+     $displayName = $sub.GetValue("DisplayName")
+     if($displayName -match "$AppPartName") {
+         # Output the key name and display name
+         $RegistryVersion = $sub.GetValue("DisplayVersion").TrimEnd('.0')
+     }
+ }
+
+ if ([string]::IsNullOrWhiteSpace($RegistryVersion)) { # Check the 32bit reg keys if no version found
+      foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
+        $name = (Get-ItemProperty $subkey.PSPath).DisplayName
+        if ($name -match "$AppPartName") {
+            $RegistryVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
+        }
+      }
+ }
+
+ if ([string]::IsNullOrWhiteSpace($RegistryVersion)) { # Check MSIX apps if no version found
+      $RegistryVersion = Get-AppPackage -AllUsers | Where-Object { $_.Name -match "$AppPartName" } | Select-Object Version
+      $RegistryVersion = $RegistryVersion.version.TrimEnd('.0')
+ }
+ WriteLog "Registry Display Version: $RegistryVersion"
+ Return $RegistryVersion
+}
+
 # Stop Turbo Capture
 Function StopTurboCapture() {
     WriteLog "Stopping Turbo Capture."
@@ -114,8 +145,8 @@ Function BuildTurboSvmImage() {
 
 # Imports the image, checks the launch and publishes to the Turbo Hub
 Function TurboPublish() {
-    WriteLog "Importing image: $HubOrg"
-    $ProcessExitCode = RunProcess $Turbo "import svm $SVM --name=$HubOrg" $True
+    WriteLog "Importing image: $HubOrg`:$InstalledVersion"
+    $ProcessExitCode = RunProcess $Turbo "import svm $SVM --name=$HubOrg`:$InstalledVersion" $True
     CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo import failure
    # $ProcessExitCode = RunProcess $Turbo "check $HubOrg" $True
    # CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo check failure
@@ -195,28 +226,3 @@ Function CheckForError($ErrMessage, $ExpectedValue, $ResultValue, $ShouldTermina
   }
 }
 
-Function GetVersionFromRegistry($AppPartName) {
-
- # Get the installed version from the 64 bit registry
- $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
- $subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
- $subKeyNames = $subKey.GetSubKeyNames()
- foreach($name in $subKeyNames) {
-     $sub = $subKey.OpenSubKey($name)
-     $displayName = $sub.GetValue("DisplayName")
-     if($displayName -match "$AppPartName") {
-         # Output the key name and display name
-         $InstalledVersion = $sub.GetValue("DisplayVersion").TrimEnd('.0')
-     }
- }
-
- if ([string]::IsNullOrWhiteSpace($InstalledVersion)) { # Check the 32bit reg keys if no version found
-      foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-        $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-        if ($name -match "$AppPartName") {
-            $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
-        }
-      }
- }
- Write-Output "Key: $name, Display Version: $InstalledVersion"
-}

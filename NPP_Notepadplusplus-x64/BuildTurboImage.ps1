@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "npp/notepadplusplus-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Don Ho"
 $AppDesc = "Notepad++ is a free source code editor which supports several programming languages."
 $AppName = "Notepad++ 64-bit"
@@ -87,19 +87,8 @@ WriteLog "Performing post-install customizations."
 ## Unregister "Edit With Notepad++" context menu DLL
 & cmd.exe /c regsvr32 /s /u "C:\Program Files\Notepad++\NppShell_06.dll"
 
-# Get the installed version from the registry
-$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
-$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
-$subKeyNames = $subKey.GetSubKeyNames()
-foreach($name in $subKeyNames) {
-    $sub = $subKey.OpenSubKey($name)
-    $displayName = $sub.GetValue("DisplayName")
-    if($displayName -like "*Notepad*") {
-        # Output the key name and display name
-        $InstalledVersion = $sub.GetValue("DisplayVersion")
-        Write-Output "Key: $name, Display Version: $InstalledVersion"
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Notepad"
+
 #########################
 ## Stop Turbo Capture  ##
 #########################

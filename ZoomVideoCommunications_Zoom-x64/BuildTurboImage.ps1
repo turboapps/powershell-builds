@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "zoomvideocommunications/zoom-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Zoom Video Communications"
 $AppDesc = "Zoom's secure, reliable video platform powers all of your communication needs, including meetings, chat, phone, webinars, and online events."
 $AppName = "Zoom 64-bit"
@@ -76,19 +76,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 
-# Get the installed version from the registry
-$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
-$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
-$subKeyNames = $subKey.GetSubKeyNames()
-foreach($name in $subKeyNames) {
-    $sub = $subKey.OpenSubKey($name)
-    $displayName = $sub.GetValue("DisplayName")
-    if($displayName -like "*Zoom*") {
-        # Output the key name and display name
-        $InstalledVersion = $sub.GetValue("DisplayVersion")
-        Write-Output "Key: $name, Display Version: $InstalledVersion"
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Zoom"
 
 #########################
 ## Stop Turbo Capture  ##

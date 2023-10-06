@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "microsoft/powerbi-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Microsoft"
 $AppDesc = "Power BI Desktop is a business analytics application that provides interactive visualizations, and self-service business intelligence capabilities."
 $AppName = "PowerBI Desktop 64-bit"
@@ -88,19 +88,9 @@ WriteLog "Performing post-install customizations."
 # Add system env var to launch msedgewebview2 with --no-sandbox parameter ** ONLY REQUIRED WITH TURBO VM LOWER THAN 23.4.3 **
 # &reg.exe ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS /t REG_SZ /d --no-sandbox /f
 
-# Get the installed version from the registry
-$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
-$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
-$subKeyNames = $subKey.GetSubKeyNames()
-foreach($name in $subKeyNames) {
-    $sub = $subKey.OpenSubKey($name)
-    $displayName = $sub.GetValue("DisplayName")
-    if($displayName -like "*Microsoft Power BI Desktop*") {
-        # Output the key name and display name
-        $InstalledVersion = $sub.GetValue("DisplayVersion")
-        Write-Output "Key: $name, Display Version: $InstalledVersion"
-    }
-}
+
+$InstalledVersion = GetVersionFromRegistry "Microsoft Power BI Desktop"
+
 #########################
 ## Stop Turbo Capture  ##
 #########################

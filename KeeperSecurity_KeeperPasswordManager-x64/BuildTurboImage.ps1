@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "keepersecurity/keeperpasswordmanager-x64"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Keeper Security"
 $AppDesc = "Keeper is the leading cybersecurity platform for preventing password-related data breaches and cyberthreats."
 $AppName = "Keeper Password Manager 64-bit"
@@ -86,27 +86,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 
-# Get the installed version from the executable
-$targetFile = "keeperpasswordmanager.exe"
-$searchPath = "C:\Program Files\WindowsApps"
-
-# Recursively search for the target file
-$foundFolders = Get-ChildItem -Path $searchPath -Recurse -Directory |
-    Where-Object { Test-Path (Join-Path $_.FullName $targetFile) } |
-    Select-Object -ExpandProperty FullName
-
-# Display the found executable and get the product version
-if ($foundFolders.Count -gt 0) { 
-    $foundFolders | ForEach-Object {
-        $exePath = "$_\keeperpasswordmanager.exe"
-        $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exePath)
-        $InstalledVersion = $versionInfo.ProductVersion
-        WriteLog "Executable found: $exePath"
-        WriteLog "Product Version: $InstalledVersion"
-    }
-} else {
-    WriteLog "No folders containing '$targetFile' were found."
-}
+$InstalledVersion = GetVersionFromRegistry "keeper"
 
 #Create Start Menu shortcut
 $shortcutPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Keeper Password Manager.lnk"

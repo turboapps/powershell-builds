@@ -11,7 +11,11 @@
          If selectedFolder <> "" Then
              scriptPath = folder &"\" & selectedFolder & "\BuildTurboImage.ps1"
              Set objShell = CreateObject("Shell.Application")
-             objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
+	     If bImport=True Then
+             	objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34) &" -Import true", "", "runas", 1
+	     Else
+		objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
+	     End If
 	     window.close
          End If
     End Sub
@@ -86,6 +90,17 @@
         </script>
     </select>
     <button onclick="RunScript()">Build Image</button>
+    <label for="importCheckbox"><font face="Arial">Import After Build:</label>
+  	<input type="checkbox" id="importCheckbox" onchange="updateBImport()">
+
+  	<script type="text/javascript">
+    	var bImport = false;
+
+    	function updateBImport() {
+      	var checkbox = document.getElementById('importCheckbox');
+      	bImport = checkbox.checked;
+    }
+  </script>
 
 </body>
 </html>

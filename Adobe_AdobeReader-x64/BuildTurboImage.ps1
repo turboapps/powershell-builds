@@ -121,19 +121,9 @@ WriteLog "Performing post-install customizations."
 # & cmd.exe /c rename "C:\Users\Public\Desktop\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
 # & cmd.exe /c rename "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
 
-# Get the installed version from the registry
-$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
-$subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
-$subKeyNames = $subKey.GetSubKeyNames()
-foreach($name in $subKeyNames) {
-    $sub = $subKey.OpenSubKey($name)
-    $displayName = $sub.GetValue("DisplayName")
-    if($displayName -like "*Adobe Acrobat*") {
-        # Output the key name and display name
-        $InstalledVersion = $sub.GetValue("DisplayVersion").TrimEnd('.0')
-        Write-Output "Key: $name, Display Version: $InstalledVersion"
-    }
-}
+
+$InstalledVersion = GetVersionFromRegistry "Adobe Acrobat"
+
 #########################
 ## Stop Turbo Capture  ##
 #########################

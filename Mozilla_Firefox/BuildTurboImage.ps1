@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "mozilla/firefox"  # Set this for each package
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Mozilla"
 $AppDesc = "Mozilla’s popular open source browser enhanced for performance, privacy, and functionality."
 $AppName = "Firefox"
@@ -96,13 +96,7 @@ Copy-Item "$SupportFiles\defaults" -Destination "C:\Program Files (x86)\Mozilla 
 WriteLog "Performing post-install customizations."
 
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "Firefox") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Firefox"
 
 
 #########################

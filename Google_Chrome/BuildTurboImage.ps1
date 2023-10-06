@@ -36,7 +36,7 @@ if (-not $elevated) {
 ###################################
 # These values will used to set the Metadata for the turbo image.
 
-$HubOrg = "google/chrome"  # This is used to get the current hub version
+$HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Google"
 $AppDesc = "Free web browser developed by Google, enhanced for performance and privacy."
 $AppName = "Chrome"
@@ -92,13 +92,8 @@ Copy-Item -Path "$SupportFiles\Chrome Apps" -Destination "$env:APPDATA\Microsoft
 &sc.exe delete GoogleChromeElevationService
 Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
 
-# Get the installed version from the registry
-foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -eq "Google Chrome") {
-        $InstalledVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
-    }
-}
+$InstalledVersion = GetVersionFromRegistry "Google Chrome"
+
 # Delete installer files
 Remove-Item -Path "C:\Program Files (x86)\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
 
