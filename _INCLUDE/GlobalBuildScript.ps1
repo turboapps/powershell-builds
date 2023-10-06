@@ -69,6 +69,40 @@ Function StartTurboCapture() {
 
 }
 
+function RemoveTrailingZeros {
+    param (
+        [string[]]$version
+    )
+	
+    # Split into array of version numbers.
+	$verArray = $version.split(".")
+	
+	# Reverse array to look at trailing zeroes first
+	[array]::Reverse($verArray)
+
+	# Find first non-zero index
+	$index = 0
+    $len = $verArray.length
+	ForEach ($v in $verArray[0..$len]) {
+	  if ([int]$v -ne 0) {
+		$index = $verArray.IndexOf($v)
+		break
+	  }
+	}
+	
+	# Copy array from first non-zero index to end.
+	$verArrayTrimmed = $verArray[$index..($verArray.length)]
+	# Reverse back to normal version order
+	[array]::Reverse($verArrayTrimmed)
+    If ($verArrayTrimmed.Length -eq 1) {
+        $verArrayTrimmed = $verArrayTrimmed + "0"
+    }
+    
+	$verTrimmed = $verArrayTrimmed -join "."
+    
+	return $verTrimmed
+}
+
 Function GetVersionFromRegistry($AppPartName) {
  # Get the installed version from the 64 bit registry
  $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
@@ -79,7 +113,7 @@ Function GetVersionFromRegistry($AppPartName) {
      $displayName = $sub.GetValue("DisplayName")
      if($displayName -match "$AppPartName") {
          # Output the key name and display name
-         $RegistryVersion = $sub.GetValue("DisplayVersion").TrimEnd('.0')
+         $RegistryVersion = $sub.GetValue("DisplayVersion")
      }
  }
 
@@ -87,15 +121,17 @@ Function GetVersionFromRegistry($AppPartName) {
       foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
         $name = (Get-ItemProperty $subkey.PSPath).DisplayName
         if ($name -match "$AppPartName") {
-            $RegistryVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion.TrimEnd('.0')
+            $RegistryVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
         }
       }
  }
 
  if ([string]::IsNullOrWhiteSpace($RegistryVersion)) { # Check MSIX apps if no version found
       $RegistryVersion = Get-AppPackage -AllUsers | Where-Object { $_.Name -match "$AppPartName" } | Select-Object Version
-      $RegistryVersion = $RegistryVersion.version.TrimEnd('.0')
+      $RegistryVersion = $RegistryVersion.version
  }
+
+ $RegistryVersion = RemoveTrailingZeros $RegistryVersion 
  WriteLog "Registry Display Version: $RegistryVersion"
  Return $RegistryVersion
 }
