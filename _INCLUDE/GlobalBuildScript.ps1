@@ -9,7 +9,7 @@ $LogPath = New-Item -Path $packagePath -Name "Log" -ItemType "directory" -Force 
 $LogFile = "$LogPath\log-$LogTimeStamp.log"  # Set path of log file
 $NewLine = "`r`n"  #  Adds a blank line to the Log file
 $DownloadPath = New-Item -Path $packagePath -Name "Installer" -ItemType "directory" -Force # create an Installer directory in the Desktop Package folder
-#$HubOrg = (Split-Path -Path (Get-Location) -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
+
 
 #####################
 ## Turbo Variables ##
