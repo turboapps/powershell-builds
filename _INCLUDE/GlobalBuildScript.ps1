@@ -37,20 +37,6 @@ Function WriteLog([String]$message) {
     ("$timestamp $message").replace($NewLine,"") | Out-File -FilePath $LogFile -Append # Strip new lines from message then output to log
 }
 
-
-# Compare the current Turbo Hub Version to the latest available download version.
-# Exits the script if Hub is the same or newer.
-function Compare-Versions($Version1, $Version2) {
-    WriteLog "Comparing Current Turbo Hub version to Latest available version."
-    If ([Version]$Version1 -lt [Version]$Version2) {
-         WriteLog "A newer version is available."
-         Return 1
-    } Else {
-         WriteLog "Turbo Hub version is the same or newer. Exiting."
-         Exit 0
-    }
-}
-
 # Download latest installer
 Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
     # Download installer
@@ -101,6 +87,31 @@ function RemoveTrailingZeros {
 	$verTrimmed = $verArrayTrimmed -join "."
     
 	return $verTrimmed
+}
+
+# Get Current Hub Version of application
+Function GetCurrentHubVersion($HubOrg) {
+    $HubURL = "https://hub.turbo.net/run/"  # URL used to get the current Hub version
+    $HubURL = $HubURL + $HubOrg
+    WriteLog "Getting the current version from $HubURL"
+    $HubPage = Invoke-WebRequest -Uri ($HubURL) -UseBasicParsing
+    $VersionLink = ($HubPage.Links | Where-Object {$_.class -like "*tag-badge ellipsis*"})
+    $CurrentHubVersion = $VersionLink.title
+    WriteLog "Current Hub Version of $HubOrg is $CurrentHubVersion"
+    Return $CurrentHubVersion
+}
+
+# Compare the current Turbo Hub Version to the latest available download version.
+# Exits the script if Hub is the same or newer.
+function Compare-Versions($Version1, $Version2) {
+    WriteLog "Comparing Current Turbo Hub version to Latest available version."
+    If ([Version]$Version1 -lt [Version]$Version2) {
+         WriteLog "A newer version is available."
+         Return 1
+    } Else {
+         WriteLog "Turbo Hub version is the same or newer. Exiting."
+         Exit 0
+    }
 }
 
 Function GetVersionFromRegistry($AppPartName) {

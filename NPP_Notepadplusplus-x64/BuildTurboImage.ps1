@@ -19,6 +19,7 @@ param(
 $scriptPath = $PSScriptRoot  # The folder path the script was launched from
 $GlobalScriptPath = Join-Path -Path $scriptPath -ChildPath "..\_INCLUDE\GlobalBuildScript.ps1"  #Get the path to the GlobalBuildScript.ps1
 . $GlobalScriptPath  # Include the script that contains global variables and functions
+$VersionScriptPath = Join-Path -Path $scriptPath -ChildPath "VersionCheck.ps1"  #Get the path to the VersionCheck.ps1
 $SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files specific to this application build
 
 # Check if the current script is running with elevated privileges
@@ -42,7 +43,18 @@ $AppDesc = "Notepad++ is a free source code editor which supports several progra
 $AppName = "Notepad++ 64-bit"
 $VendorURL = "https://notepad-plus-plus.org/"
 
+########################################
+## Compare Hub Version to Web Version ##
+########################################
 
+If (Test-Path -Path $VersionScriptPath) {
+    . $VersionScriptPath  # Include the script that compares the Hub version to the latest web version
+    WriteLog "VersionCheck script found.  Comparing Hub version to Web version."
+    RunVersionCheck
+    } else {
+    WriteLog "No VersionCheck script. Proceeding to download installer."
+}
+    
 ##########################################
 ## Download latest version of installer ##
 ##########################################
