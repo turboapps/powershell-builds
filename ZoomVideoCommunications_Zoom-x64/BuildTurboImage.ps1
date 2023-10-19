@@ -42,6 +42,17 @@ $AppDesc = "Zoom's secure, reliable video platform powers all of your communicat
 $AppName = "Zoom 64-bit"
 $VendorURL = "https://zoom.us/"
 
+########################################
+## Compare Hub Version to Web Version ##
+########################################
+$VersionScriptPath = Join-Path -Path $scriptPath -ChildPath "VersionCheck.ps1"  #Get the path to the VersionCheck.ps1
+If (Test-Path -Path $VersionScriptPath) {
+    . $VersionScriptPath  # Include the script that compares the Hub version to the latest web version
+    WriteLog "VersionCheck script found.  Comparing Hub version to Web version."
+    RunVersionCheck
+    } else {
+    WriteLog "No VersionCheck script. Proceeding to download installer."
+}
 
 ##########################################
 ## Download latest version of installer ##

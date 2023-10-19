@@ -42,6 +42,17 @@ $AppDesc = "Mozilla’s popular open source browser enhanced for performance, pr
 $AppName = "Firefox"
 $VendorURL = "https://www.mozilla.org/en-US/firefox/new/"
 
+########################################
+## Compare Hub Version to Web Version ##
+########################################
+$VersionScriptPath = Join-Path -Path $scriptPath -ChildPath "VersionCheck.ps1"  #Get the path to the VersionCheck.ps1
+If (Test-Path -Path $VersionScriptPath) {
+    . $VersionScriptPath  # Include the script that compares the Hub version to the latest web version
+    WriteLog "VersionCheck script found.  Comparing Hub version to Web version."
+    RunVersionCheck
+    } else {
+    WriteLog "No VersionCheck script. Proceeding to download installer."
+}
 
 ##########################################
 ## Download latest version of installer ##
