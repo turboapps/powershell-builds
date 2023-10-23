@@ -111,6 +111,7 @@ function Compare-Versions($Version1, $Version2) {
          Return 1
     } Else {
          WriteLog "Turbo Hub version is the same or newer. Exiting."
+         WriteLog "BuildResult=Skipped"
          Exit 0
     }
 }
@@ -207,6 +208,7 @@ Function TurboPublish() {
         CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo login failure
         $ProcessExitCode = RunProcess $Turbo "push $HubOrg $HubOrg`:$InstalledVersion" $True
         CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo login failure
+        WriteLog "BuildResult=Success"
     }
 }
 
@@ -262,7 +264,7 @@ Function CheckForError($ErrMessage, $ExpectedValue, $ResultValue, $ShouldTermina
     If ($ShouldTerminate) {
       WriteLog "Error: $ErrMessage"
       WriteLog "Error: Expected ($ExpectedValue) != Result ($ResultValue)"
-      WriteLog "Error: Script failed! $NewLine"
+      WriteLog "BuildResult=Fail"
       Exit $ResultValue
     }
     Else {
