@@ -98,7 +98,7 @@ Function GetCurrentHubVersion($HubOrg) {
     $VersionLink = ($HubPage.Links | Where-Object {$_.class -like "*tag-badge ellipsis*"})
     $CurrentHubVersion = $VersionLink.title
     $CurrentHubVersion = RemoveTrailingZeros $CurrentHubVersion
-    WriteLog "Current Hub Version of $HubOrg is $CurrentHubVersion"
+    WriteLog "HubVersion=$CurrentHubVersion"
     Return $CurrentHubVersion
 }
 

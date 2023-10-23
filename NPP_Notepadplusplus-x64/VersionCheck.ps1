@@ -20,7 +20,7 @@ $VersionLink = ($Page2.Links | Where-Object {$_.href -like "*downloads*"})[0]
 $LatestWebVersion = $VersionLink.href.Split("/")[2] -replace "v"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
-WriteLog "Version on Vendor website: $LatestWebVersion"
+WriteLog "WebVersion=$LatestWebVersion"
 
 
 ###########################################
