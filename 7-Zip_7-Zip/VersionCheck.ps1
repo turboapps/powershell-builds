@@ -10,14 +10,18 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Get main download page for application.
-$Page = Invoke-WebRequest -Uri 'https://notepad-plus-plus.org/downloads/' -UseBasicParsing
-# Get download page for latest version.
-$Page2 = Invoke-WebRequest -Uri ('https://notepad-plus-plus.org' + ($Page.Links | Where-Object {$_.outerHTML -like "*Current Version*"}).href) -UseBasicParsing
+# Get installer link for latest version
+$Page = curl 'https://www.7-zip.org/download.html' -UseBasicParsing
 
-# Assuming the VersionLink is /downloads/v##.##.##/ we will split out the version and remove the "v" to get only the version part of the link
-$VersionLink = ($Page2.Links | Where-Object {$_.href -like "*downloads*"})[0]
-$LatestWebVersion = $VersionLink.href.Split("/")[2] -replace "v"
+# Get installer link for latest version
+$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*.msi"})[1].href
+$DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
+$InstallerName = $LatestInstaller.Split("/")[1]
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+# Use this method if the MSI is NOT digitally signed
+$LatestWebVersion = Get-MsiProductVersion "$Installer"
+
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "Version on Vendor website: $LatestWebVersion"

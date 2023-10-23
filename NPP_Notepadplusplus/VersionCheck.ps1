@@ -18,7 +18,7 @@ $Page2 = Invoke-WebRequest -Uri ('https://notepad-plus-plus.org' + ($Page.Links 
 # Assuming the VersionLink is /downloads/v##.##.##/ we will split out the version and remove the "v" to get only the version part of the link
 $VersionLink = ($Page2.Links | Where-Object {$_.href -like "*downloads*"})[0]
 $LatestWebVersion = $VersionLink.href.Split("/")[2] -replace "v"
-$LatestWebVersion = RemoveTrailingZeros $LatestWebVersion
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "Version on Vendor website: $LatestWebVersion"
 

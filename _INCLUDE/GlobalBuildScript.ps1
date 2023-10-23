@@ -116,6 +116,23 @@ function Compare-Versions($Version1, $Version2) {
     }
 }
 
+# Use the Windows Installer object to get the ProducVersion property from an unsigned MSI file
+Function Get-MsiProductVersion {
+    param (
+        [Parameter(Mandatory=$True)]
+        [string]$MsiPath
+    )
+
+    $windowsInstaller = New-Object -ComObject WindowsInstaller.Installer
+    $database = $windowsInstaller.OpenDatabase($MsiPath, 0)
+    $view = $database.OpenView("SELECT Value FROM Property WHERE Property='ProductVersion'")
+    $view.Execute()
+    $record = $view.Fetch()
+    $msiproductVersion = $record.StringData(1)
+    $view.Close()
+    Return $msiproductVersion
+}
+
 Function GetVersionFromRegistry($AppPartName) {
  # Get the installed version from the 64 bit registry
  $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
