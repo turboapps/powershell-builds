@@ -39,10 +39,14 @@ Function WriteLog([String]$message) {
 
 # Download latest installer
 Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
-    # Download installer
-    WriteLog "Downloading latest installer to $DownloadPath\$InstallerName"
-    wget $DownloadLink -O $DownloadPath\$InstallerName
-    Wait-ForFileExistence $DownloadPath\$InstallerName -Iterations 3600 -SleepTime 1  # Exit if file doesn't exist after 60 minutes
+    # Download installer if it does not already exist
+    if (Test-Path -Path $DownloadPath\$InstallerName -PathType Leaf) {
+        WriteLog "File already downloaded: $DownloadPath\$InstallerName"
+    } else {
+        WriteLog "Downloading latest installer to $DownloadPath\$InstallerName"
+        wget $DownloadLink -O $DownloadPath\$InstallerName
+        Wait-ForFileExistence $DownloadPath\$InstallerName -Iterations 3600 -SleepTime 1  # Exit if file doesn't exist after 60 minutes
+    }
     Return "$DownloadPath\$InstallerName"
 }
 
@@ -60,8 +64,11 @@ function RemoveTrailingZeros {
         [string[]]$version
     )
 	
+    # Trim spaces from version
+    $trimmedVersion = $version.Trim()
+
     # Split into array of version numbers.
-	$verArray = $version.split(".")
+	$verArray = $trimmedVersion.split(".")
 	
 	# Reverse array to look at trailing zeroes first
 	[array]::Reverse($verArray)
