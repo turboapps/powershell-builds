@@ -13,7 +13,16 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # Use this section to get the latest version 
 # either from the vendor website or the downloaded installer file
 
-$LatestWebVersion = "0.0"
+# Get installer link for latest version
+$DownloadLink = "https://download.microsoft.com/download/8/8/0/880BCA75-79DD-466A-927D-1ABF1F5454B0/PBIDesktopSetup_x64.exe"
+
+# Name of the downloaded installer file
+$InstallerName = "PBIDesktopSetup_x64.exe"
+
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+$LatestWebVersion = Get-VersionFromExe "$Installer"
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 

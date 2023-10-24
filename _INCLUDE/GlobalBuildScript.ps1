@@ -140,6 +140,18 @@ Function Get-MsiProductVersion {
     Return $msiproductVersion
 }
 
+# Get the version from the EXE file from the VersionInfo.ProductVersion property
+Function Get-VersionFromExe {
+    param (
+        [Parameter(Mandatory=$True)]
+        [string]$ExePath
+    )
+    $ExeFile = Get-Item "$ExePath"
+    $exeproductVersion = $ExeFile.VersionInfo.ProductVersion
+    
+    Return $exeproductVersion
+}
+
 Function GetVersionFromRegistry($AppPartName) {
  # Get the installed version from the 64 bit registry
  $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
