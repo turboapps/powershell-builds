@@ -10,10 +10,15 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Use this section to get the latest version 
-# either from the vendor website or the downloaded installer file
+$page = curl "https://docs.keeper.io/release-notes/desktop/web-vault-+-desktop-app" -UseBasicParsing
 
-$LatestWebVersion = "0.0"
+# Find all anchor elements ('a') in the HTML
+$versionLink = ($Page.Links | Where-Object {$_.outerHTML -like "*vault release*"})[1].href
+
+# Strip out the version from the link
+$parts = $versionLink -split '-'
+$LatestWebVersion = $parts[-1]
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 

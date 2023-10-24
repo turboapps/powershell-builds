@@ -19,9 +19,7 @@ $DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
 $InstallerName = $LatestInstaller.Split("/")[1]
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-# Use this method if the MSI is NOT digitally signed
 $LatestWebVersion = Get-MsiProductVersion "$Installer"
-
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"

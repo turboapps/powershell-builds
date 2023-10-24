@@ -15,10 +15,7 @@ $DownloadLink = "https://zoom.us/client/latest/ZoomInstallerFull.msi?archType=x6
 $InstallerName = "ZoomInstallerFull.msi"
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-# Note this will only work if the MSI is digitally signed
-$MSIVersion = Get-AppLockerFileInformation -Path $Installer | Select -ExpandProperty Publisher | select BinaryVersion
-$LatestWebVersion =  [string]$MSIVersion.BinaryVersion.MajorPartNumber +'.'+ [string]$MSIVersion.BinaryVersion.MinorPartNumber +'.'+ [string]$MSIVersion.BinaryVersion.BuildPartNumber | Out-String
-
+$LatestWebVersion = Get-MsiProductVersion "$Installer"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "Version on Vendor website: $LatestWebVersion"

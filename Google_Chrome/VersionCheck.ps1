@@ -10,10 +10,15 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Use this section to get the latest version 
-# either from the vendor website or the downloaded installer file
+# Define the URL
+$chromeVersionURL = "https://versionhistory.googleapis.com/v1/chrome/platforms/win/channels/stable/versions"
 
-$LatestWebVersion = "0.0"
+# Make a GET request
+$response = Invoke-RestMethod -Uri $chromeVersionURL -UseBasicParsing
+
+# Extract the latest version
+$LatestWebVersion = $response.versions[0].version
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 
