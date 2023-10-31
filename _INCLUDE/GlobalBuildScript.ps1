@@ -105,6 +105,15 @@ Function GetCurrentHubVersion($HubOrg) {
     $VersionLink = ($HubPage.Links | Where-Object {$_.class -like "*tag-badge ellipsis*"})
     $CurrentHubVersion = $VersionLink.title
     $CurrentHubVersion = RemoveTrailingZeros $CurrentHubVersion
+    #If the hub version is comma separated, use the last version
+    if ($CurrentHubVersion -like "*,*") {
+        # Split the variable by the comma delimiter
+        $splitArray = $CurrentHubVersion -split ','
+
+        # Set the variable to the last value in the array
+        $CurrentHubVersion = $splitArray[-1]
+    }
+
     WriteLog "HubVersion=$CurrentHubVersion"
     Return $CurrentHubVersion
 }
