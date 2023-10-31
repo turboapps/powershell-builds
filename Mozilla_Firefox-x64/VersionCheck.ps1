@@ -18,7 +18,7 @@ $Page = curl 'https://www.mozilla.org/en-US/firefox/releases/' -UseBasicParsing
 $VersionLink = ($Page.Links | Where-Object {$_.href -like "*/releasenotes/"})[1].href
 
 # Use regular expression to extract the version number
-$LatestWebVersion = [regex]::Match($VersionLink, '\d+(\.\d+)+').Value
+$LatestWebVersion = [regex]::Match($VersionLink, '(\d+(\.\d+)+)').Value
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
