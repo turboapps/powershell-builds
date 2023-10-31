@@ -13,7 +13,16 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # Use this section to get the latest version 
 # either from the vendor website or the downloaded installer file
 
-$LatestWebVersion = "0.0"
+# Get installer link for latest version
+$DownloadLink = "https://update.code.visualstudio.com/latest/win32/stable"
+
+# Name of the downloaded installer file
+$InstallerName = "VSCodeSetup.exe"
+
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+$LatestWebVersion = Get-VersionFromExe "$Installer"
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 

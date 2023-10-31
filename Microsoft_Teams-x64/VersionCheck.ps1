@@ -13,7 +13,16 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # Use this section to get the latest version 
 # either from the vendor website or the downloaded installer file
 
-$LatestWebVersion = "0.0"
+# Get installer link for latest version
+$DownloadLink = "https://teams.microsoft.com/downloads/desktopurl?env=production&plat=windows&arch=x64&managedInstaller=true&download=true"
+
+# Name of the downloaded installer file
+$InstallerName = "Teams_windows_x64.msi"
+
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+$LatestWebVersion = Get-MsiProductVersion "$Installer"
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 

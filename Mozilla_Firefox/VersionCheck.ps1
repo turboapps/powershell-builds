@@ -13,7 +13,13 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # Use this section to get the latest version 
 # either from the vendor website or the downloaded installer file
 
-$LatestWebVersion = "0.0"
+# Get latest version from release notes page
+$Page = curl 'https://www.mozilla.org/en-US/firefox/releases/' -UseBasicParsing
+$VersionLink = ($Page.Links | Where-Object {$_.href -like "*/releasenotes/"})[1].href
+
+# Use regular expression to extract the version number
+$LatestWebVersion = [regex]::Match($VersionLink, '\d+(\.\d+)+').Value
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 
