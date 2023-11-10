@@ -37,6 +37,21 @@ Function WriteLog([String]$message) {
     ("$timestamp $message").replace($NewLine,"") | Out-File -FilePath $LogFile -Append # Strip new lines from message then output to log
 }
 
+Function CheckHubVersion() {
+    If ([string]::IsNullOrWhiteSpace($PushURL)) {
+         WriteLog "No PushURL parameter. Proceeding to download installer."
+    } else {
+         $VersionScriptPath = Join-Path -Path $scriptPath -ChildPath "VersionCheck.ps1"  #Get the path to the VersionCheck.ps1
+         If (Test-Path -Path $VersionScriptPath) {
+             . $VersionScriptPath  # Include the script that compares the Hub version to the latest web version
+             WriteLog "VersionCheck script found.  Comparing Hub version to Web version."
+             RunVersionCheck
+         } else {
+             WriteLog "No VersionCheck script. Proceeding to download installer."
+         }
+     }
+}
+
 # Download latest installer
 Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
     # Download installer if it does not already exist
