@@ -37,10 +37,10 @@ if (-not $elevated) {
 # These values will used to set the Metadata for the turbo image.
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "Adobe"
-$AppDesc = "View, print, search, sign, verify, and collaborate on PDF documents."
-$AppName = "Acrobat Reader"
-$VendorURL = "https://adobe.com"
+$Vendor = "Videolan"
+$AppDesc = "An open source multimedia framework, player, and server."
+$AppName = "VLC"
+$VendorURL = "www.videolan.org/vlc/"
 
 ########################################
 ## Compare Hub Version to Web Version ##
@@ -50,37 +50,18 @@ CheckHubVersion
 ##########################################
 ## Download latest version of installer ##
 ##########################################
-WriteLog "Downloading the latest MSI installer."
+WriteLog "Downloading the latest installer."
 
-## Determine the latest version of installer
-$url = "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html"
-$output = Start-Process -FilePath 'c:\windows\system32\curl.exe' -ArgumentList $url -Wait -RedirectStandardOutput "$ENV:Temp\WebContent.txt"
-$webContent = Get-Content "$ENV:Temp\WebContent.txt"
-$lines = $webContent.Split("`n")
-
-# Look for the first instance of <link rel="next" in the source page
-foreach ($line in $lines) {
-    if ($line -match '<link rel="next"') {
-
-        $output = $line 
-        break
-    }
-}
-
-# Use regular expression to match a sequence of digits separated by dots
-$pattern = "\d+(?:\.\d+)*"
-$matches = [regex]::Matches($output, $pattern)
-
-# Extract the first match as the version text
-$version = $matches[0].Value
-$version = $version.replace('.','')
-
+$Page = curl 'https://www.videolan.org/vlc/' -UseBasicParsing
 
 # Get installer link for latest version
-$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $version + "/AcroRdrDC" + $version + "_MUI.exe"
+$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*win64*"})[0].href
+$InstallerName = $LatestInstaller.Split("/")[-1]
+$InstallerVersion = $InstallerName.Split("-")[1]
 
 # Name of the downloaded installer file
-$InstallerName = "AcroRdrDC.exe"
+$DownloadLink = "https://download.videolan.org/pub/videolan/vlc/" + $InstallerVersion + "/win64/vlc-" + $InstallerVersion +"-win64.msi"
+$InstallerName = $DownloadLink.Split("/")[-1]
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
@@ -95,7 +76,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/sAll /rs /l /msi /qb-! /norestart ALLUSERS=1 EULA_ACCEPT=YES SUPPRESS_APP_LAUNCH=YES" $True
+$ProcessExitCode = RunProcess "msiexec.exe" "/I $Installer ALLUSERS=1 /qn" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
@@ -103,29 +84,24 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v iAppDoNotTakePDFOwnershipAtLaunchWin10 /f
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v iAppDoNotTakePDFOwnershipAtLaunch /f
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\FTEDialog" /t REG_DWORD /d 10 /v iFTEVersion /f
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\FTEDialog" /t REG_DWORD /d 0 /v iLastCardShown /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bToggleFTE /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bWhatsNewExp /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bProtectedMode /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bUpdater /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 1 /v bAcroSuppressUpsell /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bUsageMeasurement /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown\cServices" /t REG_DWORD /d 0 /v bUpdater /f
+# Delete web shortcuts from the start menu
+&cmd /c del "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\VideoLAN\VLC\Documentation.lnk"
+&cmd /c del "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\VideoLAN\VLC\VideoLAN website.lnk"
 
-
-# Delete Adobe ARM service
-&sc.exe stop adobearmservice
-&sc.exe delete adobearmservice
-# Delete Adobe update scheduled task
-&schtasks /delete /tn "adobe acrobat update task" /f
-# Cleanup installer files
-&cmd.exe /c rmdir /S /Q "C:\program files (x86)\common files\adobe\acrobat\setup"
-
-
-$InstalledVersion = GetVersionFromRegistry "Adobe Acrobat Reader MUI"
+# Launch VLC then send keys to disable Update check and send usage information
+&"C:\Program Files\VideoLAN\VLC\vlc.exe"
+Start-Sleep -Seconds 5
+$wshell = New-Object -ComObject wscript.shell;
+$wshell.AppActivate('Privacy and Network Access Policy')
+Start-Sleep -Seconds 1
+$wshell.SendKeys('{TAB}')
+$wshell.SendKeys(' ')
+$wshell.SendKeys('{TAB}')
+$wshell.SendKeys(' ')
+$wshell.SendKeys('{TAB}')
+$wshell.SendKeys(' ')
+  
+$InstalledVersion = GetVersionFromRegistry "VLC"
 
 #########################
 ## Stop Turbo Capture  ##

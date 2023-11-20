@@ -43,7 +43,7 @@ $node.SetAttribute("value",$value)
 
 # Configure vm settings
 $VirtualizationSettings = $xappl.Configuration.SelectSingleNode("VirtualizationSettings")
-$VirtualizationSettings.chromiumSupport = [string]$true
+#$VirtualizationSettings.chromiumSupport = [string]$true
 #$virtualizationSettings.launchChildProcsAsUser = [string]$true
 
 # Configure metadata for the application
@@ -86,6 +86,12 @@ If ($InstalledVersion -ne $null){
 }
 
 
+###################
+# Edit Services #
+###################
+
+$Services = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Services")
+
 
 ###################
 # Edit Filesystem #
@@ -105,12 +111,17 @@ $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']
 
 $Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Registry")
 
-AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']" "Adobe" "WriteCopy" "False" "False" "False"
+######################
+# Edit Startup Files #
+######################
 
-# Set Full isolation on HKLM\Software\WOW6432Node\Adobe and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Adobe']/descendant-or-self::*")
-ForEach ($childNodes in $parentNode) {
-    $childNodes.SetAttribute("isolation", "Full")
-}
-# Set Write-copy isolation on HKLM\Software\WOW6432Node\Adobe
-$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Adobe']").isolation= "WriteCopy"
+$StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
+$StartupFiles.SelectSingleNode("StartupFile[@tag='vlc']").commandLine = '--no-qt-privacy-ask --no-qt-updates-notif'
+
+######################
+# Edit Shortcuts #
+######################
+
+$Shortcuts = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Shortcuts")
+$Shortcuts.SelectSingleNode("Folder[@name='Desktop']/Shortcut[@name='VLC media player']").arguments = '--no-qt-privacy-ask --no-qt-updates-notif'
+$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Folder[@name='VideoLAN']/Folder[@name='VLC']/Shortcut[@name='VLC media player']").arguments = '--no-qt-privacy-ask --no-qt-updates-notif'
