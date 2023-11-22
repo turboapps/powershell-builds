@@ -14,7 +14,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 $Page = curl 'https://www.videolan.org/vlc/' -UseBasicParsing
 
 # Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*win64*"})[0].href
+$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*win32*"})[0].href
 $InstallerName = $LatestInstaller.Split("/")[-1]
 $LatestWebVersion = $InstallerName.Split("-")[1]
 
