@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="utf-16"?><LicenseCertificate version="2" publisher="Turbo.net"><LicenseType>Retail</LicenseType><LicenseModel>Site</LicenseModel><ProductCode>TURBO210</ProductCode><Seats>1</Seats><Account>turbobuild</Account><Signature>00e5b85e21ad2b104aff6b26887eca0d6b67e5510307489c85b99aa2c199420c6d5a6421db859da23e4b433057c78e35844929348895287dd2c846696c1803062e5fdf4c1cf333e28bc4666ad563b32e4c754f861e51063d93a595015dde2570a05314da4ed254271cb5c01c133f6b60e4cd57809caa839df50d849b88a04e6e</Signature></LicenseCertificate>
+<Add your Turbo Studio license here>
