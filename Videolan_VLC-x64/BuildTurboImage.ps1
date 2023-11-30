@@ -100,7 +100,10 @@ $wshell.SendKeys('{TAB}')
 $wshell.SendKeys(' ')
 $wshell.SendKeys('{TAB}')
 $wshell.SendKeys(' ')
-  
+
+# Kill the vlc.exe process
+&cmd.exe /c taskkill /F /IM vlc.exe /T
+
 $InstalledVersion = GetVersionFromRegistry "VLC"
 
 #########################
