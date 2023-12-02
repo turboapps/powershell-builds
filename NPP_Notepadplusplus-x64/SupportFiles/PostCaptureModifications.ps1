@@ -102,3 +102,13 @@ $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']
 ## NOTE: Beware of case sensitivity when making registry changes.  eg. The registry value type "String" requires an upper-case 'S'
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
+########################
+# Edit ShellExtentions #
+########################
+
+$ShellExtensions = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("ShellExtensions")
+$node = $xappl.CreateElement("ShellExtension")
+$node.SetAttribute("description","Edit with Notepad++")
+$node.SetAttribute("command","@PROGRAMFILES@\Notepad++\notepad++.exe &quot;%1&quot;")
+$node.SetAttribute("iconPath","@PROGRAMFILES@\Notepad++\notepad++.exe")
+$ShellExtensions.AppendChild($node)
