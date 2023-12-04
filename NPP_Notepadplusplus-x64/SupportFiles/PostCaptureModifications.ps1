@@ -109,6 +109,6 @@ $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']
 $ShellExtensions = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("ShellExtensions")
 $node = $xappl.CreateElement("ShellExtension")
 $node.SetAttribute("description","Edit with Notepad++")
-$node.SetAttribute("command","@PROGRAMFILES@\Notepad++\notepad++.exe &quot;%1&quot;")
+$node.SetAttribute("command","@PROGRAMFILES@\Notepad++\notepad++.exe ""%1""")
 $node.SetAttribute("iconPath","@PROGRAMFILES@\Notepad++\notepad++.exe")
 $ShellExtensions.AppendChild($node)
