@@ -75,8 +75,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 
 &reg.exe add "HKCU\Software\Policies\Microsoft\Office\16.0\Teams" /t REG_DWORD /d 1 /v PreventFirstLaunchAfterInstall /f
 
-$ProcessExitCode = RunProcess "C:\Program Files (x86)\Teams Installer\Teams.exe" "--noui --noapplaunch" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+$ProcessExitCode = RunProcess "C:\Program Files (x86)\Teams Installer\Teams.exe" "--noui --noapplaunch" $False
 
 # Wait for the Update.exe process to start
 $processName = "Update"
