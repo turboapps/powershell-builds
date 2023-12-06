@@ -124,25 +124,3 @@ $Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']
 # Set Full isolation on HKCU\SOFTWARE\Mozilla\Firefox\Launcher - This fixes an issue loading web pages if Firefox is installed natively
 $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Mozilla']/Key[@name='Firefox']/Key[@name='Launcher']").isolation= "Full"
 $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Mozilla']/Key[@name='Firefox']/Key[@name='Launcher']").isolation= "Full"
-
-# Add and Hide reg key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\<extension>\UserChoice
-# This will prevent Edge from taking over the HTML,HTM,PDF,SHTML,SVG,WEBP,WEBM,XHT,XHTML file associations
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']" "FileExts" "Merge" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".htm" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".html" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".pdf" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".shtml" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".svg" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".webm" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".webp" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".xht" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']" ".xhtml" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.htm']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.html']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.pdf']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.shtml']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.svg']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.webm']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.webp']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.xht']" "UserChoice" "Hide" "False" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Explorer']/Key[@name='FileExts']/Key[@name='.xhtml']" "UserChoice" "Hide" "False" "False" "False"
