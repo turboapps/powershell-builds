@@ -43,7 +43,7 @@ $node.SetAttribute("value",$value)
 
 # Configure vm settings
 $VirtualizationSettings = $xappl.Configuration.SelectSingleNode("VirtualizationSettings")
-$VirtualizationSettings.chromiumSupport = [string]$true
+#$VirtualizationSettings.chromiumSupport = [string]$true
 #$virtualizationSettings.launchChildProcsAsUser = [string]$true
 
 # Configure metadata for the application
@@ -102,17 +102,19 @@ $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']
 ## NOTE: Beware of case sensitivity when making registry changes.  eg. The registry value type "String" requires an upper-case 'S'
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
+######################
+# Edit Startup Files #
+######################
+$StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
 
-$Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Registry")
+# Uncheck any default startup files
+$StartupFiles.SelectSingleNode("StartupFile[@default='True']").default = 'False'
 
-if (-not (Test-Path -Path "HKLM:\Software\Adobe")) {
-    AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']" "Adobe" "WriteCopy" "False" "False" "False"
-}
-
-# Set Full isolation on HKLM\Software\WOW6432Node\Adobe and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Adobe']/descendant-or-self::*")
-ForEach ($childNodes in $parentNode) {
-    $childNodes.SetAttribute("isolation", "Full")
-}
-# Set Write-copy isolation on HKLM\Software\WOW6432Node\Adobe
-$Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Adobe']").isolation= "WriteCopy"
+# Add a new startup file for "C:\postgres\bin\postgres.exe" -D C:\pg-data
+$node = $xappl.CreateElement("StartupFile")
+$node.SetAttribute("node","@SYSDRIVE@\pgsql\bin\postgres.exe")
+$node.SetAttribute("tag","postgres")
+$node.SetAttribute("commandLine","-D %PGDATA%")
+$node.SetAttribute("default","True")
+$node.SetAttribute("architecture","AnyCpu")
+$StartupFiles.AppendChild($node)

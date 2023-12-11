@@ -168,7 +168,9 @@ ForEach ($childNodes in $parentNode) {
 }
 
 # set net.spoon.chromenativehost key to merge isolation, so Turbo VM Extension is able to establish connection with a message host installed natively
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']" "Chrome" "Full" "False" "False"
+if (-not (Test-Path -Path "HKCU:\Software\Google\Chrome")) {
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']" "Chrome" "Full" "False" "False"
+}
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']" "NativeMessagingHosts" "Full" "False" "False"
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']/Key[@name='NativeMessagingHosts']" "net.spoon.chromenativehost" "Merge" "False" "False"
 

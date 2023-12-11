@@ -37,52 +37,30 @@ if (-not $elevated) {
 # These values will used to set the Metadata for the turbo image.
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "Adobe"
-$AppDesc = "View, print, search, sign, verify, and collaborate on PDF documents."
-$AppName = "Acrobat Reader"
-$VendorURL = "https://adobe.com"
+$Vendor = "PostgreSQL"
+$AppDesc = "PostgreSQL is a powerful, open source object-relational database."
+$AppName = "PostgreSQL"
+$VendorURL = "https://www.postgresql.org/"
 
 ########################################
 ## Compare Hub Version to Web Version ##
 ########################################
 CheckHubVersion
-
+    
 ##########################################
 ## Download latest version of installer ##
 ##########################################
-WriteLog "Downloading the latest MSI installer."
+WriteLog "Downloading the latestinstaller."
 
-## Determine the latest version of installer
-$url = "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html"
-$output = Start-Process -FilePath 'c:\windows\system32\curl.exe' -ArgumentList $url -Wait -RedirectStandardOutput "$ENV:Temp\WebContent.txt"
-$webContent = Get-Content "$ENV:Temp\WebContent.txt"
-$lines = $webContent.Split("`n")
+# Get main download page for application.
+$Page = curl 'https://www.enterprisedb.com/downloads/postgres-postgresql-downloads' -UseBasicParsing
 
-# Look for the first instance of <link rel="next" in the source page
-foreach ($line in $lines) {
-    if ($line -match '<link rel="next"') {
+# Get installer link for latest version.
+$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*fileid*"})[1].href
 
-        $output = $line 
-        break
-    }
-}
+$InstallerName = "PostgresInstaller.exe"
 
-# Use regular expression to match a sequence of digits separated by dots
-$pattern = "\d+(?:\.\d+)*"
-$matches = [regex]::Matches($output, $pattern)
-
-# Extract the first match as the version text
-$version = $matches[0].Value
-$version = $version.replace('.','')
-
-
-# Get installer link for latest version
-$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $version + "/AcroRdrDC" + $version + "_MUI.exe"
-
-# Name of the downloaded installer file
-$InstallerName = "AcroRdrDC.exe"
-
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+$Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath\$InstallerName
 
 #########################
 ## Start Turbo Capture ##
@@ -95,7 +73,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/sAll /rs /l /msi /qb-! /norestart ALLUSERS=1 EULA_ACCEPT=YES SUPPRESS_APP_LAUNCH=YES" $True
+$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "--unattendedmodeui none --mode unattended --superpassword postgres --locale en-us --prefix c:\pgsql --datadir C:\pg-data" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
@@ -103,29 +81,14 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v iAppDoNotTakePDFOwnershipAtLaunchWin10 /f /reg:32
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v iAppDoNotTakePDFOwnershipAtLaunch /f /reg:32
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\FTEDialog" /t REG_DWORD /d 10 /v iFTEVersion /f /reg:32
-&reg.exe add "HKLM\SOFTWARE\Adobe\Acrobat Reader\DC\AVAlert\FTEDialog" /t REG_DWORD /d 0 /v iLastCardShown /f /reg:32
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bToggleFTE /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bWhatsNewExp /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bProtectedMode /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bUpdater /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 1 /v bAcroSuppressUpsell /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bUsageMeasurement /f
-&reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown\cServices" /t REG_DWORD /d 0 /v bUpdater /f
+# Set the environment variables for PostgreSQL
+&cmd.exe /C "$SupportFiles\pg_env.bat"
+
+# Remove the contents of c:\pg-data
+Remove-Item -Path "C:\pg-data\*" -Recurse -Force
 
 
-# Delete Adobe ARM service
-&sc.exe stop adobearmservice
-&sc.exe delete adobearmservice
-# Delete Adobe update scheduled task
-&schtasks /delete /tn "adobe acrobat update task" /f
-# Cleanup installer files
-&cmd.exe /c rmdir /S /Q "C:\program files (x86)\common files\adobe\acrobat\setup"
-
-
-$InstalledVersion = GetVersionFromRegistry "Adobe Acrobat Reader MUI"
+$InstalledVersion = GetVersionFromRegistry "PostgreSQL"
 
 #########################
 ## Stop Turbo Capture  ##
