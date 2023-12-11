@@ -202,4 +202,7 @@ EditRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key
 
 # Add reg key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
 # This will prevent Chrome Apps from creating Programs and Features entries
-AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
+if (-not (Test-Path -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall")) {
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
+}
+$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']").isolation = "Full"
