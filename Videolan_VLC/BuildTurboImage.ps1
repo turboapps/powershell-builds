@@ -87,6 +87,7 @@ WriteLog "Performing post-install customizations."
 # Delete web shortcuts from the start menu
 &cmd /c del "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\VideoLAN\VLC\Documentation.lnk"
 &cmd /c del "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\VideoLAN\VLC\VideoLAN website.lnk"
+&cmd /c del "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\VideoLAN\VLC\Release Notes.lnk"
 
 # Launch VLC then send keys to disable Update check and send usage information
 &"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"
