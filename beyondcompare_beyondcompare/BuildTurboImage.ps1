@@ -86,7 +86,8 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
-  
+
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Beyond Compare 4\Uninstall Beyond Compare 4.lnk" -Force
 
 $InstalledVersion = GetVersionFromRegistry "Beyond Compare"
 

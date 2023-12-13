@@ -52,32 +52,19 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-## Determine the latest version of installer
-$url = "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html"
-$output = Start-Process -FilePath 'c:\windows\system32\curl.exe' -ArgumentList $url -Wait -RedirectStandardOutput "$ENV:Temp\WebContent.txt"
-$webContent = Get-Content "$ENV:Temp\WebContent.txt"
-$lines = $webContent.Split("`n")
+# Get latest version for Acrobat Reader from their SCUP page.
+## Download SCUP cab.
+Wget https://armmf.adobe.com/arm-manifests/win/SCUP/ReaderCatalog-DC.cab -OutFile "$DownloadPath\ReaderCatalog.cab"
+## Expand cab to XML.
+Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
 
-# Look for the first instance of <link rel="next" in the source page
-foreach ($line in $lines) {
-    if ($line -match '<link rel="next"') {
+## Parse XML for latest version
+[XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
+$Versions = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.ApplicabilityRules.MetaData.MsiPatchMetaData.MsiPatch.TargetProduct.UpdatedVersion | Sort-Object -Descending
+$Version = $Versions[0] -Replace ('\.','')
 
-        $output = $line 
-        break
-    }
-}
-
-# Use regular expression to match a sequence of digits separated by dots
-$pattern = "\d+(?:\.\d+)*"
-$matches = [regex]::Matches($output, $pattern)
-
-# Extract the first match as the version text
-$version = $matches[0].Value
-$version = $version.replace('.','')
-
-
-# Get installer link for latest version
-$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/acrobat/win/AcrobatDC/" + $version + "/AcroRdrDCx64" + $version + "_MUI.exe"
+## Create download link for Reader
+$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/acrobat/win/AcrobatDC/" + $Version + "/AcroRdrDCx64" + $Version + "_en_US.exe"
 
 # Name of the downloaded installer file
 $InstallerName = "AcroRdrDCx64.exe"
