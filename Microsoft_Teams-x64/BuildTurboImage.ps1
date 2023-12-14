@@ -101,6 +101,8 @@ while (Get-Process -Name $processName -ErrorAction SilentlyContinue) {
 ################################
 WriteLog "Performing post-install customizations."
 
+# Write registry keys to create the URL Protocol handlers
+&cmd.exe /C "$SupportFiles\URLProtocols.bat"
 
 $InstalledVersion = GetVersionFromRegistry "Teams Machine-Wide Installer"
 

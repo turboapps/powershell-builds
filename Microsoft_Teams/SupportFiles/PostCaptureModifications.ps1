@@ -98,8 +98,8 @@ $StartupFiles.SelectSingleNode("StartupFile[@node='@APPDATALOCAL@\Microsoft\Team
 ######################
 
 $Shortcuts = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Shortcuts")
-$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Shortcut[@name='Microsoft Teams']").targetPath = '@APPDATALOCAL@\Microsoft\Teams\current\Teams.exe'
-$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Shortcut[@name='Microsoft Teams']").arguments = ''
+$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Shortcut[@name='Microsoft Teams classic']").targetPath = '@APPDATALOCAL@\Microsoft\Teams\current\Teams.exe'
+$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Shortcut[@name='Microsoft Teams classic']").arguments = ''
 
 
 ###################
