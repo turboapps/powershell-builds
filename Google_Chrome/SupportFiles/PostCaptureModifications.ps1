@@ -167,7 +167,8 @@ ForEach ($childNodes in $parentNode) {
 }
 
 # set net.spoon.chromenativehost key to merge isolation, so Turbo VM Extension is able to establish connection with a message host installed natively
-if (-not (Test-Path -Path "HKCU:\Software\Google\Chrome")) {
+$userChromeKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']")
+if (-not $userChromeKey) {
     AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']" "Chrome" "Full" "False" "False"
 }
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']" "NativeMessagingHosts" "Full" "False" "False"
@@ -202,7 +203,27 @@ EditRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key
 
 # Add reg key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
 # This will prevent Chrome Apps from creating Programs and Features entries
-if (-not (Test-Path -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall")) {
+$uninstallNode = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']")
+if (-not $uninstallNode) {
     AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
 }
 $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']").isolation = "Full"
+
+# This will add the ProgIDs for HTTP and HTTPS allowing users to set Chrome as the default browser
+# Create Classes reg keys for http and https
+AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "http" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "https" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
+# Clone the ChromeHTML ProgID node to http and https
+$chromeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='ChromeHTML']").CloneNode($true)
+# Modify the ProgId name and description for HTTP and HTTPS
+$httpNode = $chromeHtmlNode.Clone()
+$httpNode.SetAttribute("name", "http")
+$httpNode.SetAttribute("description", "URL:HyperText Transfer Protocol")
+$httpsNode = $chromeHtmlNode.Clone()
+$httpsNode.SetAttribute("name", "https")
+$httpsNode.SetAttribute("description", "URL:HyperText Transfer Protocol with Privacy")
+# Append HTTP and HTTPS ProgIds to the XML structure
+$xappl.SelectSingleNode("//ProgIds").AppendChild($httpNode)
+$xappl.SelectSingleNode("//ProgIds").AppendChild($httpsNode)
