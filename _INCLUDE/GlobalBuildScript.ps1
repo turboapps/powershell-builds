@@ -37,6 +37,38 @@ Function WriteLog([String]$message) {
     ("$timestamp $message").replace($NewLine,"") | Out-File -FilePath $LogFile -Append # Strip new lines from message then output to log
 }
 
+# Get Current Hub Version of application
+Function GetCurrentHubVersion($HubOrg) {
+    # Split the repo parts into owner and name values
+    $repoOwner, $repoName = $HubOrg -split "/"
+
+    WriteLog "Getting the current $HubOrg version from $PushURL"
+    # Get token from API Key
+    $headers = @{}
+    $headers.Add("X-Turbo-Api-Key", $ApiKey)
+    $reqUrl = $PushURL + '/0.1/api-keys/login'
+    $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
+
+    # Get all repos from Hub
+    $headers = @{}
+    $headers.Add("X-Turbo-Ticket", $response)
+    $headers.Add("X-Turbo-Api-Id", "turbo.net")
+    $headers.Add("X-Turbo-Api-Version", "1")
+
+    $reqUrl = $PushURL + '/io/hub/repo/search?q=&official=false&n=-1'
+    $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
+
+    # Get the first returned version from the passed repo
+    $repos = $response.repos
+    foreach ($repo in $repos) {
+        if($repo.owner -eq $repoOwner -and $repo.name -eq $repoName) {
+            $CurrentHubVersion = $repo.releases[0]
+        } 
+    }
+    WriteLog "HubVersion=$CurrentHubVersion"
+    Return $CurrentHubVersion
+}
+
 Function CheckHubVersion() {
     If ([string]::IsNullOrWhiteSpace($PushURL)) {
          WriteLog "No PushURL parameter. Proceeding to download installer."
@@ -51,6 +83,7 @@ Function CheckHubVersion() {
          }
      }
 }
+
 
 # Download latest installer
 Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
@@ -116,8 +149,8 @@ function RemoveTrailingZeros {
 	return $verTrimmed
 }
 
-# Get Current Hub Version of application
-Function GetCurrentHubVersion($HubOrg) {
+# Get the latest version from Turbo.net hub
+Function GetTurboNetHubVersion($HubOrg) {
     $HubURL = "https://hub.turbo.net/run/"  # URL used to get the current Hub version
     $HubURL = $HubURL + $HubOrg
     WriteLog "Getting the current version from $HubURL"
