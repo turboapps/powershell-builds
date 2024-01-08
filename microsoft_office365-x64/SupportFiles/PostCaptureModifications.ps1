@@ -125,17 +125,16 @@ AddDirectory "Directory[@name='@APPDATA@']/Directory[@name='Microsoft']/Director
 #######################################
 # Fix the bitness of the System files #
 #######################################
-##
 
-$parentNode = $Filesystem.SelectNodes("Directory[@name='@SYSTEM@']")
-ForEach ($childNodes in $parentNode) {
-    $childNodes.SetAttribute("source", $childNodes.GetAttribute("source").Replace("SystemX86", "System"))
-}
+# Delete these 3 files as they don't exist as 32-bit binaries
+$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']/File[@name='msvcp100.dll']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']/File[@name='msvcr100.dll']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']/File[@name='vcruntime140_1.dll']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
-$parentNode = $Filesystem.SelectNodes("Directory[@name='@SYSWOW64@']")
-ForEach ($childNodes in $parentNode) {
-    $childNodes.SetAttribute("source", $childNodes.GetAttribute("source").Replace("System", "SystemX86"))
-}
+# Swap the SYSTEM and SYSWOW64 directories
+$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']").SetAttribute("name", "@SYSWOW@") # temporarily rename this to SYSWOW before naming SYSWOW64
+$Filesystem.SelectNodes("Directory[@name='@SYSWOW64@']").SetAttribute("name", "@SYSTEM@")
+$Filesystem.SelectNodes("Directory[@name='@SYSWOW@']").SetAttribute("name", "@SYSWOW64@")
 
 #################
 # Edit Registry #
@@ -151,7 +150,7 @@ $Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']
 ######################
 ## Change the container startup file to WINWORD
 $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
-$parentNode = $StartupFiles.SelectNodes("StartupFile[@node='@PROGRAMFILES@\Microsoft Office\root\Office16\WINWORD.EXE']")
+$parentNode = $StartupFiles.SelectNodes("StartupFile[@node='@PROGRAMFILES@\Microsoft Office\Office16\WINWORD.EXE']")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("default", "True")
 }
