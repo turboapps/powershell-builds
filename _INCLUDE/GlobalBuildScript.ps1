@@ -98,6 +98,18 @@ Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
     Return "$DownloadPath\$InstallerName"
 }
 
+# Check if any given process name is running
+Function CheckRunningProcess($processName) {
+    # Check if the process is running
+    if (Get-Process -ProcessName $processName -ErrorAction SilentlyContinue) {
+        WriteLog "$processName is running."
+        Return 1
+    } else {
+        WriteLog "$processName is not running."
+        Return 0
+    }
+}
+
 # Start Turbo Capture
 Function StartTurboCapture() {
     WriteLog "Starting Turbo Capture."
@@ -254,7 +266,11 @@ Function StopTurboCapture() {
     CheckForError "Checking process exit code:" 0 $ProcessExitCode  # Fail on turbo capture failure
     WriteLog "Waiting for .xappl file to be created..."
     Wait-ForFileExistence $XapplPath -Iterations 3600 -SleepTime 1  # Exit if file doesn't exist after 60 minutes
-    Start-Sleep -Seconds 10
+    WriteLog "Waiting for Turbo Capture to finalize..."
+    DO {         
+        $XStudioRunning = CheckRunningProcess "xstudio"
+        Start-Sleep -Seconds 10
+        } While ($XStudioRunning -ne 0)
 }
 
 # Apply Customizations from a helper script to the XAPPL

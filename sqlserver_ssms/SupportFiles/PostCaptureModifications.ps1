@@ -104,6 +104,9 @@ ForEach ($childNodes in $parentNode) {
 
 $Filesystem = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Filesystem")
 
+## Remove script log file directory
+$Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+
 
 #################
 # Edit Registry #
