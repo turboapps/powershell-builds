@@ -82,7 +82,7 @@ $InstalledVersion = GetVersionFromRegistry "SQL Server Management Studio"
 
 # Disable Update Checker - since this key will likely change with the version we need to get the major version first
 $majorVersion = ($InstalledVersion -split '\.')[0]
-&reg add "HKEY_CURRENT_USER\Software\Microsoft\SQL Server Management Studio\$majorVersion.0_IsoShell\UpdateChecker" /v "UpdateChecker" /t REG_SZ /d "False" /f
+&reg add "HKEY_CURRENT_USER\Software\Microsoft\SQL Server Management Studio\$majorVersion.0_IsoShell\UpdateChecker" /v "Enabled" /t REG_SZ /d "False" /f
 
 
 #########################
