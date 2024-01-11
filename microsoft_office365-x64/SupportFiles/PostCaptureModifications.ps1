@@ -122,19 +122,6 @@ AddDirectory "Directory[@name='@APPDATA@']/Directory[@name='Microsoft']/Director
 AddDirectory "Directory[@name='@APPDATA@']/Directory[@name='Microsoft']/Directory[@name='Windows']/Directory[@name='Start Menu']" "Programs" "Merge" "False" "False" "False"
 AddDirectory "Directory[@name='@APPDATA@']/Directory[@name='Microsoft']/Directory[@name='Windows']/Directory[@name='Start Menu']/Directory[@name='Programs']" "Startup" "Full" "False" "False" "False"
 
-#######################################
-# Fix the bitness of the System files #
-#######################################
-
-# Delete these 3 files as they don't exist as 32-bit binaries
-$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']/File[@name='msvcp100.dll']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']/File[@name='msvcr100.dll']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']/File[@name='vcruntime140_1.dll']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-
-# Swap the SYSTEM and SYSWOW64 directories
-$Filesystem.SelectNodes("Directory[@name='@SYSTEM@']").SetAttribute("name", "@SYSWOW@") # temporarily rename this to SYSWOW before naming SYSWOW64
-$Filesystem.SelectNodes("Directory[@name='@SYSWOW64@']").SetAttribute("name", "@SYSTEM@")
-$Filesystem.SelectNodes("Directory[@name='@SYSWOW@']").SetAttribute("name", "@SYSWOW64@")
 
 #################
 # Edit Registry #
