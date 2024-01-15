@@ -73,3 +73,18 @@ $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']
 ## NOTE: Beware of case sensitivity when making registry changes.  eg. The registry value type "String" requires an upper-case 'S'
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
+$Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Registry")
+
+
+######################
+# Remove EdgeWebView #
+######################
+
+#Remove folders @PROGRAMFILESX86@\Microsoft\EdgeUpdate and @PROGRAMFILESX86@\Microsoft\EdgeWebView
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeWebView']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+
+#Remove reg key @HKLM@\Software\WOW6432node\Microsoft\EdgeUpdate
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+#Remove reg key @HKLM@\Software\WOW6432node\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft EdgeWebView
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']/Key[@name='Microsoft EdgeWebView']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }

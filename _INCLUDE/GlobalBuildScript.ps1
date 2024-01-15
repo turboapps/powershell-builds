@@ -14,9 +14,7 @@ $DownloadPath = New-Item -Path $packagePath -Name "Installer" -ItemType "directo
 #####################
 ## Turbo Variables ##
 #####################
-if (Test-Path "C:\Program Files (x86)\Turbo.net\Turbo Studio 23\XStudio.exe") { 
-    $XStudio = "C:\Program Files (x86)\Turbo.net\Turbo Studio 23\XStudio.exe"  
-} else { $XStudio = "C:\Program Files (x86)\Turbo.net\Turbo Studio 22\XStudio.exe" } # The path to XStudio.exe
+$XStudio = Get-ChildItem -Path "C:\Program Files (x86)\Turbo.net" -Recurse -Filter "XStudio.exe" -File | Select-Object -ExpandProperty FullName  
 $Turbo = "C:\Program Files (x86)\Turbo\Cmd\turbo.exe" # The path to Turbo.exe
 $TurboCaptureDir = "$packagePath\TurboCapture"  # The folder that the Turbo capture will be saved to
 $XapplPath = "$TurboCaptureDir\Capture.xappl"  #  Path to the captured XAPPL file
