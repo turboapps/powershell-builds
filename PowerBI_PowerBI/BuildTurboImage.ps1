@@ -82,7 +82,7 @@ WriteLog "Performing post-install customizations."
 # Register .net registration-free COM objects 
 &reg.exe import "$SupportFiles\RegCOMObjects.reg" /reg:64
 
-# This prevents a “Get the most out of PowerBI” dialog on second launch of PowerBI 
+# This prevents a Get the most out of PowerBI� dialog on second launch of PowerBI 
 &reg.exe ADD "HKCU\SOFTWARE\Microsoft\Microsoft Power BI Desktop" /v ShowLeadGenDialog /t REG_DWORD /d 0 /f
 
 # This prevents virtual spawned msedge.exe processes from staying running when Edge is closed and keeping the container running
