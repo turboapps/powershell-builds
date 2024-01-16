@@ -89,6 +89,9 @@ WriteLog "Performing post-install customizations."
 &reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v BackgroundModeEnabled /t REG_DWORD /d 0 /f
 &reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v StartupBoostEnabled /t REG_DWORD /d 0 /f
 
+# Copy Power BI Desktop folder to localappdata - this folder contains files to enable Enhanced Sign In.
+Copy-Item -Path "$SupportFiles\Power BI Desktop" -Destination "$env:LOCALAPPDATA\Microsoft" -Recurse -Force
+
 # Add system env var to launch msedgewebview2 with --no-sandbox parameter ** ONLY REQUIRED WITH TURBO VM LOWER THAN 23.4.3 **
 # &reg.exe ADD "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS /t REG_SZ /d --no-sandbox /f
 

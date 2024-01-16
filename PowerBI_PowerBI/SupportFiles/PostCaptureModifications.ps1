@@ -67,6 +67,9 @@ $Filesystem = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default
 ## Remove script log file directory
 $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
+# Sets Merge isolation on @APPDATALOCAL@\Microsoft\Power BI Desktop
+$Filesystem.SelectSingleNode("Directory[@name='@APPDATALOCAL@']/Directory[@name='Microsoft']/Directory[@name='Power BI Desktop']").isolation = "Merge"
+
 #################
 # Edit Registry #
 #################
