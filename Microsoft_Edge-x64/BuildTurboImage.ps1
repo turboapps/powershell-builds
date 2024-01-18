@@ -37,10 +37,10 @@ if (-not $elevated) {
 # These values will used to set the Metadata for the turbo image.
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "Google"
-$AppDesc = "Free web browser developed by Google, enhanced for performance and privacy."
-$AppName = "Chrome 64-bit"
-$VendorURL = "https://google.com/chrome"
+$Vendor = "Microsoft"
+$AppDesc = "Edge is a proprietary, cross-platform web browser created by Microsoft."
+$AppName = "Edge 64-bit"
+$VendorURL = "https://www.microsoft.com/en-us/edge"
 
 ########################################
 ## Compare Hub Version to Web Version ##
@@ -52,11 +52,33 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-# Get installer link for latest version
-$DownloadLink = "https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B2CC0992A-8A31-8D75-167C-5C46238DE706%7D%26lang%3Den%26browser%3D5%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dtrue%26ap%3Dx64-stable-statsdef_0%26brand%3DGCEW/dl/chrome/install/googlechromestandaloneenterprise64.msi"
+$edgeEnterpriseMSIUri = 'https://edgeupdates.microsoft.com/api/products?view=enterprise'
+$Architecture = "x64"
+$Platform = "Windows"
+$channel = "Stable"
+
+# Use the Edge Product release JSON page to get the latest version and download link
+$response = Invoke-WebRequest -Uri $edgeEnterpriseMSIUri -Method Get -ContentType "application/json" -UseBasicParsing -ErrorVariable InvokeWebRequestError
+$jsonObj = ConvertFrom-Json $([String]::new($response.Content))
+
+$selectedIndex = [array]::indexof($jsonObj.Product, "$Channel")
+
+$selectedVersion = (([Version[]](($jsonObj[$selectedIndex].Releases |
+    Where-Object { $_.Architecture -eq $Architecture -and $_.Platform -eq $Platform }).ProductVersion) |
+    Sort-Object -Descending)[0]).ToString(4)
+
+$selectedObject = $jsonObj[$selectedIndex].Releases |
+    Where-Object { $_.Architecture -eq $Architecture -and $_.Platform -eq $Platform -and $_.ProductVersion -eq $selectedVersion }
+$LatestWebVersion = $selectedObject.ProductVersion
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 # Name of the downloaded installer file
-$InstallerName = "googlechromestandaloneenterprise.msi"
+$InstallerName = "MicrosoftEdgeEnterpriseX64.msi"
+
+# Get the download link for the latest version
+foreach ($artifacts in $selectedObject.Artifacts) {
+         $DownloadLink = $artifacts.Location
+}
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
@@ -79,31 +101,31 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-# Copy initial_prefernces file - this file doesn't currently contain any changes to defaults but allows for future changes if required.
-Copy-Item "$SupportFiles\initial_preferences" -Destination "C:\Program Files\Google\Chrome\Application\"  -Force
-# Copy Google folder to localappdata - this folder contains files to prevent the Google Welcome page on first launch.
-Copy-Item -Path "$SupportFiles\Google" -Destination "$env:LOCALAPPDATA\" -Recurse -Force
+# Run the Edge first run user setup process to configure user default settings
+$ProcessExitCode = RunProcess "C:\Program Files (x86)\Microsoft\Edge\Application\$LatestWebVersion\Installer\setup.exe" "--configure-user-settings --verbose-logging --system-level --msedge" $True
 
-# Create "Chrome Apps" folder in Start Menu - creating this folder will prevent google app shortcuts from getting created
-Copy-Item -Path "$SupportFiles\Chrome Apps" -Destination "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\" -Recurse -Force
+# Copy a "Local State" file from a profile that has launched Edge twice to prevent the second launch "Whats new" tab
+Copy-Item -Path "$SupportFiles\Local State" -Destination "$env:LOCALAPPDATA\Microsoft\Edge\User Data\" -Recurse -Force
 
-# Delete Google Update
-&sc.exe stop gupdate
-&sc.exe delete gupdate
-&sc.exe stop gupdatem
-&sc.exe delete gupdatem
-&sc.exe stop GoogleChromeElevationService
-&sc.exe delete GoogleChromeElevationService
-Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
+# Delete Edge Update Services
+&sc.exe stop MicrosoftEdgeElevationService
+&sc.exe delete MicrosoftEdgeElevationService
+&sc.exe stop edgeupdate
+&sc.exe delete edgeupdate
+&sc.exe stop edgeupdatem
+&sc.exe delete edgeupdatem
+Remove-Item -Path "C:\Program Files (x86)\Microsoft\EdgeUpdate\*" -Recurse -Force
 
-$InstalledVersion = GetVersionFromRegistry "Google Chrome"
+$InstalledVersion = GetVersionFromRegistry "Microsoft Edge"
 
-# Delete installer files
-Remove-Item -Path "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
-
-# Set the policy key to prevent the default browser banner
-&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
-&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v PrivacySandboxPromptEnabled /t REG_DWORD /d 0 /f
+# Set the policy key to prevent the Edge First launch prompts
+&reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v HideFirstRunExperience /t REG_DWORD /d 1 /f
+&reg.exe ADD "HKLM\Software\Policies\Microsoft\MicrosoftEdge\Main" /v PreventFirstRunPage /t REG_DWORD /d 1 /f
+# Set the policy key to prevent the Edge second launch "What are you interested in" prompt
+&reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v NewTabPageContentEnabled /t REG_DWORD /d 0 /f
+# This prevents virtual spawned msedge.exe processes from staying running when Edge is closed and keeping the container running
+&reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v BackgroundModeEnabled /t REG_DWORD /d 0 /f
+&reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v StartupBoostEnabled /t REG_DWORD /d 0 /f
 
 #########################
 ## Stop Turbo Capture  ##

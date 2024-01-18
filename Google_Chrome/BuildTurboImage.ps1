@@ -103,6 +103,7 @@ Remove-Item -Path "C:\Program Files (x86)\Google\Chrome\Application\$InstalledVe
 
 # Set the policy key to prevent the default browser banner
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v PrivacySandboxPromptEnabled /t REG_DWORD /d 0 /f
 
 #########################
 ## Stop Turbo Capture  ##
