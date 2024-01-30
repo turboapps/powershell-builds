@@ -19,6 +19,13 @@ password = credentials.get('password')
 App("java.exe").focus()
 type(Key.DOWN, Key.WIN) # Minimize cmd window
 
+# Turn off prompt to download multiple files in Edge
+run('"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\msedge.exe"') 
+click("1706654433765.png")
+type("edge://settings/content/automaticDownloads")
+type(Key.ENTER)
+click("1706654222871.png")
+type(Key.F4, Key.ALT)
 # URL handler
 run('explorer "https://adminconsole.adobe.com/"')
 wait("1706293893609.png")
