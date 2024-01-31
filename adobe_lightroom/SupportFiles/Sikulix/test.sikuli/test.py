@@ -21,7 +21,7 @@ type(Key.DOWN, Key.WIN) # Minimize cmd window
 
 # Turn off prompt to download multiple files in Edge
 run('"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\msedge.exe"') 
-click("1706654433765.png")
+wait(5)
 type("edge://settings/content/automaticDownloads")
 type(Key.ENTER)
 click("1706654222871.png")
