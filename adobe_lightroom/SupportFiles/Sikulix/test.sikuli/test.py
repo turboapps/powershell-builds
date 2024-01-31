@@ -20,11 +20,12 @@ App("java.exe").focus()
 type(Key.DOWN, Key.WIN) # Minimize cmd window
 
 # Turn off prompt to download multiple files in Edge
-run('"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\msedge.exe"') 
+run('explorer "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\msedge.exe"') 
 wait(5)
 type("edge://settings/content/automaticDownloads")
 type(Key.ENTER)
-click("1706654222871.png")
+click("1706654222871-1.png")
+wait(2)
 type(Key.F4, Key.ALT)
 # URL handler
 run('explorer "https://adminconsole.adobe.com/"')
