@@ -113,6 +113,11 @@ WriteLog "Performing post-install customizations."
 # Delete Adobe update scheduled task
 &schtasks /delete /tn "adobe acrobat update task" /f
 
+# Rename shortcuts from "Adobe Acrobat" to "Adobe Acrobat Pro"
+# Required if Acrobat Reader will also be installed as they share the same shortcut names
+& cmd.exe /c rename "C:\Users\Public\Desktop\Adobe Acrobat.lnk" "Adobe Acrobat Pro.lnk"
+& cmd.exe /c rename "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat.lnk" "Adobe Acrobat Pro.lnk"
+
 $InstalledVersion = GetVersionFromRegistry "Adobe Acrobat"
 # Add 20 to the version for the year
 $InstalledVersion = "20" + $InstalledVersion
