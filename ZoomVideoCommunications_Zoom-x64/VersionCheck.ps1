@@ -18,7 +18,7 @@ $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 $LatestWebVersion = Get-MsiProductVersion "$Installer"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
-WriteLog "Version on Vendor website: $LatestWebVersion"
+WriteLog "WebVersion=$LatestWebVersion"
 
 
 ###########################################
