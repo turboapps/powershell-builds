@@ -112,7 +112,7 @@ WriteLog "Performing post-install customizations."
 &cmd.exe /c rmdir /S /Q "C:\program files (x86)\common files\adobe\acrobat\setup"
 
 
-$InstalledVersion = GetVersionFromRegistry "Adobe Acrobat Reader MUI"
+$InstalledVersion = GetVersionFromRegistry "Adobe Acrobat Reader"
 
 #########################
 ## Stop Turbo Capture  ##
