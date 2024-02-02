@@ -77,9 +77,12 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-$InstalledVersion = GetVersionFromRegistry "Tableau"
-# Add 20 to the front of the version to make it a proper year value eg 2023.x
-$InstalledVersion = "20" + $InstalledVersion
+# Get the version from the download page as the registry version doesn't match the vendor release versions
+$verURL = "https://www.tableau.com/support/releases"
+$verPage = curl $verURL -UseBasicParsing
+$VersionLink = ($verPage.Links | Where-Object {$_.href -like "*desktop*"})[2].href
+$InstalledVersion = $VersionLink.Split("/")[-1]
+WriteLog "Installed Version: $InstalledVersion"
 
 #########################
 ## Stop Turbo Capture  ##
