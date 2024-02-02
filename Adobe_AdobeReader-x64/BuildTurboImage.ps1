@@ -111,6 +111,9 @@ WriteLog "Performing post-install customizations."
 # Cleanup installer files
 &cmd.exe /c rmdir /S /Q "C:\program files\common files\adobe\acrobat\setup"
 
+# Rename the 'Adobe Crash Processor.exe' as it causes the turbo container to take a long time to stop after closing the app
+& cmd.exe /c rename "C:\Program Files\Adobe\Acrobat DC\Acrobat\Adobe Crash Processor.exe" "Adobe Crash Processor_.exe"
+
 # Rename shortcuts from "Adobe Acrobat" to "Acrobat Reader"
 # Only required if Acrobat Pro will also be installed as they share the same shortcut names
 # & cmd.exe /c rename "C:\Users\Public\Desktop\Adobe Acrobat.lnk" "Acrobat Reader.lnk"
