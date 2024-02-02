@@ -18,7 +18,7 @@ $VersionLink = ($Page.Links | Where-Object {$_.href -like "*desktop*"})[2].href
 $LatestWebVersion = $VersionLink.Split("/")[-1]
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
-Write-Log "WebVersion=$LatestWebVersion"
+WriteLog "WebVersion=$LatestWebVersion"
 
 
 ###########################################
