@@ -85,7 +85,7 @@ WriteLog "Performing post-install customizations."
 &cmd.exe /C "$SupportFiles\pg_env.bat"
 
 # Remove the contents of c:\pg-data
-Remove-Item -Path "C:\pg-data\*" -Recurse -Force
+# Remove-Item -Path "C:\pg-data\*" -Recurse -Force
 
 
 $InstalledVersion = GetVersionFromRegistry "PostgreSQL"
