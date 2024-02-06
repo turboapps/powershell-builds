@@ -112,7 +112,7 @@ $StartupFiles.SelectSingleNode("StartupFile[@default='True']").default = 'False'
 
 # Add a new startup file for "C:\pgsql\run-postgre-sql.bat"
 $node = $xappl.CreateElement("StartupFile")
-$node.SetAttribute("node","C:\pgsql\run-postgre-sql.bat")
+$node.SetAttribute("node","@SYSDRIVE@\pgsql\run-postgre-sql.bat")
 $node.SetAttribute("tag","postgres")
 $node.SetAttribute("commandLine","")
 $node.SetAttribute("default","True")
