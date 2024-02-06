@@ -73,7 +73,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "--unattendedmodeui none --mode unattended --superpassword postgres --locale en-us --prefix c:\pgsql --datadir C:\pg-data" $True
+$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "--unattendedmodeui none --mode unattended --superpassword postgres --locale EnglishxxCOMMAxxxxSPxxUnitedxxSPxxStates --prefix c:\pgsql --datadir C:\pg-data" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
