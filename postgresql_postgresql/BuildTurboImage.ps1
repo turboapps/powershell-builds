@@ -84,6 +84,9 @@ WriteLog "Performing post-install customizations."
 # Set the environment variables for PostgreSQL
 &cmd.exe /C "$SupportFiles\pg_env.bat"
 
+# Copy the run-postgre-sql.bat startup-file C:\pgsql
+Copy-Item "$SupportFiles\run-postgre-sql.bat" -Destination "C:\pgsql\"  -Force
+
 # Remove the contents of c:\pg-data
 Remove-Item -Path "C:\pg-data\*" -Recurse -Force
 
