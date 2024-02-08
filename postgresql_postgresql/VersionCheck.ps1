@@ -11,13 +11,15 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 #############################################
 
 # Get main download page for application.
-$Page = Invoke-WebRequest -Uri 'https://notepad-plus-plus.org/downloads/' -UseBasicParsing
-# Get download page for latest version.
-$Page2 = Invoke-WebRequest -Uri ('https://notepad-plus-plus.org' + ($Page.Links | Where-Object {$_.outerHTML -like "*Current Version*"}).href) -UseBasicParsing
+$Page = curl 'https://www.enterprisedb.com/downloads/postgres-postgresql-downloads' -UseBasicParsing
 
-# Assuming the VersionLink is /downloads/v##.##.##/ we will split out the version and remove the "v" to get only the version part of the link
-$VersionLink = ($Page2.Links | Where-Object {$_.href -like "*downloads*"})[0]
-$LatestWebVersion = $VersionLink.href.Split("/")[2] -replace "v"
+# Get installer link for latest version.
+$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*fileid*"})[1].href
+
+$Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath
+$InstallerName = "PostgresInstaller.exe"
+
+$LatestWebVersion = Get-VersionFromExe $Installer
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
