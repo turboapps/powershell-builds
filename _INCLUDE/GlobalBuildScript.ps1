@@ -36,7 +36,10 @@ Function WriteLog([String]$message) {
 }
 
 # Get Current Hub Version of application
-Function GetCurrentHubVersion($HubOrg) {
+Function GetCurrentHubVersion($HubOrg,$URL) {
+    if (!$URL) {
+        $URL = $PushURL
+    }
     # Split the repo parts into owner and name values
     $repoOwner, $repoName = $HubOrg -split "/"
 
@@ -44,7 +47,7 @@ Function GetCurrentHubVersion($HubOrg) {
     # Get token from API Key
     $headers = @{}
     $headers.Add("X-Turbo-Api-Key", $ApiKey)
-    $reqUrl = $PushURL + '/0.1/api-keys/login'
+    $reqUrl = $URL + '/0.1/api-keys/login'
     $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
 
     # Get all repos from Hub
@@ -53,7 +56,7 @@ Function GetCurrentHubVersion($HubOrg) {
     $headers.Add("X-Turbo-Api-Id", "turbo.net")
     $headers.Add("X-Turbo-Api-Version", "1")
 
-    $reqUrl = $PushURL + '/io/hub/repo/search?q=&official=false&n=-1'
+    $reqUrl = $URL + '/io/hub/repo/search?q=&official=false&n=-1'
     $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
 
     # Get the first returned version from the passed repo
