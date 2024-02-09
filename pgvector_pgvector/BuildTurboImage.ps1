@@ -60,7 +60,7 @@ Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $DownloadPath
 
 WriteLog "Pulling latest vsbuildtools and postgresql images from Hub."
 WriteLog "> turbo pull microsoft/vsbuildtools,postgresql/postgresql"
-# . turbo pull microsoft/vsbuildtools,postgresql/postgresql
+. turbo pull microsoft/vsbuildtools,postgresql/postgresql
 
 # Run the compiler on the source files from a turbo container using vsbuildtools and postgresql which are required for the compile action.
 # The compile.bat script will create the pgvector extension files in the mounted native folder C:\pgvector-files\pgsql
