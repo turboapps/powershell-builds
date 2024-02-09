@@ -79,11 +79,6 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Rename verseioned opensearch-[vers] to opensearch folder.
-# This will also capture the files because it is a change.
-# Move-Item is not captured by Studio.
-# Move-Item (Get-Item "C:\opensearch-*") C:\opensearch\
-
 # Run installer:
 # /S: silent install (https://wiki.filezilla-project.org/Silent_Setup)
 # /user=all: system-wide install
@@ -101,8 +96,6 @@ Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\FileZill
 ################################
 WriteLog "Performing post-install customizations."
 
-# OpenSearch is not an installed application, but simply an extracted ZIP.
-# $InstalledVersion = GetVersionFromRegistry ""
 
 #########################
 ## Stop Turbo Capture  ##
