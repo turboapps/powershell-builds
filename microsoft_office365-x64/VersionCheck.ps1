@@ -10,14 +10,16 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Get installer link for latest version
-$Page = curl 'https://www.videolan.org/vlc/' -UseBasicParsing
+$Page = curl 'https://www.microsoft.com/en-us/download/details.aspx?id=49117' -UseBasicParsing
 
 # Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*win64*"})[0].href
-$InstallerName = $LatestInstaller.Split("/")[-1]
-$LatestWebVersion = $InstallerName.Split("-")[1]
+$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*download.microsoft.com*"})[0].href
+$InstallerName = $DownloadLink.Split("/")[-1]
 
+# Download the Office deployment tool
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+$LatestWebVersion = Get-VersionFromExe $Installer
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
