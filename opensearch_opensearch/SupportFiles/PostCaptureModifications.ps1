@@ -38,6 +38,18 @@ $node.SetAttribute("type",$type)
 $node.SetAttribute("value",$value)
 }
 
+# Adds an environment variable - usage example: AddEnvVar "JAVA_HOME" "Full" "Replace" "" "C:\path\to\java"
+Function AddEnvVar($name,$isolation,$mergeMode,$mergeString,$value) {
+$parentNode = $EnvironmentVariablesEx
+$node = $xappl.CreateElement("VariableEx")
+$node.SetAttribute("name",$name)
+$node.SetAttribute("isolationMode",$isolation)
+$node.SetAttribute("mergeMode",$mergeMode)
+$node.SetAttribute("mergeString",$mergeString)
+$node.SetAttribute("value",$value)
+$parentNode.AppendChild($node)
+}
+
 
 #######################
 
@@ -103,6 +115,13 @@ $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']
 
 $Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Registry")
 
+#################
+# Edit Registry #
+#################
+
+$EnvironmentVariablesEx = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("EnvironmentVariablesEx")
+
+AddEnvVar "JAVA_HOME" "Full" "Replace" "" ""
 
 ######################
 # Edit Startup Files #
