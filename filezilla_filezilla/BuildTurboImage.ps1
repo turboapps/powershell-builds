@@ -37,41 +37,36 @@ if (-not $elevated) {
 # These values will used to set the Metadata for the turbo image.
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
-$Vendor = "pgvector"
-$AppDesc = "Open-source vector similarity search for Postgres."
-$AppName = "pgvector"
-$VendorURL = "https://github.com/pgvector/pgvector"
+$Vendor = "FileZilla"
+$AppDesc = "FileZilla is a fast and reliable cross-platform FTP, FTPS and SFTP client."
+$AppName = "FileZilla"
+$VendorURL = "https://filezilla-project.org/"
 
 ########################################
 ## Compare Hub Version to Web Version ##
 ########################################
 CheckHubVersion
-    
+
 ##########################################
 ## Download latest version of installer ##
 ##########################################
-WriteLog "Downloading the latest installer."
+WriteLog "Downloading the latest ZIP archive."
 
-# Download and extract the source files from GitHub
-$DownloadLink = "https://github.com/pgvector/pgvector/archive/refs/heads/master.zip"
-$InstallerName = "master.zip"
-$Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath\$InstallerName
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $DownloadPath
+# Get main download page for application.
+$Page = curl -UserAgent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0' https://filezilla-project.org/download.php?show_all=1 -UseBasicParsing
 
-WriteLog "Pulling latest vsbuildtools and postgresql images from Hub."
-WriteLog "> turbo pull microsoft/vsbuildtools,postgresql/postgresql"
-. turbo pull microsoft/vsbuildtools,postgresql/postgresql
+# Get installer link for latest version.
+$DownloadLink = (($Page.Links | Where-Object {$_.href -like "https://*FileZilla_*_win32-setup.exe*"}).href)
 
-# Run the compiler on the source files from a turbo container using vsbuildtools and postgresql which are required for the compile action.
-# The compile.bat script will create the pgvector extension files in the mounted native folder C:\pgvector-files\pgsql
-WriteLog "> turbo try microsoft/vsbuildtools,postgresql/postgresql --mount=$DownloadPath --isolate=merge --startup-file=$SupportFiles\compile.bat"
-. turbo try microsoft/vsbuildtools,postgresql/postgresql --mount=$DownloadPath --isolate=merge --startup-file="$SupportFiles\compile.bat"
+# Get the latest version tag.
+$InstalledVersion = $DownloadLink.split("_")[1]
 
-# Get the version from the GitHub vector.control file
-$Page = curl 'https://github.com/pgvector/pgvector/raw/master/vector.control' -UseBasicParsing
-$Line =  $Page.Content -split "`n" | Where-Object { $_ -like '*default_version*' }
-$LatestWebVersion = (($Line -split "=") -replace "'","")[1].Trim()
-$InstalledVersion = RemoveTrailingZeros "$LatestWebVersion"
+# Name of the downloaded installer file. Remove trailing signature text (?h=qqRKmF13eMCktg97-nJeQA&x=1707436613).
+$InstallerName = ([System.IO.Path]::GetFileName($DownloadLink)).split("?")[0]
+$Installer = Join-Path $DownloadPath $InstallerName
+
+# Download installer
+wget $DownloadLink -O $Installer
 
 #########################
 ## Start Turbo Capture ##
@@ -82,10 +77,19 @@ StartTurboCapture
 #############################
 ## Install the application ##
 #############################
-WriteLog "Copying application files to be captured."
+WriteLog "Installing the application."
 
-# Copy the compiled files to their final destination to be captured in the config
-Copy-Item "$DownloadPath\pgsql" -Destination "C:\"  -Force -Recurse
+# Run installer:
+# /S: silent install (https://wiki.filezilla-project.org/Silent_Setup)
+# /user=all: system-wide install
+$ProcessExitCode = RunProcess $Installer "/S /user=all" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
+# Copy configuration file to disable update check and welcome message.
+Copy-Item "$SupportFiles\Fzdefaults.xml" -Destination "C:\Program Files (x86)\FileZilla FTP Client"  -Recurse -Force
+
+# Remove uninstall shortcut.
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\FileZilla FTP Client\Uninstall.lnk" -Recurse -Force
 
 ################################
 ## Customize the application  ##
