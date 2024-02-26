@@ -16,10 +16,10 @@ $Page = curl 'https://www.enterprisedb.com/downloads/postgres-postgresql-downloa
 # Get installer link for latest version.
 $DownloadLink = ($Page.Links | Where-Object {$_.href -like "*fileid*"})[1].href
 
-$Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath
 $InstallerName = "PostgresInstaller.exe"
+$Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath\$InstallerName
 
-$LatestWebVersion = Get-VersionFromExe $Installer
+$LatestWebVersion = Get-VersionFromExe $DownloadPath\$InstallerName
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
