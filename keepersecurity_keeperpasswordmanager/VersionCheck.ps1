@@ -13,7 +13,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 $page = curl "https://docs.keeper.io/release-notes/desktop/web-vault-+-desktop-app" -UseBasicParsing
 
 # Find all anchor elements ('a') in the HTML
-$versionLink = ($Page.Links | Where-Object {$_.outerHTML -like "*vault release*"})[1].href
+$versionLink = ($Page.Links | Where-Object {$_.outerHTML -like "*vault release*"})[0].href
 
 # Strip out the version from the link
 $parts = $versionLink -split '-'
