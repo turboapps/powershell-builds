@@ -50,8 +50,12 @@ CheckHubVersion
 ##########################################
 ## Download latest version of installer ##
 ##########################################
-WriteLog "Downloading the latest MSI installer."
 
+WriteLog "Downloading the VCRedist installer."
+# Donwload the VC++2015-2022 x64 Redistributable
+Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "$DownloadPath\vc_redist.x64.exe"
+
+WriteLog "Downloading the latest MSIX installer."
 # Get installer link for latest version
 $DownloadLink = "https://www.keepersecurity.com/desktop_electron/packages/KeeperPasswordManager.msixbundle"
 
@@ -65,7 +69,7 @@ $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 #########################
 
 # Replace the SnapshotSettings_21.xml file to include C:\WindowsApps folder in the capture
-Copy-Item -Path "$SupportFiles\Turbo Studio 23" -Destination "$env:LOCALAPPDATA\Turbo.net" -Recurse -Force
+Copy-Item -Path "$SupportFiles\Turbo Studio 24" -Destination "$env:LOCALAPPDATA\Turbo.net" -Recurse -Force
 
 StartTurboCapture
 
@@ -74,8 +78,8 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Install the VCRedist pre-req
-$ProcessExitCode = RunProcess "$SupportFiles\VC_redist.x64.exe" "/S" $True
+# Install the VCRedist
+$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x64.exe" "/S" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Install the MSIX Keeper application
@@ -92,7 +96,9 @@ WriteLog "Performing post-install customizations."
 
 $InstalledVersion = GetVersionFromRegistry "keeper"
 
-#Create Start Menu shortcut
+# Look for the keeperpasswordmanager.exe
+$exePath = Get-ChildItem -Path "C:\Program Files\WindowsApps" -Filter "keeperpasswordmanager.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+# Create Start Menu shortcut
 $shortcutPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Keeper Password Manager.lnk"
 
 $WshShell = New-Object -ComObject WScript.Shell
