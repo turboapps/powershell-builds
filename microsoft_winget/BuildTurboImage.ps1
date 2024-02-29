@@ -67,7 +67,8 @@ Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/d
 ## Start Turbo Capture ##
 #########################
 
-# Replace the SnapshotSettings_21.xml file to include C:\WindowsApps folder in the capture
+# Replace the SnapshotSettings_21.xml file to include C:\Program Files\WindowsApps folder in the capture
+New-Item -ItemType Directory -Force -Path $env:LOCALAPPDATA\Turbo.net
 Copy-Item -Path "$SupportFiles\Turbo Studio 24" -Destination "$env:LOCALAPPDATA\Turbo.net" -Recurse -Force
 
 StartTurboCapture
