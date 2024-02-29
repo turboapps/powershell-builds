@@ -134,7 +134,7 @@ $Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']
 
 $EnvironmentVariablesEx = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("EnvironmentVariablesEx")
 # Add the dotnet directory to the PATH env var
-AddEnvVar "PATH" "Inherit" "Prepend" ";" "@PROGRAMFILES@\dotnet"
+AddEnvVar "PATH" "Inherit" "Prepend" ";" "@PROGRAMFILESX86@\dotnet"
 # Specifies whether .NET welcome and telemetry messages are displayed on the first run.
 # https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-environment-variables#dotnet_nologo
 AddEnvVar "DOTNET_NOLOGO" "Inherit" "Replace" "" "true"
