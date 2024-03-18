@@ -20,7 +20,7 @@ $LatestVersion = ($LatestVersionLink -Split '/')[0]
 
 $Page2 = curl ($URL + $LatestVersionLink) -UseBasicParsing
 
-$DownloadLink = $Page2.Links | Where-Object { $_.href -like '*.exe*' } | Select-Object -ExpandProperty href
+$DownloadLink = ($Page2.Links | Where-Object { $_.href -like '*.exe*' } | Select-Object -ExpandProperty href)[0]
 $DownloadLink = $URL + $LatestVersion + "/" + $DownloadLink 
 
 # Name of the downloaded installer file
