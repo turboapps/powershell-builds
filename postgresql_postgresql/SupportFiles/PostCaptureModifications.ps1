@@ -85,7 +85,27 @@ If ($InstalledVersion -ne $null){
     $StandardMetaData.AppendChild($node)
 }
 
+###################
+# Edit Services   #
+###################
 
+$Services = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Services")
+
+# Disable autostart for all services to avoid file lock conflict between startup file and services (APPQ-3726).
+ForEach ($Service in $Services.SelectNodes("Service")) {
+  $Service.start = "LoadOnDemand"
+}
+
+###############################
+# Edit Named Object Isolation #
+###############################
+
+# Isolate the postgresql basednamedojbect to allow running multiple instances side-by-side (VM-2420).
+$NamedObjectIsolation = $xappl.Configuration.SelectSingleNode("NamedObjectIsolation")
+
+$node = $xappl.CreateElement("Exception")
+$node.SetAttribute("regex","postgresql")
+$NamedObjectIsolation.AppendChild($node)
 
 ###################
 # Edit Filesystem #

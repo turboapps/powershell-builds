@@ -53,6 +53,7 @@ CheckHubVersion
 WriteLog "Downloading the latest MSI installer."
 
 # Get installer link for latest version
+## Simplified link is https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi. However, our link disables browser usage stats and installs for all users.
 $DownloadLink = "https://dl.google.com/tag/s/appguid={00000000-0000-0000-0000-000000000000}&iid={00000000-0000-0000-0000-000000000000}&lang=$language&browser=3&usagestats=0&appname=Google%20Chrome&installdataindex=defaultbrowser&needsadmin=prefers/edgedl/chrome/install/GoogleChromeStandaloneEnterprise.msi"
 
 # Name of the downloaded installer file
