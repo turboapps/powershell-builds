@@ -3,7 +3,7 @@
 # Import the package "util" which contains common operations.
 # More information: https://sikulix-2014.readthedocs.io/en/latest/scripting.html#importing-other-sikuli-scripts-reuse-code-and-images
 script_path = os.path.dirname(os.path.abspath(sys.argv[0])) 
-common_path = os.path.join(script_path, os.pardir, os.pardir, "_INCLUDE", "util.sikuli")
+common_path = os.path.join(script_path, os.pardir, os.pardir, os.pardir, "_INCLUDE", "Test", "util.sikuli")
 sys.path.append(common_path)
 import util
 reload(util)
@@ -29,7 +29,7 @@ click(Pattern("help.png").targetOffset(245,-23))
 
 # Basic operations: zip.
 click(Pattern("address_bar.png").targetOffset(20,0))
-type(os.path.join(script_path, os.pardir, os.pardir, "_INCLUDE"))
+type(os.path.join(script_path, os.pardir, os.pardir, os.pardir, "_INCLUDE", "Test"))
 type(Key.ENTER)
 click("folder.png")
 click("zip_add.png")
