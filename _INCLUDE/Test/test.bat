@@ -2,6 +2,9 @@
 rem Run the SikuliX test for the app.
 rem Usage: test.bat <image>
 
+rem Pull the images needed for the test.
+turbo pull sikulix/sikulixide,microsoft/openjdk --all-users
+
 rem Get a formatted prefix for the test log.
 for /f "tokens=1,2 delims=/" %%a in ("%1") do (
     set "name=%%a_%%b"
