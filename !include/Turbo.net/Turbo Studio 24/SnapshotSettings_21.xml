@@ -1,0 +1,662 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SnapshotSettings>
+  <Processes>
+    <Process name="Turbo-Sandbox"/>
+    <Process name="TurboService"/>
+    <Process name="Turbo-update"/>
+    <Process name="Studio"/>
+    <Process name="XStudio"/>
+
+    <!-- windows system -->
+    <Process name="system"/>
+    <Process name="consent"/>
+    <Process name="wermgr"/>
+    <Process name="cleanmgr"/>
+    <Process name="OneDriveStandaloneUpdater"/>
+    <Process name="winlogon"/>
+    <Process name="registry"/>
+    <!-- <Process name="services"/> // STD-3859 -->
+    <Process name="powermgr"/>
+    <Process name="WindowsAzureGuestAgent"/>
+    <Process name="WindowsAzureTelemetryService"/>
+    <Process name="spoolsv"/>
+    <Process name="wevtutil"/>
+    <Process name="backgroundTaskHost"/>
+    <Process name="drvinst"/>
+    <Process name="Defrag"/>
+    <Process name="SearchApp"/>
+    <Process name="StartMenuExperienceHost"/>
+    <Process name="TextInputHost"/>
+    <Process name="WmiPrvSE"/>
+    <Process name="GameBar*"/>
+    <Process name="SecurityHealthHost"/>
+    <Process name="applicationframehost"/>
+    <Process name="backgroundtransferhost"/>
+    <Process name="FindVolume"/>
+    <Process name="LogonUI"/>
+    <Process name="vmcompute"/>
+    <Process name="smartscreen"/>
+    <Process name="fontdrvhost"/>
+    <Process name="dismhost"/>
+    <Process name="tabtip"/>
+    <Process name="waappagent"/>
+    <Process name="rdpclip"/>
+    <Process name="cortana"/>
+    <Process name="NisSrv"/>
+    <Process name="UserOOBEBroker"/>
+    <Process name="VSSVC"/>
+    <Process name="wsqmcons"/>
+    <Process name="taskkill"/>
+
+    <!-- windows defender -->
+    <Process name="AM_Delta"/>
+    <Process name="AM_Base"/>
+    <Process name="AM_Engine"/>
+    <Process name="MpCmdRun"/>
+    <Process name="SgrmBroker"/>
+    <Process name="MsMpEng"/>
+    <Process name="mpengine"/>
+
+    <!-- windows update -->
+    <Process name="MoUsoCoreWorker"/>
+    <Process name="MPSigStub"/>
+    <Process name="MusNotif*"/>
+    <Process name="SIHClient"/>
+    <Process name="TiWorker"/>
+    <Process name="UpdateAssistant"/>
+    <Process name="UpdateNotificationMgr"/>
+    <Process name="usoclient"/>
+    <Process name="wuauclt"/>
+    <Process name="MicrosoftEdge*"/>
+    <Process name="wuapihost"/>
+
+    <!-- universal apps -->
+    <Process name="RuntimeBroker"/>
+    <Process name="ShellExperienceHost"/>
+
+    <!-- windows search -->
+    <Process name="SearchProtocolHost"/>
+    <Process name="SearchIndexer"/>
+    <Process name="SearchUI"/>
+    <Process name="SearchFilterHost"/>
+
+    <!-- .net -->
+    <Process name="ngentask"/>
+    <Process name="ngen"/>
+
+    <!-- apps -->
+    <Process name="msfeedssync"/>
+    <Process name="Microsoft.Photos"/>
+    <Process name="YourPhone"/>
+    <Process name="DeviceCensus"/>
+    <Process name="CompatTelRunner"/>
+    <Process name="audiodg"/>
+    <Process name="XblGameSaveTask"/>
+    <Process name="lpremove"/>
+    <Process name="ipoint"/>
+    <Process name="Dmclient"/>
+    <Process name="SecurityHealthService"/>
+    <Process name="lsass"/>
+    <Process name="dwm"/>
+    <Process name="ctfmon"/>
+    <Process name="itype"/>
+    <Process name="SettingSyncHost"/>
+    <Process name="msfeedsync"/>
+    <Process name="wmiadap"/>
+    <Process name="sihost"/>
+    <Process name="sppsvc"/>
+    <Process name="software_reporter_tool"/>
+    <Process name="scriptedsandbox64"/>
+    <Process name="procexp"/>
+    <Process name="procexp64"/>
+    <Process name="vboxservice"/>
+    <Process name="hxtsr"/>
+    <Process name="msedge"/>
+  </Processes>
+  
+  <!--Filesystem snapshot settings-->
+  <Filesystem>
+
+    <!--Set of snapshot starting-point root folders.  Removing any of these 
+        will cause it to be removed from the set of starting points.  But
+        note that sometimes we can still arrive at a deeper root by way of 
+        a shallower root, unless the path to the deeper root is excluded 
+        at some point.
+        
+        NOTE: Should order these from deepest to shallowest-->
+    <Root path="@STARTUP@" />
+    <Root path="@PROGRAMS@" />
+    <Root path="@STARTMENU@" />
+    <Root path="@DESKTOP@" />
+    <Root path="@TEMPLATES@" />
+    <Root path="@FAVORITES@" />
+    <Root path="@MUSIC@" />
+    <Root path="@PICTURES@" />
+    <Root path="@VIDEOS@" />
+    <Root path="@DOCUMENTS@" />
+    <Root path="@APPDATALOCAL@" />
+    <Root path="@APPDATALOCALLOW@" />
+    <Root path="@APPDATA@" />
+    <Root path="@PROFILE@" />
+    
+    <Root path="@STARTUPCOMMON@" />
+    <Root path="@PROGRAMSCOMMON@" />
+    <Root path="@STARTMENUCOMMON@" />
+    <Root path="@DESKTOPCOMMON@" />
+    <Root path="@TEMPLATESCOMMON@" />
+    <Root path="@FAVORITESCOMMON@" />
+    <Root path="@MUSICCOMMON@" />
+    <Root path="@PICTURESCOMMON@" />
+    <Root path="@DOCUMENTSCOMMON@" />
+    <Root path="@APPDATACOMMON@" />
+    <Root path="@PROFILECOMMON@" />
+    
+    <Root path="@PROGRAMFILESCOMMONX86@" wow64If="true" />
+    <Root path="@PROGRAMFILESX86@" wow64If="true" />
+
+    <Root path="@SYSWOW64@" wow64If="true" />
+ 
+    <Root path="@WINDIR@" />
+    <Root path="@SYSDRIVE@" />
+
+    <Exclude path="@SYSDRIVE@\Pagefile.sys" />
+    <Exclude path="@SYSDRIVE@\Boot" />
+    <Exclude path="@SYSDRIVE@\$Recycle.Bin" />
+    <Exclude path="@SYSDRIVE@\Recycler" />
+    <Exclude path="@SYSDRIVE@\Recovery" />
+    <Exclude path="@SYSDRIVE@\PerfLogs" />
+    <Exclude path="@SYSDRIVE@\System Volume Information" />
+    <Exclude path="@SYSDRIVE@\WindowsAzure" />
+    <Exclude path="@SYSDRIVE@\Packages" />
+    <!--MSOCache Created by Office installation, but massive and not needed-->
+    <Exclude path="@SYSDRIVE@\MSOCache" />
+    <Exclude path="@SYSDRIVE@\Config.msi" /> <!-- used for temp files by windows installer -->
+    
+    <Exclude path="@PROGRAMFILESX86@\Microsoft.NET\RedistList" />
+    <Exclude path="@PROGRAMFILESX86@\MSECache" />
+    <Exclude path="@PROGRAMFILESX86@\Windows XP Mode" />
+    
+    <Exclude path="@PROGRAMFILES@\Microsoft Dependency Agent" />
+    <Exclude path="@PROGRAMFILES@\Microsoft Update Health Tools" />
+    <Exclude path="@PROGRAMFILES@\UNP" />
+    <Exclude path="@PROGRAMFILES@\WindowsApps" />
+
+    <!--We should exclude explicit enumeration throught these paths, as 
+        required "Root" children of these - such as @PROFILE@ get 
+        added separately.-->
+    <Exclude path="@SYSDRIVE@\Documents and settings" />
+    <Exclude path="@SYSDRIVE@\Users" />
+
+    <Exclude path="@APPDATA@\Microsoft\Crypto" />
+    <Exclude path="@APPDATA@\Microsoft\Diagnosis" />
+    <Exclude path="@APPDATA@\Microsoft\Protect" />
+    <Exclude path="@APPDATA@\Microsoft\CryptnetUrlCache" />
+    <Exclude path="@APPDATA@\Microsoft\SystemCertificates" />
+    <Exclude path="@APPDATA@\Microsoft\Windows Defender" />
+    <Exclude path="@APPDATA@\Microsoft\Search" />
+    <Exclude path="@APPDATA@\Microsoft\Spelling" />
+    <Exclude path="@APPDATA@\Microsoft\RAC" />
+    <Exclude path="@APPDATA@\Microsoft\Windows" />
+    <Exclude path="@APPDATA@\Microsoft\Windows NT" />
+    <Exclude path="@APPDATA@\Microsoft\Internet Explorer" />
+    <Exclude path="@APPDATA@\Packages" />
+    <Exclude path="@APPDATA@\USOPrivate" />
+
+    <Exclude path="@APPDATACOMMON@\Microsoft\Diagnosis" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\SmsRouter" />
+    <Exclude path="@APPDATACOMMON@\Packages" />
+    <Exclude path="@APPDATACOMMON@\regid.*.com.microsoft" />
+
+    <!--On XP these are used (NOTE this is not @APPDATALOCAL@, which would be @PROFILE@\Local Settings\Application Data\... on XP)-->
+    <Exclude path="@PROFILE@\ntuser.ini" />
+    <Exclude path="@PROFILE@\Cookies" />
+    <Exclude path="@PROFILE@\OneDrive" />
+    <Exclude path="@PROFILE@\Searches" />
+    <Exclude path="@PROFILE@\Recent" />
+    <!--We block all under 'Local Settings' but the specfic "Root" directores such as @APPDATALOCAL@ are added separately-->
+    <Exclude path="@PROFILE@\Local Settings" />
+    <Exclude path="@PROFILE@\AppData" />
+    <Exclude path="@PROFILE@\NTUSER.DAT*" />
+
+    <Exclude path="@APPDATALOCAL@\Comms" />
+    <Exclude path="@APPDATALOCAL@\ConnectedDevicesPlatform" />
+    <Exclude path="@APPDATALOCAL@\GdiPFontCacheV1.dat" />
+    <Exclude path="@APPDATALOCAL@\IconCache.db" />
+    <Exclude path="@APPDATALOCAL@\History" />
+    <Exclude path="@APPDATALOCAL@\@PUBLISHER@\Sandbox" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\CLR_v4.0\UsageLogs" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\CLR_v4.0_32\UsageLogs" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Feeds" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Feeds Cache" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\GameDVR" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\HelpCtr" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Internet Explorer" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\OneDrive" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\PenWorkspace" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\RAC" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Search" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\TokenBroker" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Vault" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\XboxLive" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\WindowsApps" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Windows" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Windows Defender" />
+    <Exclude path="@APPDATALOCAL@\Microsoft\Windows NT" />
+    <Exclude path="@APPDATALOCAL@\Packages" />
+    <Exclude path="@APPDATALOCAL@\PlaceholderTilelogoFolder" />
+    <Exclude path="@APPDATALOCAL@\Publishers" />
+    <Exclude path="@APPDATALOCAL@\Spoon" />
+    <Exclude path="@APPDATALOCAL@\SquirrelTemp" />
+    <Exclude path="@APPDATALOCAL@\Temp" />
+    <Exclude path="@APPDATALOCAL@\Temporary Internet Files" />
+    <Exclude path="@APPDATALOCAL@\Turbo" />
+    <Exclude path="@APPDATALOCAL@\Turbo.net" />
+    <Exclude path="@APPDATALOCAL@\Xenocode" />
+    
+    <Exclude path="@APPDATALOCALLOW@\Microsoft" />
+
+    <Exclude path="@APPDATACOMMON@\Microsoft\DiagnosticLogCSP" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Internet Explorer" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Network\Downloader" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\RAC" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Search" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Windows" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Windows Defender" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Windows NT" />
+    <Exclude path="@APPDATACOMMON@\Microsoft\Windows Security Health" />
+    <Exclude path="@APPDATACOMMON@\Microsoft OneDrive" />
+    <Exclude path="@APPDATACOMMON@\Package Cache" />
+    <Exclude path="@APPDATACOMMON@\regid.*.com.microsoft" />
+    <Exclude path="@APPDATACOMMON@\Turbo" />
+    <Exclude path="@APPDATACOMMON@\USOShared" />
+    <Exclude path="@APPDATACOMMON@\USOPrivate" />
+
+    <Exclude path="@WINDIR@\win.ini" />
+    <Exclude path="@WINDIR@\SchedLgU.Txt" />
+    <Exclude path="@WINDIR@\*.log" />
+    <Exclude path="@WINDIR@\ShellIconCache" />
+    <Exclude path="@WINDIR@\Bootstat.dat" />
+    <Exclude path="@WINDIR@\assembly\NativeImages_v4.0.30319_32" />
+    <Exclude path="@WINDIR@\assembly\NativeImages_v4.0.30319_64" />
+    <Exclude path="@WINDIR@\Migration\WTR" />
+    <Exclude path="@WINDIR@\$*" />
+    <Exclude path="@WINDIR@\AppCompat" />
+    <Exclude path="@WINDIR@\AppReadiness" />
+    <Exclude path="@WINDIR@\assembly\tmp" />
+    <Exclude path="@WINDIR@\Temp" />
+    <Exclude path="@WINDIR@\Tasks" />
+    <Exclude path="@WINDIR@\Csc" />
+    <Exclude path="@WINDIR@\Vss" />
+    <Exclude path="@WINDIR@\Inf" />
+    <Exclude path="@WINDIR@\Pla" />
+    <Exclude path="@WINDIR@\Logs" />
+    <Exclude path="@WINDIR@\Debug" />
+    <Exclude path="@WINDIR@\symbols" />
+    <Exclude path="@WINDIR@\Diagnostics" />
+    <Exclude path="@WINDIR@\Security" />
+    <Exclude path="@WINDIR@\Installer" />
+    <Exclude path="@WINDIR@\Prefetch" />
+    <Exclude path="@WINDIR@\PCHealth" />
+    <Exclude path="@WINDIR@\Performance" />
+    <Exclude path="@WINDIR@\PolicyDefinitions" />
+    <Exclude path="@WINDIR@\PrintDialog" />
+    <Exclude path="@WINDIR@\Servicing" />
+    <Exclude path="@WINDIR@\Rescache" />
+    <Exclude path="@WINDIR@\ServicePackFiles" />
+    <Exclude path="@WINDIR@\ServiceProfiles" />
+    <Exclude path="@WINDIR@\ServiceState" />
+    <Exclude path="@WINDIR@\SoftwareDistribution" />
+    <Exclude path="@WINDIR@\SystemApps" />
+    <Exclude path="@WINDIR@\XSXS" />
+    <Exclude path="@WINDIR@\WinSXS\Backup" />
+    <Exclude path="@WINDIR@\WinSXS\Catalogs" />
+    <Exclude path="@WINDIR@\WinSXS\Filemaps" />
+    <Exclude path="@WINDIR@\WinSXS\ManifestCache" />
+    <Exclude path="@WINDIR@\WinSXS\Temp" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework\v1.0.3705\Temporary ASP.NET Files" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework\v1.1.4322\Temporary ASP.NET Files" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework\v2.0.50727\Temporary ASP.NET Files" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework\v4.0.30319\ngen.log" />    
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework\v4.0.30319\Temporary ASP.NET Files" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework64\v2.0.50727\Temporary ASP.NET Files" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework64\v4.0.30319\ngen.log" />    
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files" />
+    <Exclude path="@WINDIR@\Microsoft.NET\Framework64\v4.0.30319\SetupCache" />
+
+    <!--Note: wow64If="true" (the default) means both @SYSTEM@ and @SYSWOW64@ will be used if applicable-->
+    <Exclude path="@SYSWOW64@\vpc-s3.cfg" />
+    <Exclude path="@SYSWOW64@\wpa.dbl" />
+    <Exclude path="@SYSWOW64@\Perf*.dat" />
+    <Exclude path="@SYSWOW64@\PerfStringBackup.ini" />
+    <Exclude path="@SYSWOW64@\Microsoft" />
+    <Exclude path="@SYSWOW64@\Winevt" />
+    <Exclude path="@SYSWOW64@\Tasks" />
+    <Exclude path="@SYSWOW64@\Spool" />
+    <Exclude path="@SYSWOW64@\Wfp" />
+    <Exclude path="@SYSWOW64@\Wbem" />
+    <Exclude path="@SYSWOW64@\Wdi" />
+    <Exclude path="@SYSWOW64@\Migwiz" />
+    <Exclude path="@SYSWOW64@\Dllcache" />
+    <Exclude path="@SYSWOW64@\DriverStore" />
+    <Exclude path="@SYSWOW64@\LogFiles" />
+    <Exclude path="@SYSWOW64@\Config" />
+    <Exclude path="@SYSWOW64@\CatRoot" />
+    <Exclude path="@SYSWOW64@\CatRoot2" />
+    <Exclude path="@SYSWOW64@\NtmsData" />
+    <Exclude path="@SYSWOW64@\spp\store" />
+    <Exclude path="@SYSWOW64@\Sysprep" />
+    <Exclude path="@SYSWOW64@\SleepStudy" />
+    <Exclude path="@SYSWOW64@\sru" />
+
+    <Exclude path="@PROGRAMS@\Turbo.net" />
+
+    <Exclude path="@STARTUP@\Turbo Sandbox Manager.lnk" />
+
+    <!--Ensure this and all child folders are set to specified isolation-->
+    <Isolation path="@SYSTEM@\mui" isolation="Merge" />
+    <Isolation path="@SYSWOW64@\mui" isolation="Merge" />
+    <Isolation path="@DOCUMENTS@" isolation="Merge" />
+    <Isolation path="@PICTURES@" isolation="Merge" />
+    <Isolation path="@MUSIC@" isolation="Merge" />
+
+  </Filesystem>
+
+  <!--Registry snapshot settings-->
+  <Registry>
+
+    <!--Set of snapshot starting point root folders.  Removing any of these 
+        will cause it to be removed from the set of starting points.  But
+        note that sometimes we can still arrive at a deeper root by way of 
+        a shallower root, unless the path to the deeper root is excluded 
+        at some point.-->
+    <Root path="@HKCU@" />
+    <Root path="@HKLM@" />
+    <Root path="@HKU@" />
+
+    <!--Excluded HKLM subkeys by default, we will select what we want
+        NOTE:  wow64If="true" (the default) causes both path flavors to be added as in: 
+            HKEY_LOCAL_MACHINE\Software\Classes\AppId and
+            HKEY_LOCAL_MACHINE\Software\Classes\Wow6432Node\AppId -->
+    <Exclude path="HKEY_LOCAL_MACHINE\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software" wow64If="false" />
+    <Include path="HKEY_LOCAL_MACHINE\System" wow64If="false" />
+
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Classes\CLSID\{4336a54d-038b-4685-ab02-99bb52d3fb8b}" /> <!-- some shell clsid that seems to be touched by every installer -->
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Classes\Local Settings" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Classes\PackagedCom\ClassIndex" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Classes\PackagedCom\Package" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Classes\Installer\Components\D1DBED127F892CE42ABE98BC42728C1D" /> <!-- OutlookSearchShellReg for Outlook 2013, VM-1765 -->
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Classes\Installer\Components\81CD10F7CB6DFEE4597F043552379067" /> <!-- OutlookSearchShellReg for Outlook 2016, VM-1765 -->
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\v2.0.50727\NGenService" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\IdentityCRL" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\MemoryDiagnostic" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\MpSigStub" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Provisioning" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\RemovalTools" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\SMB1Uninstall" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Speech_OneCore" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\UNP" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Rpc" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\DrWatson" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\WBEM" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\EventSystem" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Updates" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\DirectDraw\MostRecentApplication" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Cryptography" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\PCHealth" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Ctf" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Dfrg" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Radar" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\EseNt" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\SystemCertificates" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\SqlClient" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\SqmClient" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\MMC\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\MMC\SnapIns" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Wab" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\WzcSvc" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Tracing" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Thinprint" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Reliability Analysis" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Security Center" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Search\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Search\ProtocolHandlers" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Defender" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows CE Services" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Protected Storage System Provider" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Media Device Manager" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\WindowsSelfHost" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\WindowsUpdate" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Dwm" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\WindowsSelfhost" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Error Reporting" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather\Windows" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather\Windows\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather\Windows\SystemIndex" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather\Windows\SystemIndex\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Windows Search\Gather\Windows\SystemIndex\Protocols" />
+    <!--Exclude all under \Windows\CurrentVersion except...-->
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\KindMap" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\PreviewHandlers" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnce" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Setup" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\SharedDlls" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\SideBySide" />
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\SideBySide\PublisherPolicyChangeTime" /> <!-- APPQ-2616 -->
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects" />
+    <!--Exclude all under \Windows Nt\CurrentVersion except...-->
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Nt\CurrentVersion\*" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Nt\CurrentVersion\AppCompatFlags" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Nt\CurrentVersion\Fonts" />
+    <Include path="HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Nt\CurrentVersion\Image File Execution Options" />
+    <!--This is a symbolic link to HKLM\Software\Classes\Wow6432Node.   No need to snap.-->
+    <Exclude path="HKEY_LOCAL_MACHINE\Software\Wow6432Node\Classes" wow64If="false" />
+
+    <!--Only snap the services stuff under HKLM\System-->
+    <Exclude path="HKEY_LOCAL_MACHINE\System\*" />
+    <Include path="HKEY_LOCAL_MACHINE\System\CurrentControlSet" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\*"/>
+    <Include path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\*"/>
+    <Include path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\BackupRestore" /> <!-- This is necessary for Microsoft Outlook -->
+    <Include path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\MSIPC" /> <!-- This is necessary for Microsoft Office 2013+, STD-3565 -->
+    <Include path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\bam" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\BITS" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\ClipSvc" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\DsmSvc" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NcbService" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\rdyboost" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\SharedAccess" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\SmsRouter" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VSS" />
+    <Exclude path="HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\W32Time " />
+
+    <!--Exclude system registry stuff (HKEY_CURRENT_USER)-->
+    <Exclude path="HKEY_CURRENT_USER\*" />
+    <Include path="HKEY_CURRENT_USER\Software" wow64If="false" />
+    
+    <Exclude path="HKEY_CURRENT_USER\Software\Spoon" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Xenocode" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Code Systems" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Policies" />
+    <Include path="HKEY_CURRENT_USER\Software\AppDataLow" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\ActivatableClasses\Package" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\AppID\{7AF9FBAE-1136-40BF-B82F-B443A855DCD2}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\AppID\Turbo-Plugin*" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\Extensions\ContractId" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\Local Settings" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\PackagedCom\ClassIndex" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\PackagedCom\Package" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\turbo" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\Turbo-Plugin*" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\VirtualStore" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\CLSID\{3D58DDEA-561E-45BA-AA6A-0AB04BCD9FAD}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\Interface\{7F5F65EA-0802-41CB-AD41-808AF6830CF0}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\Interface\{BA4C9F7A-59F9-47F9-937B-EABAD0286A45}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\TypeLib\{8F9A5B9B-1A72-42A1-A633-FD8F8D0CE328}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\TypeLib\{BBEFC9EE-D449-4CC6-A330-A3138FF89EF3}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Classes\WOW6432Node\CLSID\{F44E4433-DDC6-4F0B-AF6F-7E673B349E90}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\net.spoon.chromenativehost" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\net.spoon.chromenativehost" />
+    <Exclude path="HKEY_CURRENT_USER\Software\MozillaPlugins\*Turbo.net*" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\AuthCookies" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Ctf" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Fusion" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Notepad" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Direct3d" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Iam" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\IdentityCRL" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Multimedia" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows Script" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Search Assistant" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\EventSystem" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Cryptography" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\OneDrive" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\PCHealth" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Phone" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Poom" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\RestartManager" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Speech_OneCore" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Unified Store" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ActivityDataModel" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AppBroadcast" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AppHost" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Authentication" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CloudStore" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Cortana" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\GameDVR" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\InstallService" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lock Screen" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Notifications" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\PushNotifications" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\SettingSync" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Exts\Stats\{3D58DDEA-561E-45BA-AA6A-0AB04BCD9FAD}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Exts\Stats\{F44E4433-DDC6-4F0B-AF6F-7E673B349E90}" /> <!-- turbo plugin -->
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Security and Maintenance" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\UFH" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows\Winlogon" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows Media" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows Search" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows Defender" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\HostActivityManager" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Network\Location Awareness" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\TileDataModel" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\SystemCertificates" />
+    <Exclude path="HKEY_CURRENT_USER\Software\Microsoft\Protected Storage System Provider" />
+    
+    <!-- causes problems with registration on win10 (STD-2906) -->
+    <Exclude path="HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts" />
+
+    <!--Symbolic link to HKEY_CURRENT_USER\Software.  No need to snap.-->
+    <Exclude path="HKEY_CURRENT_USER\Software\Wow6432Node" wow64If="false" />
+
+    <Exclude path="HKEY_USERS\*" />
+    <!--
+    <Include path="HKEY_USERS\.Default" />
+    <Include path="HKEY_USERS\S-1-5-18" />
+    <Include path="HKEY_USERS\S-1-5-19" />
+    -->
+    <Include path="HKEY_USERS\S-1-5-20" />
+    <Exclude path="HKEY_USERS\S-1-5-20\*" />
+    <Include path="HKEY_USERS\S-1-5-20\Software" />
+    <Exclude path="HKEY_USERS\S-1-5-20\Software\*" />
+    <Include path="HKEY_USERS\S-1-5-20\Software\AppDataLow" />
+    <Include path="HKEY_USERS\S-1-5-20\Software\Microsoft" />
+    <Exclude path="HKEY_USERS\S-1-5-20\Software\Microsoft\*" />
+    <Include path="HKEY_USERS\S-1-5-20\Software\Microsoft\OfficeSoftwareProtectionPlatform" />
+
+    <!--AllOrNothing mean that any immediate subkey of the given root is added in 
+        all-or-nothing fashion.  Any add/modify under one of these locations causes the
+        entire sub-tree to be added.  One can also configure names for subkey exceptions.
+        Setting wow64iIf="True" (the default) will cause both flavors of the path to be added, as 
+        in: HKEY_LOCAL_MACHINE\Software\Classes\AppId and
+            HKEY_LOCAL_MACHINE\Software\Classes\Wow6432Node\AppId -->
+            
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes" wow64If="true" >
+      <Exception name="DirectShow" />
+      <Exception name="Media Type" />
+      <Exception name="MediaFoundation" />
+      <Exception name="Installer" />
+      <Exception name="MIME"  />
+      <Exception name="PROTOCOLS" />
+      <Exception name="Applications" />
+      <Exception name="AppID" />
+      <Exception name="FileType" />
+      <Exception name="CLSID" />
+      <Exception name="Component Categories" />
+      <Exception name="Interface" />
+      <Exception name="TypeLib" />
+      <Exception name="SystemFileAssociations" />
+      <Exception name="Record" />
+      <Exception name="Licenses" />
+    </AllOrNothing>
+    
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes" wow64If="true" >
+      <Exception name="DirectShow" />
+      <Exception name="Media Type" />
+      <Exception name="MediaFoundation" />
+      <Exception name="Installer" />
+      <Exception name="MIME"  />
+      <Exception name="PROTOCOLS" />
+      <Exception name="Applications" />
+      <Exception name="AppID" />
+      <Exception name="FileType" />
+      <Exception name="CLSID" />
+      <Exception name="Component Categories" />
+      <Exception name="Interface" />
+      <Exception name="TypeLib" />
+      <Exception name="SystemFileAssociations" />
+      <Exception name="Record" />
+      <Exception name="Licenses" />
+      <Exception name="exefile" />
+      <Exception name="Folder" />
+      <Exception name="Drive" />
+    </AllOrNothing>
+            
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\Applications" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\Applications" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\AppID" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\AppID" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\FileType" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\FileType" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\CLSID" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\CLSID" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\Component Categories" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\Component Categories" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\Interface" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\Interface" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\TypeLib" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\TypeLib" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\SystemFileAssociations" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\SystemFileAssociations" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\Record" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\Record" />
+    <AllOrNothing path="HKEY_CURRENT_USER\Software\Classes\Licenses" />
+    <AllOrNothing path="HKEY_LOCAL_MACHINE\Software\Classes\Licenses" />
+    
+    <Isolation path="@HKLM@\Software\Classes\Installer" isolation="WriteCopy" />
+    <Isolation path="@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData" isolation="WriteCopy" />
+    <Isolation path="@HKLM@\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Installer\UserData" isolation="WriteCopy" />
+
+  </Registry>
+
+</SnapshotSettings>

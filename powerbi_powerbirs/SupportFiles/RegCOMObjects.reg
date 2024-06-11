@@ -1,0 +1,177 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Record\{96A43E91-1969-406E-BED8-7CAB51F11810}\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.AuxiliaryPermissionInfo"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{F97F7673-295F-4616-A99D-261B2731EC58}\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.ResolvePbiWorkspaceErrorReason"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{A1F358BD-8DF5-42A8-BD25-9810B247FABA}\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.ResolveDatabaseNameErrorReason"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{FB54F2ED-9378-4C5F-8031-C1DE73C0ED36}\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.ArtifactCapacityState"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{072C2F98-E96A-4987-944C-12DEFA942FF3}\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.WorkspaceCapacitySkuType201606"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.AzureClient.AadAuthenticator]
+@="Microsoft.AnalysisServices.AzureClient.AadAuthenticator"
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.AzureClient.AadAuthenticator\CLSID]
+@="{92DB0183-4232-4F12-82C7-5BBE8FDDD4E1}"
+
+[HKEY_CLASSES_ROOT\CLSID\{92DB0183-4232-4F12-82C7-5BBE8FDDD4E1}]
+@="Microsoft.AnalysisServices.AzureClient.AadAuthenticator"
+
+[HKEY_CLASSES_ROOT\CLSID\{92DB0183-4232-4F12-82C7-5BBE8FDDD4E1}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="Microsoft.AnalysisServices.AzureClient.AadAuthenticator"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{92DB0183-4232-4F12-82C7-5BBE8FDDD4E1}\InprocServer32\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.AadAuthenticator"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{92DB0183-4232-4F12-82C7-5BBE8FDDD4E1}\ProgId]
+@="Microsoft.AnalysisServices.AzureClient.AadAuthenticator"
+
+[HKEY_CLASSES_ROOT\CLSID\{92DB0183-4232-4F12-82C7-5BBE8FDDD4E1}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException]
+@="Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException"
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException\CLSID]
+@="{D69CBC7F-1175-3A17-B618-EEC022946847}"
+
+[HKEY_CLASSES_ROOT\CLSID\{D69CBC7F-1175-3A17-B618-EEC022946847}]
+@="Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException"
+
+[HKEY_CLASSES_ROOT\CLSID\{D69CBC7F-1175-3A17-B618-EEC022946847}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{D69CBC7F-1175-3A17-B618-EEC022946847}\InprocServer32\15.0.0.0]
+"Class"="Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException"
+"Assembly"="Microsoft.AnalysisServices.AzureClient, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{D69CBC7F-1175-3A17-B618-EEC022946847}\ProgId]
+@="Microsoft.AnalysisServices.AzureClient.ASAzureAdalWrapperException"
+
+[HKEY_CLASSES_ROOT\CLSID\{D69CBC7F-1175-3A17-B618-EEC022946847}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer]
+@="Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer"
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer\CLSID]
+@="{17DF25E3-0580-44CC-B5F7-BB3F214BAD52}"
+
+[HKEY_CLASSES_ROOT\CLSID\{17DF25E3-0580-44CC-B5F7-BB3F214BAD52}]
+@="Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer"
+
+[HKEY_CLASSES_ROOT\CLSID\{17DF25E3-0580-44CC-B5F7-BB3F214BAD52}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer"
+"Assembly"="Microsoft.AnalysisServices.DatasetSerializer, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{17DF25E3-0580-44CC-B5F7-BB3F214BAD52}\InprocServer32\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer"
+"Assembly"="Microsoft.AnalysisServices.DatasetSerializer, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{17DF25E3-0580-44CC-B5F7-BB3F214BAD52}\ProgId]
+@="Microsoft.AnalysisServices.DatasetSerializer.DatasetSerializer"
+
+[HKEY_CLASSES_ROOT\CLSID\{17DF25E3-0580-44CC-B5F7-BB3F214BAD52}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\Record\{97F32244-1916-42B9-88F6-B0CC5B0CB051}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.AdaptiveCaching.Common.InvalidQueryShapeReason+InvalidReason"
+"Assembly"="Microsoft.AnalysisServices.DatasetSerializer, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+
+[HKEY_CLASSES_ROOT\Record\{FBDBAA85-A008-4DAC-96CC-F263EE3D1692}\16.0.0.0]
+"Class"="Microsoft.ASPaaS.AnalysisServer.Interfaces.Common.MInterop.ClaimMInterop"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{0F372344-CB46-40AC-9B35-B00D4604F8D7}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.MStaticAnalysisMode"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{8B919575-4516-457E-8753-6647523CF64F}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.MEngineSettings"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{5C49AE96-82EF-4CFD-B0F0-AB0C14FE54C8}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.MEngineSettingsForContainerPool"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{D2A18636-C415-41B0-BC4D-EB7875B34679}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.DQDataSourceKind"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{9922D05C-85D7-429C-8372-6C0C7C81994A}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.MParameterType"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.MInterop.MInteropHelper]
+@="Microsoft.AnalysisServices.MInterop.MInteropHelper"
+
+[HKEY_CLASSES_ROOT\Microsoft.AnalysisServices.MInterop.MInteropHelper\CLSID]
+@="{B11D3642-6184-41A4-BB47-57726A615DDC}"
+
+[HKEY_CLASSES_ROOT\CLSID\{B11D3642-6184-41A4-BB47-57726A615DDC}]
+@="Microsoft.AnalysisServices.MInterop.MInteropHelper"
+
+[HKEY_CLASSES_ROOT\CLSID\{B11D3642-6184-41A4-BB47-57726A615DDC}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="Microsoft.AnalysisServices.MInterop.MInteropHelper"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{B11D3642-6184-41A4-BB47-57726A615DDC}\InprocServer32\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.MInteropHelper"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\CLSID\{B11D3642-6184-41A4-BB47-57726A615DDC}\ProgId]
+@="Microsoft.AnalysisServices.MInterop.MInteropHelper"
+
+[HKEY_CLASSES_ROOT\CLSID\{B11D3642-6184-41A4-BB47-57726A615DDC}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\Record\{3B8B1444-45AF-4B83-AB92-257CE75067EF}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.MInterop.ServerType"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"
+
+[HKEY_CLASSES_ROOT\Record\{2AB5F25A-1C50-4D17-A36C-A5CEB128F74F}\16.0.0.0]
+"Class"="Microsoft.AnalysisServices.PlatformHost.EngineErrorInfo"
+"Assembly"="Microsoft.AnalysisServices.MInterop, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+"RuntimeVersion"="v4.0.30319"

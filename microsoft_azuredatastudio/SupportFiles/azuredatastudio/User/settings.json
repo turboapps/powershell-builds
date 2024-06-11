@@ -1,0 +1,7 @@
+{
+    "update.enableWindowsBackgroundUpdates": false,
+    "update.mode": "none",
+    "workbench.enablePreviewFeatures": true,
+    "update.showReleaseNotes": false,
+    "telemetry.telemetryLevel": "off"
+}

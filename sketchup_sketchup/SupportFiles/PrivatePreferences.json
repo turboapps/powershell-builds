@@ -1,0 +1,29 @@
+{
+    "This Computer Only": {
+        "Application": {
+            "CID": "69e6af30-54c5-4c3e-a661-2e785517d6ea",
+            "RunCounterSU": 1
+        },
+        "Common": {
+            "AcceptedTerms": true
+        },
+        "Preferences": {
+            "AAMethod": 4,
+            "BrowserHome": "",
+            "CountOfNewRenderersOnProbation": 0,
+            "NewModelCount": 0,
+            "CheckForUpdates": false,
+            "OnlineTestURL": "",
+            "SignInPort": -1,
+            "UseFastFeedback": true,
+            "UseMaxTextureSize": true,
+            "ValidateGraphicsCardPrefs": true
+        },
+        "WebCommonDialog_BlendtecWelcomeDialog": {
+            "Height": 671,
+            "Left": 480,
+            "Top": 185,
+            "Width": 960
+        }
+    }
+}

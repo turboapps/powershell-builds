@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turbo.net Image Builder</title>
+    <hta:application
+        id="folderSelector"
+    />
+    <style>
+        table {
+            width: 650px;
+            table-layout: fixed;
+        }
+	tr {
+	    width: 350px;
+	}
+        td {
+            font-family: Arial, sans-serif;
+	        padding: 3px;
+	        width: 50%; 
+            height: 30px;
+            vertical-align: middle;
+        }
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+    </style>
+    <script language="VBScript">
+   
+   Sub Window_onLoad
+    window.resizeTo 900,1080
+   End Sub
+
+   Sub RunScript()
+        Dim selectedFolder, scriptPath
+        selectedFolder = folderSelect.value
+        If selectedFolder <> "" Then
+            scriptPath = folder &"\" & selectedFolder & "\BuildTurboImage.ps1"
+	        sPushURL = document.getElementById("pushURL").value
+    	    sApiKey = document.getElementById("apiKey").value
+            sUser = "username," & document.getElementById("username").value
+            sPass = "password," & document.getElementById("password").value
+            
+            sikulixPath = folder &"\" & selectedFolder & "\SupportFiles\Sikulix"
+            secretsFilePath = sikulixPath & "\Resources\secrets.txt"
+            If fso.FileExists(secretsFilePath) Then  'Wipe out the secrets.txt file if it already exists
+                Set secretsFile = fso.OpenTextFile(secretsFilePath, 2, True) 'for writing
+                secretsFile.Close
+            End If
+
+            If document.getElementById("secretsSection").style.display = "block" Then
+                If document.getElementById("username").value = "" or document.getElementById("password").value = "" Then
+                    response = MsgBox("Warning: Username and/or Password is blank!" & vbCrlf & "Continue?", vbYesNo + vbExclamation, "Warning")
+                Else
+                    WriteSecretsFile sUser,secretsFilePath
+                    WriteSecretsFile sPass,secretsFilePath
+                End If
+            End If
+                           
+            If response <> vbNo Then
+                Set objShell = CreateObject("Shell.Application")
+	            If bImport=True Then
+		            If LCase(Left(sPushURL, 4)) = "http" Then
+		                objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34) &" -Import true -PushURL " &sPushURL &" -ApiKey " &sApiKey, "", "runas", 1
+		            Else
+             	        objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34) &" -Import true", "", "runas", 1
+		            End If
+	            Else
+		            objShell.ShellExecute "powershell", "-NoProfile -ExecutionPolicy Bypass -File " & chr(34) & scriptPath & chr(34), "", "runas", 1
+	            End If
+                window.close
+            End If	        
+        End If
+    End Sub
+
+    Function RetrieveRegistryLicense
+        Dim keyPath, valueName, regCommand, shell, exec, output
+            
+	    cmd = "%SystemRoot%\sysnative\WindowsPowerShell\v1.0\powershell.exe " &chr(40) &"Get-ItemProperty -Path 'HKLM:\SOFTWARE\Code Systems\Turbo Studio 24' -Name 'LicenseCertificate'" &chr(41) &".LicenseCertificate"
+        Set shell = CreateObject("WScript.Shell")
+        Set exec = shell.Exec(cmd)
+            
+        output = ""
+        Do While Not exec.StdOut.AtEndOfStream
+            output = output & exec.StdOut.ReadLine()
+        Loop
+        
+        RetrieveRegistryLicense = output
+    End Function
+
+    Function updateLicense
+      Dim licenseText, fso, licenseFile, filePath, htaPath
+      updateLicense = ""
+      licenseText = document.getElementById("licenseText").value
+      
+      Set fso = CreateObject("Scripting.FileSystemObject")
+      htaPath = GetHTAPath()
+      filePath = fso.BuildPath(htaPath, "!include\License.txt")
+
+      'On Error Resume Next
+      
+      'First, if there is content in the license input box write it to the license file
+      If licenseText <> "" Then
+        updateLicense = WriteLicenseFile(licenseText,filePath)
+        Exit Function
+      End If
+
+      'Next, check if a license file exists and read it
+      If fso.FileExists(filePath) Then
+        Set licenseFile = fso.OpenTextFile(filePath, 1, True) 'for reading
+        existingText = licenseFile.ReadAll
+        If existingText <> "" Then
+            'License file exists and aleady has content
+            updateLicense = WriteLicenseFile(existingText,filePath)
+            document.getElementById("licenseText").value = existingText
+            Exit Function
+        End If
+      ElseIf RetrieveRegistryLicense <> "" Then
+            'No license file or is blank but found it in the registry
+            updateLicense = WriteLicenseFile(RetrieveRegistryLicense,filePath)
+            document.getElementById("licenseText").value = RetrieveRegistryLicense
+            Exit Function
+      Else
+        'No license file or blank and not found in registry
+        updateLicense = "Paste license then click Update"
+      End If
+    End Function
+
+    Function WriteLicenseFile(licenseText,filePath)
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set licenseFile = fso.OpenTextFile(filePath, 2, True) 'for writing
+        licenseFile.Write licenseText
+        licenseFile.Close
+        WriteLicenseFile = "License updated successfully!"
+    End Function
+    
+    Sub WriteSecretsFile(secretValue,secretsFilePath) 
+        Set secretsFile = fso.OpenTextFile(secretsFilePath, 8, True) 'for appending
+        secretsFile.WriteLine secretValue
+        secretsFile.Close
+    End Sub
+
+    Function ReadSecretsFile(secretValue,sikulixPath)
+    On Error Resume Next
+        secretsFilePath = sikulixPath & "\Resources\secrets.txt"
+        If fso.FileExists(secretsFilePath) Then
+            Set secretsFile = fso.OpenTextFile(secretsFilePath, 1, True) 'for reading
+            Do Until secretsFile.AtEndOfStream
+            strLine = secretsFile.ReadLine
+                ' Check if the line begins with the secretValue
+                If Left(strLine, Len(secretValue) + 1) = secretValue & "," Then
+                    ' Return the substring after secretValue and ","
+                    result = Mid(strLine, Len(secretValue) + 2)
+                    ReadSecretsFile = result
+                    Exit Do
+                End If
+            Loop
+            secretsFile.Close
+        Else
+            ReadSecretsFile= ""
+        End If
+    End Function
+
+    Function GetHTAPath()
+      Dim fso, scriptPath
+      Set fso = CreateObject("Scripting.FileSystemObject")
+      scriptPath = fso.GetParentFolderName(document.location.href)
+      GetHTAPath = Replace(Replace(scriptPath,"/","\"),"file:\\\","")
+    End Function
+
+    Sub DisplayLicenseTip()
+        document.write updateLicense()
+        window.setTimeout "ClearText()", 5000
+    End Sub
+
+    Sub ClearText()
+        document.getElementById("licenseApplied").innerHTML = ""
+    End Sub
+
+    Sub CheckForSikulix()
+        selectedPath = folder & "\" & document.getElementById("folderSelect").value
+        sikulixPath = selectedPath & "\SupportFiles\Sikulix"
+        If fso.FolderExists(sikulixPath) Then
+            document.getElementById("secretsSection").style.display = "block"
+            secretsUser = ReadSecretsFile("username",sikulixPath)
+            document.getElementById("username").value = secretsUser
+            secretsPass = ReadSecretsFile("password",sikulixPath)
+            document.getElementById("password").value = secretsPass
+        Else
+            document.getElementById("secretsSection").style.display = "none"
+        End If
+    End Sub
+
+  </script>
+</head>
+<body>
+    
+    <h1><font face="Arial">Turbo.net Image Builder</font></h1>
+    <div style="padding: 10px;">
+      <h2><font face="Arial">Turbo Studio License</font></h2>
+      <textarea id="licenseText" rows="15" cols="75"></textarea>
+      <br>
+      <button onclick="updateAndReload()">Update</button>
+      <span id=licenseApplied style="font-family: Arial, sans-serif; font-style: italic; color: red;">
+        <script language="VBScript">DisplayLicenseTip()</script>
+      </span>
+    </div>
+    <br>
+<table>
+   <tr>
+    <td style="text-align: right;"><label for="folderSelect""><font face="Arial">Select an application folder:</font></label></td>
+    <td><select id="folderSelect" style="width: 300px;" onchange="CheckForSikulix()">
+        <option value="">-- Select an application folder--</option>
+        <script language="VBScript">
+            Dim fso, folder, subfolder
+            Set fso = CreateObject("Scripting.FileSystemObject")
+            Set folder = fso.GetFolder(GetHTAPath)
+            For Each subfolder In folder.SubFolders
+                parts = Split(subfolder.Name, "_")
+                If UBound(parts) = 1 And Left(subfolder.Name,1) <> "_" Then
+                    document.write "<option value='" & subfolder.Name & "'>" & subfolder.Name & "</option>"
+                End If
+            Next
+        </script>
+    </select></td>
+   </tr>
+</table>
+<table id="secretsSection" class="hidden" style="border: 1px solid black; border-collapse: collapse;">
+   <tr>
+    <td style="text-align: left; width: 60px; font-style: italic;">Required build info:</td>
+    <td style="text-align: right; width: 140px;"><label for="username">Secrets username:</label></td>
+    <td style="text-align: left;"><input type="text" id="username" name="username" style="width: 300px;"></td>
+   </tr>
+   <tr>
+    <td style="text-align: left; width: 60px;"></td>
+    <td style="text-align: right; width: 140px;"><label for="password">Secrets password:</label></td>
+    <td style="text-align: left;"><input type="text" id="password" name="password" style="width: 300px;"></td>
+   </tr>
+   <tr>
+    <td style="text-align: left; width: 60px;"></td>
+    <td style="text-align: right; width: 140px;">Note:</td>
+    <td style="text-align: left;">Resolution must be 1080p (1920x1080) to build this image.</td>
+   </tr>
+</table>
+<br>
+<table style="border: 1px solid black;border-collapse: collapse;">
+   <tr>
+    <td style="text-align: left; width: 60px; font-style: italic;">Optional:</td>
+    <td style="text-align: right; width: 140px;"><label for="importCheckbox">Import After Build:</label></td>
+    <td style="text-align: left;"><input type="checkbox" id="importCheckbox" onchange="updateBImport()"></td>
+   </tr>
+  	<script type="text/javascript">
+    	var bImport = false;
+
+    	function updateBImport() {
+      	var checkbox = document.getElementById('importCheckbox');
+      	bImport = checkbox.checked;
+    	}
+        function updateAndReload() {
+            // Call the update function
+            window.updateLicense();
+
+            // Force the HTA to reload
+            location.reload();
+        }
+  	</script>
+ 
+   <tr>
+    <td style="width: 60px;"></td>
+    <td style="text-align: right; width: 140px;"><label for="pushURL">Turbo Server Url:</label></td>
+    <td style="text-align: left;"><input type="text" id="pushURL" name="pushURL" style="width: 300px;" value="eg. https://example.turbo.net"></td>
+   </tr>
+   <tr>
+    <td style="width: 60px;"></td>
+    <td style="text-align: right; width: 140px;"><label for="apiKey">Api Key:</label></td>
+    <td style="text-align: left;"><input type="text" id="apiKey" name="apiKey" style="width: 300px;"></td>
+    </td>
+   </tr>
+</table>
+<table>
+    <tr><td><td><button onclick="RunScript()">Build Image</button></td></td>
+</table>
+</body>
+</html>

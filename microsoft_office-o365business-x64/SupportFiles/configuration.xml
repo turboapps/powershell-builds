@@ -1,0 +1,19 @@
+<Configuration ID="1ce3f3fe-a41e-4690-81da-9a2ed3b7e990">
+<Add OfficeClientEdition="64" Channel="Current">
+<Product ID="O365BusinessRetail">
+<Language ID="en-us"/>
+<ExcludeApp ID="Groove"/>
+<ExcludeApp ID="Lync"/>
+<ExcludeApp ID="OneDrive"/>
+<ExcludeApp ID="Teams"/>
+<ExcludeApp ID="Bing"/>
+</Product>
+</Add>
+<Property Name="SharedComputerLicensing" Value="1"/>
+<Property Name="FORCEAPPSHUTDOWN" Value="FALSE"/>
+<Property Name="DeviceBasedLicensing" Value="0"/>
+<Property Name="SCLCacheOverride" Value="0"/>
+<Updates Enabled="FALSE"/>
+<RemoveMSI/>
+<Display Level="Full" AcceptEULA="TRUE"/>
+</Configuration>
