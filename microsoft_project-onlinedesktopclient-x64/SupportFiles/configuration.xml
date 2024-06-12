@@ -1,0 +1,14 @@
+<Configuration ID="5d34e28a-352e-4374-8ebf-fdc1a81ebc23">
+  <Add OfficeClientEdition="64" Channel="Current">
+    <Product ID="ProjectProRetail">
+      <Language ID="en-us" />
+    </Product>
+  </Add>
+  <Property Name="SharedComputerLicensing" Value="1" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
+  <Property Name="DeviceBasedLicensing" Value="0" />
+  <Property Name="SCLCacheOverride" Value="0" />
+  <Updates Enabled="FALSE" />
+  <RemoveMSI />
+  <Display Level="Full" AcceptEULA="TRUE" />
+</Configuration>
