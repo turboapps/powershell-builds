@@ -10,16 +10,32 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Use this section to get the latest version 
-# either from the vendor website or the downloaded installer file
+$DownloadPath = "$env:USERPROFILE\Downloads"
+$DesktopPath = "$env:USERPROFILE\Desktop"
+$sikulixPath = "$DesktopPath\sikulix"
+$IncludePath = Join-Path -Path $scriptPath -ChildPath "..\!include"
 
-# Get installer link for latest version
-$DownloadLink = "https://download.microsoft.com/download/7/0/A/70AD68EF-5085-4DF2-A3AB-D091244DDDBF/PBIDesktopSetupRS_x64.exe"
+# Copy the sikulix resources folder to the desktop
+Remove-Item -Path "$DesktopPath\Sikulix" -Recurse -Force
+Copy-Item "$SupportFiles\Sikulix" -Destination $DesktopPath -Recurse -Force
+
+# Wait for the warm up of the VM
+Start-Sleep -Seconds 30
+
+# Pull down the sikulix and openjdk turbo images from turbo.net hub if they are not already part of the image
+$turboArgs = "config --domain=turbo.net"
+$ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
+$turboArgs = "pull sikulix/sikulixide,microsoft/openjdk"
+$ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
+
+# Launch SikulixIDE to get the latest version
+$turboArgs = "try sikulixide --using=microsoft/openjdk --offline --disable=spawnvm --isolate=merge-user --startup-file=java -- -jar @SYSDRIVE@\SikulixIDE\sikulixide-2.0.5.jar -r $sikulixPath\build.sikuli -f $env:userprofile\desktop\build-sikulix-log.txt"
+$ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Name of the downloaded installer file
 $InstallerName = "PBIDesktopSetupRS_x64.exe"
-
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+$Installer = "$DownloadPath\$InstallerName"
 
 $LatestWebVersion = Get-VersionFromExe "$Installer"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
