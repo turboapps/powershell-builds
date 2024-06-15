@@ -181,7 +181,7 @@
 
     Sub CheckForSikulix()
         selectedPath = folder & "\" & document.getElementById("folderSelect").value
-        sikulixPath = selectedPath & "\SupportFiles\Sikulix"
+        sikulixPath = selectedPath & "\SupportFiles\Sikulix\Resources"
         If fso.FolderExists(sikulixPath) Then
             document.getElementById("secretsSection").style.display = "block"
             secretsUser = ReadSecretsFile("username",sikulixPath)
