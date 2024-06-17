@@ -144,7 +144,7 @@
 
     Function ReadSecretsFile(secretValue,sikulixPath)
     On Error Resume Next
-        secretsFilePath = sikulixPath & "\Resources\secrets.txt"
+        secretsFilePath = sikulixPath & "\secrets.txt"
         If fso.FileExists(secretsFilePath) Then
             Set secretsFile = fso.OpenTextFile(secretsFilePath, 1, True) 'for reading
             Do Until secretsFile.AtEndOfStream
