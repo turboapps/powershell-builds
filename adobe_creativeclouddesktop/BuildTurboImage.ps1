@@ -102,6 +102,10 @@ $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setu
 ################################
 WriteLog "Performing post-install customizations."
 
+# Stop and delete the Adobe Update Service
+&sc.exe stop AdobeUpdateService
+&sc.exe delete AdobeUpdateService
+
 # Remove start menu shortcut.
 Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Creative Cloud.lnk" -Recurse -Force
 
