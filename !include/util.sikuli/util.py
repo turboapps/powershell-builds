@@ -41,8 +41,10 @@ def adobe_adminconsole_login(username, password, optional = False):
         type(username)
         wait(3)
         type(Key.ENTER)
-        wait("adobe_login_pass.png",10)
-        click("adobe_login_pass.png")
+        if exists("adobe_login_pass_dark.png",20):
+            click("adobe_login_pass_dark.png")
+        if exists("adobe_login_pass.png",20):
+            click("adobe_login_pass.png")
         wait(3)
         type(password)
         wait(3)
