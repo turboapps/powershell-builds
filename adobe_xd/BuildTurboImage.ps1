@@ -60,6 +60,7 @@ $IncludePath = Join-Path -Path $scriptPath -ChildPath "..\!include"
 # Copy the sikulix resources folder to the desktop
 if (!(Test-Path "$DesktopPath\Sikulix")) {
     Copy-Item "$SupportFiles\Sikulix" -Destination $DesktopPath -Recurse -Force
+    Copy-Item "$IncludePath\util.sikuli" -Destination $sikulixPath -Recurse -Force
 }
 
 # Wait for the warm up of the VM
@@ -68,7 +69,7 @@ Start-Sleep -Seconds 30
 # Pull down the sikulix and openjdk turbo images from turbo.net hub if they are not already part of the image
 $turboArgs = "config --domain=turbo.net"
 $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
-$turboArgs = "pull sikulix/sikulixide,microsoft/openjdk"
+$turboArgs = "pull xvm,base,sikulix/sikulixide,microsoft/openjdk"
 $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
 
 # Launch SikulixIDE to get the latest version from Adobe Admin Console
