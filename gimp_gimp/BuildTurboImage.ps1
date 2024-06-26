@@ -87,15 +87,50 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-# Get just the major and minor version eg. 2.10
-$gimpVersion = ($InstalledVersion  -split '\.')[0..1] -join '.'
+# Disable update check
+    # Get all the files named "gimprc" in the subfolders
+    $files = Get-ChildItem -Path "C:\Program Files" -Recurse -Filter "gimprc" -File
 
-# Copy the gimprc file to APPDATA\GIMP\X.XX folder which has (check-updates no) to disable update checks
-$GimpAppDataFolder = "$env:APPDATA\" + "GIMP"
-New-Item -ItemType Directory -Path "$GimpAppDataFolder" -Force
-New-Item -ItemType Directory -Path "$GimpAppDataFolder\$gimpVersion" -Force
-Copy-Item "$SupportFiles\gimprc" -Destination "$GimpAppDataFolder\$gimpVersion\" -Force
+    foreach ($file in $files) {
+        # Read the content of the file
+        $content = Get-Content -Path $file.FullName
 
+        # Replace the line if it matches "# (check-updates yes)"
+        $updatedContent = $content -replace '# \(check-updates yes\)', '(check-updates no)'
+
+        # Write the updated content back to the file
+        Set-Content -Path $file.FullName -Value $updatedContent
+
+        WriteLog "Updated file: $($file.FullName)"
+    }
+
+# Launch GIMP - this will speed up first launch of a new session
+    # Define the path to the Start Menu Programs directory for all users
+    $startMenuPath = "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs"
+
+    # Get all .lnk files in the Start Menu Programs directory and subdirectories
+    $shortcutFiles = Get-ChildItem -Path $startMenuPath -Filter *.lnk -Recurse
+
+    # Find the .lnk file that contains "GIMP" in its name
+    $gimpShortcut = $shortcutFiles | Where-Object { $_.Name -like "*GIMP*" }
+
+    # Check if the GIMP shortcut was found
+    if ($gimpShortcut) {
+        # Get the full path to the GIMP shortcut
+        $gimpShortcutPath = $gimpShortcut.FullName
+
+        # Use the Shell COM object to resolve the target path of the .lnk file
+        $shell = New-Object -ComObject WScript.Shell
+        $shortcut = $shell.CreateShortcut($gimpShortcutPath)
+        $targetPath = $shortcut.TargetPath
+
+        # Launch the target application
+        Start-Process -FilePath $targetPath
+    } else {
+        WriteLog "GIMP shortcut not found."
+    }
+
+Start-Sleep -Seconds 90
 
 #########################
 ## Stop Turbo Capture  ##
@@ -108,6 +143,18 @@ StopTurboCapture
 ######################
 
 CustomizeTurboXappl "$SupportFiles\PostCaptureModifications.ps1"  # Helper script for XML changes to Xappl"
+
+# Set the plugin exes to precachable="False" - this is a workaround to prevent the plugins from being reloaded on first launch of a new session - APPQ-3781
+# Read the contents of the file
+$fileContent = Get-Content -Path $FinalXapplPath
+
+# Perform the first find and replace operation
+$fileContent = $fileContent -replace 'precacheable="True" source="\.\\Files\\Default\\@PROGRAMFILES@\\GIMP 2\\lib\\gimp\\2.0\\plug-ins', 'precacheable="False" source=".\Files\Default\@PROGRAMFILES@\GIMP 2\lib\gimp\2.0\plug-ins'
+
+# Save the updated content back to the file
+Set-Content -Path $FinalXapplPath -Value $fileContent
+
+WriteLog "Find and replace operations completed successfully."
 
 #########################
 ## Build Turbo Image   ##
