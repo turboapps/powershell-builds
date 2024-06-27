@@ -108,21 +108,6 @@ WriteLog "Performing post-install customizations."
 
 $InstalledVersion = GetVersionFromRegistry "Adobe Prelude"
 
-# Get the Year version if it exists from the shortcut name
-    $yearVersion = $null
-    
-    # Get the name of the shortcut without extension
-    $shortcut = Get-ChildItem -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs" -Filter "*Prelude*.lnk" | Select-Object -First 1
-    $shortcutName = [System.IO.Path]::GetFileNameWithoutExtension($shortcut.Name)
-    
-    # Get the last part of the split name
-    $lastPart = ($shortcutName -split " ")[-1]   
-    
-    # Check if the last part matches the pattern #### (year number)
-    if ($lastPart -match '^\d{4}$') {
-        $yearVersion = $lastPart
-    }
-
 #########################
 ## Stop Turbo Capture  ##
 #########################
@@ -147,7 +132,3 @@ BuildTurboSvmImage
 
 PushImage $InstalledVersion
 
-# Publish again with the 4 digit year version
-If ($yearVersion -ne $null) {
-    PushImage $yearVersion
-}
