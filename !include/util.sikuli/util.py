@@ -129,3 +129,47 @@ def build_ccd():
     click("create-package-button.png")
     wait("folder-button.png",90)
     waitVanish("wait-preparing.png")
+
+def get_adobeapp_version(adobeApp):
+    # Read credentials from the secrets file.
+    credentials = get_credentials(os.path.join(resources_path, "secrets.txt"))
+    username = credentials.get("username")
+    password = credentials.get("password")    
+    # Launch the Adobe Admin Console, login and build the installer
+    run('explorer "https://adminconsole.adobe.com"')
+    close_firewall_alert()
+    # Login to the Admin Console
+    adobe_adminconsole_login(username, password)
+    # Wait for the Packages link to load
+    wait("packages-link.png")
+    if exists("admin-console-welcome.png"):
+        type(Key.ESC)
+    wait(10)
+    click("packages-link.png")
+    #Build package and download Creative Cloud Desktop
+    wait("create-a-package-button.png",10)
+    click("create-a-package-button.png")
+    click(Pattern("managed-package-checkbox.png").targetOffset(127,-2))
+    click("next-button.png")
+    wait("select-platform-dropdown.png")
+    click(Pattern("select-platform-dropdown.png").targetOffset(72,8))
+    wait("64bit-dropdown.png")
+    click(Pattern("64bit-dropdown.png").targetOffset(-41,0))
+    click("next-button.png")
+    wait("search-button.png")
+    click("search-button.png")
+    type(adobeApp)
+    wait("version.png")
+    doubleClick(Pattern("version.png").targetOffset(40,0))
+    click("click-copy.png")
+    run('explorer "C:\\windows\\system32\\notepad.exe"') 
+    wait("wait-notepad.png")
+    type("v", Key.CTRL)
+    wait(2)
+    type("s", Key.CTRL)
+    wait(2)
+    type("%USERPROFILE%\\desktop\\version.txt")
+    type(Key.ENTER)
+    wait(5)
+    closeApp("Notepad")
+    closeApp("Edge")

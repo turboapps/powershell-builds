@@ -9,22 +9,24 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 #############################################
 ## Get latest version from the vendor site ##
 #############################################
+$DownloadPath = "$env:USERPROFILE\Downloads"
 $DesktopPath = "$env:USERPROFILE\Desktop"
-
-# Get the directory where the sikuli script is located
-$sikulixFolder = Join-Path -Path $SupportFiles -ChildPath "Sikulix"
+$sikulixPath = "$DesktopPath\sikulix"
+$IncludePath = Join-Path -Path $scriptPath -ChildPath "..\!include"
 
 # Copy the sikulix resources folder to the desktop
-Copy-Item $sikulixFolder -Destination $DesktopPath -Recurse -Force
+if (!(Test-Path "$DesktopPath\Sikulix")) {
+    Copy-Item "$SupportFiles\Sikulix" -Destination $DesktopPath -Recurse -Force
+    Copy-Item "$IncludePath\util.sikuli" -Destination $sikulixPath -Recurse -Force
+}
 
 # Set the current working directory to sikuli script folder
-$sikulixPath = "$DesktopPath\sikulix"
 Set-Location -Path $sikulixPath
 
 # Pull down the sikulix and openjdk turbo images from turbo.net hub if they are not already part of the image
 $turboArgs = "config --domain=turbo.net"
 $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
-$turboArgs = "pull sikulix/sikulixide,microsoft/openjdk"
+$turboArgs = "pull xvm,base,sikulix/sikulixide,microsoft/openjdk"
 $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
 
 # Launch SikulixIDE to get the latest version from Adobe Admin Console
