@@ -11,5 +11,5 @@ $PostCaptureFunctionsPath = Join-Path -Path $scriptPath -ChildPath "..\!include\
 $NamedObjectIsolation = $xappl.Configuration.SelectSingleNode("NamedObjectIsolation")
 
 $node = $xappl.CreateElement("Exception")
-$node.SetAttribute("regex","39ba74c1-.*-main-sock")
+$node.SetAttribute("regex","40c024692924a7e0e09c00bf44e8c2ef-.*-main-sock")
 $NamedObjectIsolation.AppendChild($node)
