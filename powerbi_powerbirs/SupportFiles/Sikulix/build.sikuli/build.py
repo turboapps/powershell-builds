@@ -5,11 +5,11 @@ App("java.exe").focus()
 type(Key.DOWN, Key.WIN) # Minimize cmd window
 # URL handler
 run('explorer "https://aka.ms/pbireportserver"')
-wait(10)
+wait(20)
 setAutoWaitTimeout(40)
 wait(Pattern("download-button.png").similar(0.75))
 click(Pattern("download-button.png").similar(0.75))
-wait(10)
+wait(5)
 wait(Pattern("download-checkbox.png").similar(0.80))
 click(Pattern("download-checkbox.png").similar(0.80))
 wait(Pattern("download-button.png").similar(0.75))
