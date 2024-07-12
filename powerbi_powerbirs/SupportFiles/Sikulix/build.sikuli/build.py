@@ -6,6 +6,11 @@ type(Key.DOWN, Key.WIN) # Minimize cmd window
 # URL handler
 run('explorer "https://aka.ms/pbireportserver"')
 wait(20)
+closeApp("Edge")
+wait(5)
+# Launch the website a second time as it fails to load sometimes on first try
+run('explorer "https://aka.ms/pbireportserver"')
+wait(20)
 setAutoWaitTimeout(40)
 wait(Pattern("download-button.png").similar(0.75))
 click(Pattern("download-button.png").similar(0.75))
