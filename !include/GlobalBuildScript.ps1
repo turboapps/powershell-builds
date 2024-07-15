@@ -286,7 +286,7 @@ Function StopTurboCapture() {
     $ProcessExitCode = RunProcess $XStudio "/capture stop" $True
     CheckForError "Checking process exit code:" 0 $ProcessExitCode  # Fail on turbo capture failure
     WriteLog "Waiting for .xappl file to be created..."
-    Wait-ForFileExistence $XapplPath -Iterations 3600 -SleepTime 1  # Exit if file doesn't exist after 60 minutes
+    Wait-ForFileExistence $XapplPath -Iterations 7200 -SleepTime 1  # Exit if file doesn't exist after 120 minutes
     WriteLog "Waiting for Turbo Capture to finalize..."
     DO {         
         $XStudioRunning = CheckRunningProcess "xstudio"
