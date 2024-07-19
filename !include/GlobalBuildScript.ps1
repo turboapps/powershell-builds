@@ -128,12 +128,12 @@ Function CheckRunningProcess($processName) {
 # Start Turbo Capture
 Function StartTurboCapture() {
     WriteLog "Starting Turbo Capture."
-    $ProcessExitCode = RunProcess $XStudio "/capture start /destination $TurboCaptureDir" $False
+    $ProcessExitCode = RunProcess "cmd.exe" "/C `"$XStudio`" /capture start /destination $TurboCaptureDir" $False
     WriteLog "Waiting for Turbo Capture to intialize..."
     # run xstudio /capture query until it returns a 0 meaning the capture is fully initialized.
     DO {  
         WriteLog "Waiting for Turbo Capture to intialize..."
-        $CaptureStarted = RunProcess $XStudio "/capture query" $True
+        $CaptureStarted = RunProcess "cmd.exe" "/C `"$XStudio`" /capture query" $True
         Start-Sleep -Seconds 2
         } While ($CaptureStarted -ne 0)
 
@@ -413,10 +413,37 @@ Function CheckForError($ErrMessage, $ExpectedValue, $ResultValue, $ShouldTermina
   }
 }
 
+# Uses headless Edge to get the user-agent string for the headless browser
+Function EdgeGetUserAgentString() {
+    $browser = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+    $arguments =  "--headless --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 $BuildScriptPath\HelperFiles\get-user-agent.html"
+    
+    # Create a temporary file to capture the output
+    $tempFile = [System.IO.Path]::GetTempFileName()
+    
+    $process = Start-Process -FilePath $browser -ArgumentList $arguments -NoNewWindow -RedirectStandardOutput $tempFile -PassThru
+
+        # Wait for the process to exit
+        $process.WaitForExit()
+
+        # Read the content from the temporary file
+        $content = Get-Content -Path $tempFile -Raw       
+        $userAgent = [regex]::Match($content, '(?<=<p id="uastring">).+?(?=</p>)').Value
+        $userAgent = $userAgent -replace 'Headless',''  # Remove 'Headless' from the userAgent
+
+        # Clean up the temporary file
+        Remove-Item -Path $tempFile
+
+        # Return the content
+        return $userAgent
+}
+
+
 # Uses headless Edge to scrape the contents of a web page including JavaScript created content
 Function EdgeGetContent([String]$url) {
+    $userAgent = EdgeGetUserAgentString
     $browser = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    $arguments =  "--headless --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 $url"
+    $arguments =  "--headless --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 --user-agent=`"$userAgent`" $url"
     
     # Create a temporary file to capture the output
     $tempFile = [System.IO.Path]::GetTempFileName()
