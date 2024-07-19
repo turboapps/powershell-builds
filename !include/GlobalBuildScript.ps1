@@ -129,13 +129,24 @@ Function CheckRunningProcess($processName) {
 Function StartTurboCapture() {
     WriteLog "Starting Turbo Capture."
     $ProcessExitCode = RunProcess "cmd.exe" "/C `"$XStudio`" /capture start /destination $TurboCaptureDir" $False
-    WriteLog "Waiting for Turbo Capture to intialize..."
+    WriteLog "Waiting for Turbo Capture to start..."
+    Start-Sleep -Seconds 10
     # run xstudio /capture query until it returns a 0 meaning the capture is fully initialized.
-    DO {  
-        WriteLog "Waiting for Turbo Capture to intialize..."
-        $CaptureStarted = RunProcess "cmd.exe" "/C `"$XStudio`" /capture query" $True
+    $attempts = 0
+    $maxAttempts = 5
+    $captureStarted = 1  # Initialize to a non-zero value to enter the loop
+
+    Do {
+        WriteLog "Waiting for Turbo Capture to initialize (Attempt $($attempts + 1)/$maxAttempts)..."
+        $captureStarted = RunProcess "cmd.exe" "/C `"$XStudio`" /capture query" $True
         Start-Sleep -Seconds 2
-        } While ($CaptureStarted -ne 0)
+        $attempts++
+    } While ($captureStarted -ne 0 -and $attempts -lt $maxAttempts)
+
+    if ($captureStarted -ne 0) {
+        WriteLog "Failed to initialize Turbo Capture after $maxAttempts attempts."
+        exit 1  # Exit with a failure code
+    }
 
 }
 
