@@ -1,0 +1,10 @@
+# This file is regenerated each time preferences are saved within
+# Wireshark. Making manual changes should be safe, however.
+# Preferences that have been commented out have not been
+# changed from their default value.
+
+####### User Interface ########
+
+# Check for updates (Windows and macOS only)
+# TRUE or FALSE (case-insensitive)
+gui.update.enabled: FALSE
