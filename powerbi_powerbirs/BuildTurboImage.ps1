@@ -52,35 +52,23 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-$DownloadPath = "$env:USERPROFILE\Downloads"
-$DesktopPath = "$env:USERPROFILE\Desktop"
-$sikulixPath = "$DesktopPath\sikulix"
-$IncludePath = Join-Path -Path $scriptPath -ChildPath "..\!include"
+# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
+$url = "https://aka.ms/pbireportserver"
+$Page = EdgeGetContent -url $url
 
-# Name of the downloaded installer file
-$InstallerName = "PBIDesktopSetupRS_x64.exe"
-$Installer = "$DownloadPath\$InstallerName"
+# Split the content into lines
+$lines = $Page -split "`n"
 
-# Download the installer if it doesn't exist already
-if (!(Test-Path $Installer)) { 
+# Use regex to match URLs that end with PBIDesktopSetupRS.exe
+$regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS\.exe)'
 
-    # Copy the sikulix resources folder to the desktop
-    if (Test-Path "$DesktopPath\Sikulix") {
-        Remove-Item -Path "$DesktopPath\Sikulix" -Recurse -Force
-        }
-    Copy-Item "$SupportFiles\Sikulix" -Destination $DesktopPath -Recurse -Force
+# Find matches in the input string
+$matches = [regex]::matches($lines, $regex)
 
-    # Pull down the sikulix and openjdk turbo images from turbo.net hub if they are not already part of the image
-    $turboArgs = "config --domain=turbo.net"
-    $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
-    $turboArgs = "pull xvm,base,sikulix/sikulixide,microsoft/openjdk,isolate-edge-wc"
-    $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
+$DownloadLink = $matches[0].Value
 
-    # Launch SikulixIDE to get the latest version
-    $turboArgs = "try sikulixide,isolate-edge-wc --using=microsoft/openjdk --offline --disable=spawnvm --isolate=merge-user --startup-file=java -- -jar @SYSDRIVE@\SikulixIDE\sikulixide-2.0.5.jar -r $sikulixPath\build.sikuli -f $env:userprofile\desktop\build-sikulix-log.txt"
-    $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
-    CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
-}
+$InstallerName = $DownloadLink.split("/")[-1]
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 $InstalledVersion = Get-VersionFromExe "$Installer"
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
