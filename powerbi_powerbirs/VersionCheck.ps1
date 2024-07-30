@@ -10,31 +10,23 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-$DownloadPath = "$env:USERPROFILE\Downloads"
-$DesktopPath = "$env:USERPROFILE\Desktop"
-$sikulixPath = "$DesktopPath\sikulix"
-$IncludePath = Join-Path -Path $scriptPath -ChildPath "..\!include"
+# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
+$url = "https://aka.ms/pbireportserver"
+$Page = EdgeGetContent -url $url
 
-# Copy the sikulix resources folder to the desktop
-if (Test-Path "$DesktopPath\Sikulix") {
-        Remove-Item -Path "$DesktopPath\Sikulix" -Recurse -Force
-    }
-Copy-Item "$SupportFiles\Sikulix" -Destination $DesktopPath -Recurse -Force
+# Split the content into lines
+$lines = $Page -split "`n"
 
-# Pull down the sikulix and openjdk turbo images from turbo.net hub if they are not already part of the image
-$turboArgs = "config --domain=turbo.net"
-$ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
-$turboArgs = "pull xvm,base,sikulix/sikulixide,microsoft/openjdk,isolate-edge-wc"
-$ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
+# Use regex to match URLs that end with PBIDesktopSetupRS.exe
+$regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS\.exe)'
 
-# Launch SikulixIDE to get the latest version
-$turboArgs = "try sikulixide,isolate-edge-wc --using=microsoft/openjdk --offline --disable=spawnvm --isolate=merge-user --startup-file=java -- -jar @SYSDRIVE@\SikulixIDE\sikulixide-2.0.5.jar -r $sikulixPath\build.sikuli -f $env:userprofile\desktop\build-sikulix-log.txt"
-$ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+# Find matches in the input string
+$matches = [regex]::matches($lines, $regex)
 
-# Name of the downloaded installer file
-$InstallerName = "PBIDesktopSetupRS_x64.exe"
-$Installer = "$DownloadPath\$InstallerName"
+$DownloadLink = $matches[0].Value
+
+$InstallerName = $DownloadLink.split("/")[-1]
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 $LatestWebVersion = Get-VersionFromExe "$Installer"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
