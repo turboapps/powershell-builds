@@ -1,3 +1,4 @@
+# This script will modify the users trillian.ini file to prevent update checks and notifications
 # Define the search path
 $searchPath = Join-Path $env:APPDATA "trillian\users"
 
