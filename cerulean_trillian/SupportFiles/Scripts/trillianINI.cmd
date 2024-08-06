@@ -1,0 +1,1 @@
+powershell -executionpolicy bypass -file "%~dp0trillianINI.ps1"
