@@ -16,5 +16,11 @@ $Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILES@']/Directory[@name=
 # Environment Vars #
 ####################
 
+# Find the path to the winget.exe
+$exePath = Get-ChildItem -Path "C:\Program Files\WindowsApps" -Filter "winget.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+$parentFolder = Split-Path -Path $exePath -Parent
+$wingetFolder = Split-Path -Path $parentFolder -Leaf
+
+# Append the path to the folder that contains winget.exe to the PATH environment variable
 $EnvironmentVariablesEx = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("EnvironmentVariablesEx")
-AddEnvVar "PATH" "Inherit" "Prepend" ";" "@PROGRAMFILES@\WindowsApps\Microsoft.DesktopAppInstaller_1.22.10582.0_x64__8wekyb3d8bbwe"
+AddEnvVar "PATH" "Inherit" "Prepend" ";" "@PROGRAMFILES@\WindowsApps\$wingetFolder"
