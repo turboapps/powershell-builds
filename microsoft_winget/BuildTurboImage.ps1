@@ -60,7 +60,7 @@ $progressPreference = 'silentlyContinue'
 Invoke-WebRequest -Uri https://aka.ms/getwinget -OutFile "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
 Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
-
+Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
 
 
 #########################
@@ -88,7 +88,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Installing Winget and depdencies"
 Add-AppxPackage -Path "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
 Add-AppxPackage -Path "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
-Add-AppxPackage -Path "$SupportFiles\Microsoft.UI.Xaml.2.8.appx"
+Add-AppxPackage -Path "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
 Add-AppxPackage -Path "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 
 
