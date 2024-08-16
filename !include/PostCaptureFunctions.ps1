@@ -7,6 +7,21 @@ $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
 # PostCapture Functions #
 #########################
 
+# Pushes folder isolation level $newiso to all folders from a parent folder if the current isolation is $currentiso
+# This example will set WriteCopy isolation on @PROGRAMFILES@\Adobe and all subfolders that are currently set to Merge
+# Usage example: PushFolderIsolation "Directory[@name='@PROGRAMFILES@']/Directory[@name='Adobe']" "Merge" "WriteCopy"
+Function SetFolderIsolation($parentDir,$currentiso,$newiso) {
+    $parentNode = $Filesystem.SelectNodes("$parentDir")
+    ForEach ($childNodes in $parentNode) {
+        # Check if the current isolation attribute is set to $currentiso
+        if ($childNodes.GetAttribute("isolation") -eq $currentiso) {
+            # Set the isolation attribute to $newiso
+            $childNodes.SetAttribute("isolation", $newiso)
+        }
+    }
+}
+
+
 # Adds a directory to a parent - usage example: AddDirectory "Directory[@name='@PROGRAMFILES@']/Directory[@name='Adobe']/Directory[@name='Acrobat']" "Prefs" "Full" "False" "False"
 Function AddDirectory($parentDir,$name,$isolation,$readOnly,$hide,$noSync) {
   $parentNode = $Filesystem.SelectSingleNode($parentDir)
