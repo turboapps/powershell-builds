@@ -8,6 +8,8 @@ addImagePath(util_path) # This is needed to include screenshots from "util".
 setAutoWaitTimeout(20)
 util.minimize_app("java")
 
+appname = "indesign"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version("indesign")
-
+util.get_adobeapp_version1(appname)
+doubleClick(Pattern("version.png").targetOffset(45,-1))
+util.get_adobeapp_version2(appname)

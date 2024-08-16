@@ -130,7 +130,7 @@ def build_ccd():
     wait("folder-button.png",90)
     waitVanish("wait-preparing.png")
 
-def get_adobeapp_version(adobeApp):
+def get_adobeapp_version1(adobeApp):
     # Read credentials from the secrets file.
     credentials = get_credentials(os.path.join(resources_path, "secrets.txt"))
     username = credentials.get("username")
@@ -160,7 +160,8 @@ def get_adobeapp_version(adobeApp):
     click("search-button.png")
     type(adobeApp)
     wait("version.png")
-    doubleClick(Pattern("version.png").targetOffset(40,0))
+
+def get_adobeapp_version2(adobeApp):
     click("click-copy.png")
     run('explorer "C:\\windows\\system32\\notepad.exe"') 
     wait("wait-notepad.png")

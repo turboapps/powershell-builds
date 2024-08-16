@@ -8,6 +8,9 @@ addImagePath(util_path) # This is needed to include screenshots from "util".
 setAutoWaitTimeout(20)
 util.minimize_app("java")
 
+appname = "after effects"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version("after effects")
+util.get_adobeapp_version1(appname)
+doubleClick(Pattern("version.png").targetOffset(55,0))
+util.get_adobeapp_version2(appname)
 
