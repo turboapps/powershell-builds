@@ -101,6 +101,8 @@ def build_ccd():
     adobe_adminconsole_login(username, password)
     # Wait for the Packages link to load
     wait("packages-link.png")
+    if exists("got-it.png"):
+        type(Key.ESC)
     if exists("admin-console-welcome.png"):
         type(Key.ESC)
     wait(10)
