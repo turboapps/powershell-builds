@@ -10,13 +10,25 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Download the latest installer
-$DownloadLink = "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=249551_4d245f941845490c91360409ecffb3b4"
-$InstallerName = "jre-windows-x64.exe"
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+$url = "https://www.java.com/en/download/manual.jsp"
+$Page = EdgeGetContent -url $url
 
-# Get the version from the downloaded installer file
-Get-VersionFromExe $Installer
+# Split the content into lines
+$lines = $Page -split "`n"
+
+# Define a regular expression pattern
+$pattern = 'Download Java software for Windows'
+
+# Filter and output lines containing matching links
+foreach ($line in $lines) {
+    if ($line -match $pattern) {
+        $DownloadLink = [regex]::Match($line, 'href="([^"]+)"').Groups[1].Value
+        break
+    }
+}
+
+$InstallerName = "jre-windows.exe"
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 $LatestWebVersion = Get-VersionFromExe $Installer
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
