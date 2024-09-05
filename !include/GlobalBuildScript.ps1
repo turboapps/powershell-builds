@@ -427,7 +427,7 @@ Function CheckForError($ErrMessage, $ExpectedValue, $ResultValue, $ShouldTermina
 # Uses headless Edge to get the user-agent string for the headless browser
 Function EdgeGetUserAgentString() {
     $browser = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    $arguments =  "--headless --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 $BuildScriptPath\HelperFiles\get-user-agent.html"
+    $arguments =  "--headless=new --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 $BuildScriptPath\HelperFiles\get-user-agent.html"
     
     # Create a temporary file to capture the output
     $tempFile = [System.IO.Path]::GetTempFileName()
@@ -454,7 +454,7 @@ Function EdgeGetUserAgentString() {
 Function EdgeGetContent([String]$url) {
     $userAgent = EdgeGetUserAgentString
     $browser = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    $arguments =  "--headless --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 --user-agent=`"$userAgent`" $url"
+    $arguments =  "--headless=new --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 --user-agent=`"$userAgent`" $url"
     
     # Create a temporary file to capture the output
     $tempFile = [System.IO.Path]::GetTempFileName()
