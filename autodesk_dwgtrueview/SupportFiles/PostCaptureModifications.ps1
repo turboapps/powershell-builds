@@ -1,9 +1,6 @@
 $PostCaptureFunctionsPath = Join-Path -Path $scriptPath -ChildPath "..\!INCLUDE\PostCaptureFunctions.ps1"
 . $PostCaptureFunctionsPath  # Include the script that contains post capture functions
 
-# Configure vm settings
-$VirtualizationSettings = $xappl.Configuration.SelectSingleNode("VirtualizationSettings")
-$VirtualizationSettings.shutdownProcessTree = [string]$true
 
 ###################
 # Edit Services   #
