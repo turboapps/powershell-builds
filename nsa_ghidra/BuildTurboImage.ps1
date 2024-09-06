@@ -53,7 +53,7 @@ CheckHubVersion
 WriteLog "Downloading the latest ZIP archive."
 
 # Get main download page for application.
-$Page = EdgeGetContent https://github.com/NationalSecurityAgency/ghidra/releases/latest
+$Page = EdgeGetContent -url 'https://github.com/NationalSecurityAgency/ghidra/releases/latest' -headlessMode "old"
 
 
 # Split the page content into lines
