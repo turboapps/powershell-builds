@@ -11,7 +11,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 #############################################
 
 $url = "https://www.java.com/en/download/manual.jsp"
-$Page = EdgeGetContent -url $url
+$Page = EdgeGetContent -url $url -headlessMode "new"
 
 # Split the content into lines
 $lines = $Page -split "`n"

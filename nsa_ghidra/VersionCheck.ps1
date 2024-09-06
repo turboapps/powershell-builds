@@ -12,7 +12,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 
 # Get main download page for application.
 # The content of this page is built by javascript so we need to use Edge in headless mode to get the content
-$Page = EdgeGetContent https://github.com/NationalSecurityAgency/ghidra/releases/latest
+$Page = EdgeGetContent -url 'https://github.com/NationalSecurityAgency/ghidra/releases/latest' -headlessMode "old"
 
 # Split the content into lines
 $PageLines = $Page -split "`n"

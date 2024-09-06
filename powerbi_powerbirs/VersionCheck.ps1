@@ -12,7 +12,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 
 # The content of this page is built by javascript so we need to use Edge in headless mode to get the content
 $url = "https://aka.ms/pbireportserver"
-$Page = EdgeGetContent -url $url
+$Page = EdgeGetContent -url $url -headlessMode "old"
 
 # Split the content into lines
 $lines = $Page -split "`n"

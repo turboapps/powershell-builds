@@ -425,9 +425,9 @@ Function CheckForError($ErrMessage, $ExpectedValue, $ResultValue, $ShouldTermina
 }
 
 # Uses headless Edge to get the user-agent string for the headless browser
-Function EdgeGetUserAgentString() {
+Function EdgeGetUserAgentString([String]$headlessMode) {
     $browser = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    $arguments =  "--headless=new --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 $BuildScriptPath\HelperFiles\get-user-agent.html"
+    $arguments =  "--headless=$headlessMode --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 $BuildScriptPath\HelperFiles\get-user-agent.html"
     
     # Create a temporary file to capture the output
     $tempFile = [System.IO.Path]::GetTempFileName()
@@ -451,10 +451,10 @@ Function EdgeGetUserAgentString() {
 
 
 # Uses headless Edge to scrape the contents of a web page including JavaScript created content
-Function EdgeGetContent([String]$url) {
-    $userAgent = EdgeGetUserAgentString
+Function EdgeGetContent([String]$url,[String]$headlessMode) {
+    $userAgent = EdgeGetUserAgentString -headlessMode "old"
     $browser = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    $arguments =  "--headless=new --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 --user-agent=`"$userAgent`" $url"
+    $arguments =  "--headless=$headlessMode --temp-profile --disable-gpu --dump-dom --virtual-time-budget=10000 --user-agent=`"$userAgent`" $url"
     
     # Create a temporary file to capture the output
     $tempFile = [System.IO.Path]::GetTempFileName()

@@ -54,7 +54,7 @@ WriteLog "Downloading the latest MSI installer."
 
 # Get main download page for application.
 # The content of this page is built by javascript so we need to use Edge in headless mode to get the content
-$Page = EdgeGetContent 'https://support.8x8.com/business-phone/voice/work-desktop/download-8x8-work-for-desktop'
+$Page = EdgeGetContent -url 'https://support.8x8.com/business-phone/voice/work-desktop/download-8x8-work-for-desktop' -headlessMode "old"
 
 # Split the content into lines
 $lines = $Page -split "`n"
