@@ -2,6 +2,7 @@
 $Filesystem = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Filesystem")
 $Registry = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Registry")
 $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
+$Dependencies = $xappl.Configuration.SelectSingleNode("Dependencies")
 
 #########################
 # PostCapture Functions #
@@ -90,6 +91,16 @@ Function AddStartupFile($name,$tag,$commandLine,$default,$arch) {
   $node.SetAttribute("commandLine",$commandLine)
   $node.SetAttribute("default",$default)
   $node.SetAttribute("architecture",$arch)
+  $parentNode.AppendChild($node)
+}
+
+# Adds a dependency - usage example: AddStartupFile "google" "chrome" "128.0.6613.120" "b2f2baaa06b847f0a6637cbed57e3d8720a733bb6c41c1ff6cb0592aa0ca6255" $False
+Function AddDependency($namespace,$name,$tag,$hash,$bakedIn) {
+  $parentNode = $Dependencies
+  $node = $xappl.CreateElement("Dependency")
+  $node.SetAttribute("Identifier","$namespace/$name`:$tag#$hash")
+  $node.SetAttribute("Hash",$hash)
+  $node.SetAttribute("BakedIn",$bakedIn)
   $parentNode.AppendChild($node)
 }
 

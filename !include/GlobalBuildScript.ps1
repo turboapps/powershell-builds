@@ -33,8 +33,8 @@ Function WriteLog([String]$message) {
     ("$timestamp $message").replace($NewLine,"") | Out-File -FilePath $LogFile -Append # Strip new lines from message then output to log
 }
 
-# Get Current Hub Version of application
-Function GetCurrentHubVersion($HubOrg,$URL) {
+# Get current Hub revisions of application
+Function GetHubRevisions($HubOrg,$URL) {
     if (!$URL) {
         $URL = $PushURL
     }
@@ -56,7 +56,13 @@ Function GetCurrentHubVersion($HubOrg,$URL) {
 
     # Get the revisions array for the repo
     $reqUrl = $PushURL + '/io/_hub/repo/' + $repoOwner + '/' + $repoName + '/revisions?withTags'
-    $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
+    $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers
+    Return $response
+}
+
+# Get Current Hub Version of application
+Function GetCurrentHubVersion($HubOrg,$URL) {
+    $response = GetHubRevisions $HubOrg $URL
 
     # Get the first imageID from the repo
     if ($response.imageid.count -gt 1) {
@@ -66,7 +72,7 @@ Function GetCurrentHubVersion($HubOrg,$URL) {
         $imageID = $response.imageID
     }
 
-        # Get all the versions from the first image
+    # Get all the versions from the first image
     $Objects = $response | Where-Object {$_.imageID -eq $imageID}
     $CurrentHubVersion = $Objects.tags
     
@@ -81,7 +87,21 @@ Function GetCurrentHubVersion($HubOrg,$URL) {
     WriteLog "HubVersion=$LatestHubVer"
 
     Return $LatestHubVer
+}
 
+# Get the current Hub hash of the application
+Function GetCurrentHubHash($HubOrg,$URL) {
+    $response = GetHubRevisions $HubOrg $URL
+
+    # Get the first imageID from the repo (this is the hash)
+    if ($response.imageid.count -gt 1) {
+        $imageID = $response.imageID[0]
+        }
+    else {
+        $imageID = $response.imageID
+    }
+
+    Return $imageID
 }
 
 Function CheckHubVersion() {
