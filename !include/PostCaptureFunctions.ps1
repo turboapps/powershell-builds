@@ -98,7 +98,17 @@ Function AddStartupFile($name,$tag,$commandLine,$default,$arch) {
 Function AddDependency($namespace,$name,$tag,$hash,$bakedIn) {
   $parentNode = $Dependencies
   $node = $xappl.CreateElement("Dependency")
-  $node.SetAttribute("Identifier","$namespace/$name`:$tag#$hash")
+  $fullIdentifier = "$namespace/$name"
+  if ($tag)
+  {
+      $fullIdentifier += "`:$tag"
+  }
+  if ($hash -notmatch "^0{64}$")
+  {
+      # Only add hash to full identifier if it is not all zeroes
+      $fullIdentifier += "#$hash"
+  }
+  $node.SetAttribute("Identifier",$fullIdentifier)
   $node.SetAttribute("Hash",$hash)
   $node.SetAttribute("BakedIn",$bakedIn)
   $parentNode.AppendChild($node)
