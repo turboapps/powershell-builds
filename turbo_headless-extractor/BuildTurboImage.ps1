@@ -59,7 +59,7 @@ $response = Invoke-WebRequest -Uri $URL -UseBasicParsing
 # Get download link for latest package
 $DownloadLink = ($response.Links | Where-Object href -like '*/package/HtmlAgilityPack/*').href
 
-# Name of the file to download to (will be a nupkg but needs to have .zip so Powershell can extract the files)
+# Name of the file to download to (will be a nupkg but needs to be named .zip so Powershell can extract the files)
 $InstallerName = "HtmlAgilityPack.nupkg.zip"
 
 # Download the installer
