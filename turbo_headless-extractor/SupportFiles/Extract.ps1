@@ -4,6 +4,12 @@ param (
 
     [Parameter(Mandatory=$true)]
     [string]$OutputDir,
+    
+    [Parameter(Mandatory=$false)]
+    [switch]$Screenshot,
+    
+    [Parameter(Mandatory=$false)]
+    [switch]$ExtractLinks,
 
     [string]$UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
 
@@ -62,8 +68,15 @@ if (-not (Test-Path -Path $OutputDir)) {
     New-Item -ItemType Directory -Path $OutputDir | Out-Null
 }
 
-$imagePath = Join-Path $OutputDir "image.png"
-$command = "`"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`" --headless=new --user-agent=`"$UserAgent`" --dump-dom --window-size=$WindowWidth,$WindowHeight --screenshot=$imagePath $Url"
+# Build command
+$command = "`"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`" --headless=new --user-agent=`"$UserAgent`" --dump-dom --window-size=$WindowWidth,$WindowHeight"
+if ($Screenshot)
+{
+    # Only take screenshot if option specified in parameter
+    $imagePath = Join-Path $OutputDir "image.png"
+    $command += " --screenshot=$imagePath"
+}
+$command += " $Url"
 
 try {
     # Start the process and capture output
@@ -73,17 +86,25 @@ try {
     $domOutputFile = Join-Path $OutputDir "dom.html"
     $output | Out-File -FilePath $domOutputFile -Encoding utf8
 
-    Write-Host "Screenshot saved to: $imagePath"
     Write-Host "DOM output saved to: $domOutputFile"
+    
+    if ($Screenshot)
+    {
+        Write-Host "Screenshot saved to: $imagePath"
+    }
 
-    # Parse the DOM and extract links
-    $links = ExtractLinks -HtmlFilePath $domOutputFile -BaseUrl $Url
+    # Only extract links if option specified in parameter
+    if ($ExtractLinks)
+    {
+        # Parse the DOM and extract links
+        $links = ExtractLinks -HtmlFilePath $domOutputFile -BaseUrl $Url
 
-    # Write links to a file
-    $linksOutputFile = Join-Path $OutputDir "links.txt"
-    $links | Out-File -FilePath $linksOutputFile -Encoding utf8
+        # Write links to a file
+        $linksOutputFile = Join-Path $OutputDir "links.txt"
+        $links | Out-File -FilePath $linksOutputFile -Encoding utf8
 
-    Write-Host "Absolute links extracted and saved to: $linksOutputFile"
+        Write-Host "Absolute links extracted and saved to: $linksOutputFile"
+    }
 }
 catch {
     Write-Host "An error occurred: $_"
