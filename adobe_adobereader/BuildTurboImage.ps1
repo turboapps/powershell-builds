@@ -66,6 +66,9 @@ $Version = $Versions[0] -Replace ('\.','')
 ## Create download link for Reader
 $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $Version + "/AcroRdrDC" + $Version + "_en_US.exe"
 
+# NOTE: Adobe has been slow to update the public download link for the 32bit installer after a new release comes out.
+# This may cause the download to fail for a few days after a new version is released.
+
 # Name of the downloaded installer file
 $InstallerName = "AcroRdrDC.exe"
 
