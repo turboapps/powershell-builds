@@ -2,9 +2,20 @@ $PostCaptureFunctionsPath = Join-Path -Path $scriptPath -ChildPath "..\!include\
 . $PostCaptureFunctionsPath  # Include the script that contains post capture functions
 
 # Add Chrome as dependency
-# Don't need to actually specify version or hash, client can still resolve latest version even without a specific hash but need to at least
-# put something with 32 bytes in the hash field for the dependency otherwise config won't load
-AddDependency "google" "chrome" "" "0000000000000000000000000000000000000000000000000000000000000000" $False
+
+# At the moment pushes with client fail unless dependency hashes are valid. However, client can still resolve latest version even with an invalid hash
+# if the hash field in the config is at least 32 bytes (config load fails otherwise)
+#AddDependency "google" "chrome" "" "0000000000000000000000000000000000000000000000000000000000000000" $False
+
+# Get latest Chrome info
+$repo = "google/chrome"
+$version = GetCurrentHubVersion $repo
+$hash = GetCurrentHubHash $repo
+
+if ($version -and $hash)
+{
+    AddDependency "google" "chrome" "$version" "$hash" $False
+}
 
 ######################
 # Edit Startup Files #
