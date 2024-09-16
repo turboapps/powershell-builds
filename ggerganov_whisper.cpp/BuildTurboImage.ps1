@@ -98,6 +98,7 @@ WriteLog "Installing the application."
 # This will capture the files because it is a change.
 echo F|. xcopy /i $SourceDir\build\bin\Release\main.exe C:\whisper.cpp\main.exe
 echo F|. xcopy /i $SourceDir\build\bin\Release\whisper.dll C:\whisper.cpp\whisper.dll
+echo F|. xcopy /i $SupportFiles\ConvertAndRun.ps1 C:\whisper.cpp\ConvertAndRun.ps1
 
 ################################
 ## Customize the application  ##
