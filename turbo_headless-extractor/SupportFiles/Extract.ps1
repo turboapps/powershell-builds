@@ -6,6 +6,9 @@ param (
     [string]$OutputDir,
     
     [Parameter(Mandatory=$false)]
+    [switch]$DOM,
+    
+    [Parameter(Mandatory=$false)]
     [switch]$Screenshot,
     
     [Parameter(Mandatory=$false)]
@@ -38,10 +41,7 @@ function ExtractLinks {
         [string]$HtmlFilePath,
         [string]$BaseUrl
     )
-
-    # Load the HTML Agility Pack
-    Add-Type -Path "C:\extractor\HtmlAgilityPack.dll"
-
+    
     $doc = New-Object HtmlAgilityPack.HtmlDocument
     $doc.Load($HtmlFilePath)
 
@@ -82,14 +82,32 @@ try {
     # Start the process and capture output
     $output = cmd /c $command
 
-    # Write the output to dom.html
-    $domOutputFile = Join-Path $OutputDir "dom.html"
-    $output | Out-File -FilePath $domOutputFile -Encoding utf8
+    # Load the HTML Agility Pack
+    Add-Type -Path "C:\extractor\HtmlAgilityPack.dll"
 
-    Write-Host "DOM output saved to: $domOutputFile"
+    # Get the text from the raw html
+    $doc = New-Object HtmlAgilityPack.HtmlDocument
+    $doc.LoadHtml($output)
+    $htmlText = $doc.DocumentNode.InnerText.Trim()
+    
+    # Write the output to a text file
+    $domTextOutputFile = Join-Path $OutputDir "domText.txt"
+    $htmlText | Out-File -FilePath $domTextOutputFile -Encoding utf8
+    
+    Write-Host "DOM text output saved to: $domTextOutputFile"
+    
+    if ($DOM)
+    {
+        # Write the raw DOM output to dom.html
+        $domOutputFile = Join-Path $OutputDir "dom.html"
+        $output | Out-File -FilePath $domOutputFile -Encoding utf8
+    
+        Write-Host "DOM output saved to: $domOutputFile"
+    }
     
     if ($Screenshot)
     {
+        # Screenshot is specified in command line option earlier so if param was passed notify caller here
         Write-Host "Screenshot saved to: $imagePath"
     }
 
