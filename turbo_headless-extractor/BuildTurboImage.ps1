@@ -68,10 +68,9 @@ $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 # Extract .zip
 Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\temp"
 
-# Set this image version to whatever the latest Chrome version is on the Hub
-$repo = "google/chrome"
-$chromeVersion = GetCurrentHubVersion $repo
-$InstalledVersion = $chromeVersion
+# Set this image version to whatever the script version is
+$version = Get-Content "$SupportFiles\version.txt"
+$InstalledVersion = $version
 
 #########################
 ## Start Turbo Capture ##

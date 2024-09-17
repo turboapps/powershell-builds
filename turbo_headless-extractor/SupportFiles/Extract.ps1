@@ -1,3 +1,7 @@
+# Script for extracting content from a web page at a URL
+
+# If updating this script, change the version number in SupportFiles\version.txt
+
 param (
     [Parameter(Mandatory=$true)]
     [string]$Url,

@@ -10,11 +10,10 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Check what the latest Chrome version is on the Hub
-$repo = "google/chrome"
-$chromeVersion = GetCurrentHubVersion $repo
+# Get the current extractor script version
+$version = Get-Content "$SupportFiles\version.txt"
 
-$LatestWebVersion = $chromeVersion
+$LatestWebVersion = $version
 WriteLog "WebVersion=$LatestWebVersion"
 
 
