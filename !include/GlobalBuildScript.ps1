@@ -40,12 +40,12 @@ Function GetHubRevisions($HubOrg,$URL) {
     }
     # Split the repo parts into owner and name values
     $repoOwner, $repoName = $HubOrg -split "_"
-    WriteLog "Getting the current $HubOrg version from $PushURL"
+    WriteLog "Getting the current $HubOrg version from $URL"
     
     # Get token from API Key
     $headers = @{}
     $headers.Add("X-Turbo-Api-Key", $APIKey)
-    $reqUrl = $PushURL + '/0.1/api-keys/login'
+    $reqUrl = $URL + '/0.1/api-keys/login'
     $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
 
     # Get all repos from Hub
@@ -55,7 +55,7 @@ Function GetHubRevisions($HubOrg,$URL) {
     $headers.Add("X-Turbo-Api-Version", "1")
 
     # Get the revisions array for the repo
-    $reqUrl = $PushURL + '/io/_hub/repo/' + $repoOwner + '/' + $repoName + '/revisions?withTags'
+    $reqUrl = $URL + '/io/_hub/repo/' + $repoOwner + '/' + $repoName + '/revisions?withTags'
     $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers
     Return $response
 }
