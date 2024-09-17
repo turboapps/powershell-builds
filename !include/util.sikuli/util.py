@@ -45,6 +45,8 @@ def adobe_adminconsole_login(username, password, optional = False):
             click("adobe_login_pass_dark.png")
         if exists("adobe_login_pass.png",20):
             click("adobe_login_pass.png")
+        if exists("adobe-password-new.png",20):
+            click("adobe-password-new.png")
         wait(3)
         type(password)
         wait(3)
