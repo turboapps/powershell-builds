@@ -30,7 +30,8 @@ foreach ($line in $lines) {
     }
 }
 $InstallerName = $DownloadLink.split("/")[-1]
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+$Installer = Join-Path -Path $DownloadPath -ChildPath $InstallerName
+. curl.exe $DownloadLink -o $Installer
 
 $LatestWebVersion = Get-VersionFromExe $Installer
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
