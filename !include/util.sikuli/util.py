@@ -153,6 +153,7 @@ def get_adobeapp_version1(adobeApp):
     #Build package and download Creative Cloud Desktop
     wait("create-a-package-button.png",10)
     click("create-a-package-button.png")
+    wait("managed-package-checkbox.png",10)
     click(Pattern("managed-package-checkbox.png").targetOffset(127,-2))
     click("next-button.png")
     wait("select-platform-dropdown.png")
