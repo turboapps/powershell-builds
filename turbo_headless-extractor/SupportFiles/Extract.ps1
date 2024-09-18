@@ -93,6 +93,7 @@ try {
     $doc = New-Object HtmlAgilityPack.HtmlDocument
     $doc.LoadHtml($output)
     $htmlText = $doc.DocumentNode.InnerText.Trim()
+    $htmlText = $htmlText -replace "\s+", " "
     
     # Write the output to a text file
     $domTextOutputFile = Join-Path $OutputDir "domText.txt"
