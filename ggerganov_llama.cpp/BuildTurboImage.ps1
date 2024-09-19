@@ -61,7 +61,7 @@ $latest -match "b(\d+)"
 $InstalledVersion = $matches[1] + ".0"
 
 $BuildFiles = "C:\build_files"
-$Builds = "noavx","avx","avx2","avx512"
+$Builds = "noavx","avx","avx2","avx512","cuda-cu12.2.0"
 foreach ($Build in $Builds) {
     # Get download link for latest version for build
     $DownloadLink = "https://github.com/ggerganov/llama.cpp/releases/download/$latest/llama-$latest-bin-win-$Build-x64.zip"
