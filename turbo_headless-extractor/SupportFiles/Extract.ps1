@@ -73,7 +73,7 @@ if (-not (Test-Path -Path $OutputDir)) {
 }
 
 # Build command
-$command = "`"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`" --headless=new --user-agent=`"$UserAgent`" --dump-dom --window-size=$WindowWidth,$WindowHeight"
+$command = "`"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`" --headless=new --user-agent=`"$UserAgent`" --dump-dom --window-size=$WindowWidth,$WindowHeight --no-sandbox --virtual-time-budget=10000"
 if ($Screenshot)
 {
     # Only take screenshot if option specified in parameter
