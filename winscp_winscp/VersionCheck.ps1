@@ -11,13 +11,23 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 #############################################
 
 # Get main download page for application.
-$Page = Invoke-WebRequest -Uri 'https://winscp.net/eng/downloads.php' -UseBasicParsing
+$Page = EdgeGetContent -url 'https://winscp.net/eng/downloads.php' -headlessMode "old"
+# Split the content into lines
+$lines = $Page -split "`n"
 
-# Get installer link with version number.
-$VersionLink = ($Page.links | Where-Object {$_.href -like "*winscp-*.msi*"}).href
+# Define a regular expression pattern
+$pattern = 'WinSCP-[\d\.]+\.msi'
+
+# Filter and output lines containing matching links
+foreach ($line in $lines) {
+    if ($line -match $pattern) {
+        $InstallerName = $matches[0]  # Use the first link that matches *.exe*
+        break
+    }
+}
 
 # Get version number.
-$LatestWebVersion = (($VersionLink.split("/"))[-2] -replace "winscp-") -replace ".msi"
+$LatestWebVersion = (($InstallerName -replace "winscp-") -replace ".msi"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"

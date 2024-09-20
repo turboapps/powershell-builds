@@ -53,18 +53,39 @@ CheckHubVersion
 WriteLog "Downloading the latest MSI installer."
 
 # Get main download page for application.
-$Page = Invoke-WebRequest -Uri 'https://winscp.net/eng/downloads.php' -UseBasicParsing
+$Page = EdgeGetContent -url 'https://winscp.net/eng/downloads.php' -headlessMode "old"
+# Split the content into lines
+$lines = $Page -split "`n"
 
-# Get next download page for application. # Prefix with URL as page uses relative URLs.
-$Page2 = Invoke-WebRequest -Uri  ("https://winscp.net/" + ($Page.links | Where-Object {$_.href -like "*winscp-*.msi*"}).href) -UseBasicParsing
+# Define a regular expression pattern
+$pattern = 'WinSCP-[\d\.]+\.msi'
 
-# Get installer link for latest version.
-$DownloadLink =  ($Page2.links | Where-Object {$_.href -like "*winscp-*.msi*"}).href[0]
+# Filter and output lines containing matching links
+foreach ($line in $lines) {
+    if ($line -match $pattern) {
+        $InstallerName = $matches[0]  # Use the first link that matches *.exe*
+        break
+    }
+}
+$DownloadLink =  "https://winscp.net/download/$InstallerName/download"
 
-# Name of the downloaded installer file. Remove trailing signature text (?h=qqRKmF13eMCktg97-nJeQA&x=1707436613).
-$InstallerName = [System.IO.Path]::GetFileName($DownloadLink).split("?")[0]
+# Get download link from the 
+$Page = EdgeGetContent -url $DownloadLink -headlessMode "old"
+# Split the content into lines
+$lines = $Page -split "`n"
 
-$Installer = wget $DownloadLink -O $DownloadPath\$InstallerName
+# Define a regular expression pattern
+$pattern = "'(https?://[^']*WinSCP[^']*\.msi[^']*)'"
+
+# Filter and output lines containing matching links
+foreach ($line in $lines) {
+    if ($line -match $pattern) {
+        $InstallerLink = $matches[0].Trim("'")  # Use the first link that matches *.exe*
+        break
+    }
+}
+
+$Installer = wget $InstallerLink -O $DownloadPath\$InstallerName
 
 #########################
 ## Start Turbo Capture ##
