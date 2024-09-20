@@ -10,6 +10,9 @@ param (
     [string]$OutputDir,
     
     [Parameter(Mandatory=$false)]
+    [string]$Timeout,
+    
+    [Parameter(Mandatory=$false)]
     [switch]$DOM,
     
     [Parameter(Mandatory=$false)]
@@ -73,7 +76,13 @@ if (-not (Test-Path -Path $OutputDir)) {
 }
 
 # Build command
-$command = "`"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`" --headless=new --user-agent=`"$UserAgent`" --dump-dom --window-size=$WindowWidth,$WindowHeight --no-sandbox --virtual-time-budget=10000"
+$requestTimeout = "300000" # Default timeout for Chrome is 5 minutes
+if ($Timeout)
+{
+    $requestTimeout = $Timeout
+}
+$command = "`"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`" --headless=new --user-agent=`"$UserAgent`" --dump-dom --window-size=$WindowWidth,$WindowHeight --virtual-time-budget=10000 --timeout=$requestTimeout --no-sandbox --disable-extensions --disable-gpu --disable-gpu-sandbox --temp-profile"
+Write-Host $command
 if ($Screenshot)
 {
     # Only take screenshot if option specified in parameter
