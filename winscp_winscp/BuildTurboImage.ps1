@@ -110,7 +110,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Set version meta.
-$InstalledVersion = (($InstallerName.split("/"))[-1] -replace "winscp-") -replace ".msi"
+$InstalledVersion = ($InstallerName -replace "winscp-") -replace ".msi"
 
 # Set autoupdate checks to never.
 &reg add "HKEY_CURRENT_USER\SOFTWARE\Martin Prikryl\WinSCP 2\Configuration\Interface\Updates" /v Period /t REG_DWORD /d 0 /f
