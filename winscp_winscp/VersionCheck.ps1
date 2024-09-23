@@ -27,7 +27,7 @@ foreach ($line in $lines) {
 }
 
 # Get version number.
-$LatestWebVersion = (($InstallerName -replace "winscp-") -replace ".msi"
+$LatestWebVersion = ($InstallerName -replace "winscp-") -replace ".msi"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
