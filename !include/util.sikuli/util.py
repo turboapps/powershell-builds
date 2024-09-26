@@ -150,6 +150,7 @@ def get_adobeapp_version1(adobeApp):
         type(Key.ESC)
     wait(10)
     click("packages-link.png")
+    wait(5)
     #Build package and download Creative Cloud Desktop
     wait("create-a-package-button.png",10)
     click("create-a-package-button.png")
