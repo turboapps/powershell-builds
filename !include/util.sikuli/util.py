@@ -41,11 +41,11 @@ def adobe_adminconsole_login(username, password, optional = False):
         type(username)
         wait(3)
         type(Key.ENTER)
-        if exists("adobe_login_pass_dark.png",20):
+        if exists("adobe_login_pass_dark.png",10):
             click("adobe_login_pass_dark.png")
-        if exists("adobe_login_pass.png",20):
+        if exists("adobe_login_pass.png",10):
             click("adobe_login_pass.png")
-        if exists("adobe-password-new.png",20):
+        if exists("adobe-password-new.png",10):
             click("adobe-password-new.png")
         wait(3)
         type(password)
@@ -109,6 +109,7 @@ def build_ccd():
         type(Key.ESC)
     wait(10)
     click("packages-link.png")
+    wait(5)
     #Build package and download Creative Cloud Desktop
     wait("create-a-package-button.png",10)
     click("create-a-package-button.png")
