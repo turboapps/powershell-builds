@@ -11,7 +11,7 @@ $Dependencies = $xappl.Configuration.SelectSingleNode("Dependencies")
 # Pushes folder isolation level $newiso to all folders from a parent folder if the current isolation is $currentiso
 # This example will set WriteCopy isolation on @PROGRAMFILES@\Adobe and all subfolders that are currently set to Merge
 # Usage example: PushFolderIsolation "Directory[@name='@PROGRAMFILES@']/Directory[@name='Adobe']" "Merge" "WriteCopy"
-Function SetFolderIsolation($parentDir,$currentiso,$newiso) {
+Function PushFolderIsolation($parentDir,$currentiso,$newiso) {
     $parentNode = $Filesystem.SelectNodes("$parentDir")
     ForEach ($childNodes in $parentNode) {
         # Check if the current isolation attribute is set to $currentiso
