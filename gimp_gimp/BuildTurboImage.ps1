@@ -55,7 +55,7 @@ WriteLog "Downloading the latest installer."
 $Page = curl 'https://www.gimp.org/downloads/' -UseBasicParsing
 
 # Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*setup.exe"})[0].href
+$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*gimp*setup*.exe"})[0].href
 
 $DownloadLink = "https:" + $LatestInstaller
 
