@@ -38,7 +38,7 @@ if (-not $elevated) {
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "The Document Foundation"
-$AppDesc = "LibreOffice is a private, free and open source office suite – the successor project to OpenOffice."
+$AppDesc = "LibreOffice is a private, free and open source office suite - the successor project to OpenOffice."
 $AppName = "Libre Office"
 $VendorURL = "https://www.libreoffice.org/"
 
@@ -78,7 +78,7 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 #ADDLOCAL=ALL: This parameter instructs the MSI to install all LibreOffice features.
-#CREATEDESKTOPLINK=0: When set to “0” no desktop icon is created, if you do want a desktop icon on your user’s computer change this to 1. 
+#CREATEDESKTOPLINK=0: When set to "0" no desktop icon is created, if you do want a desktop icon on your userâ€™s computer change this to 1. 
 #REGISTER_ALL_MSO_TYPES=1: Registers all Office types (Writer, Calc, Impress, etc.)
 #REMOVE=gm_o_Onlineupdate: Adding this disables alerts from LibreOffice that your users would otherwise see asking them to update.
 $ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "ADDLOCAL=ALL CREATEDESKTOPLINK=0 REGISTER_ALL_MSO_TYPES=1 ISCHECKFORPRODUCTUPDATES=0 REMOVE=gm_o_Onlineupdate /qb REBOOT=ReallySuppress" $True
