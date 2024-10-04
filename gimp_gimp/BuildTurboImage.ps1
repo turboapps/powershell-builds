@@ -144,18 +144,6 @@ StopTurboCapture
 
 CustomizeTurboXappl "$SupportFiles\PostCaptureModifications.ps1"  # Helper script for XML changes to Xappl"
 
-# Set the plugin exes to precachable="False" - this is a workaround to prevent the plugins from being reloaded on first launch of a new session - APPQ-3781
-# Read the contents of the file
-$fileContent = Get-Content -Path $FinalXapplPath
-
-# Perform the first find and replace operation
-$fileContent = $fileContent -replace 'precacheable="True" source="\.\\Files\\Default\\@PROGRAMFILES@\\GIMP 2\\lib\\gimp\\2.0\\plug-ins', 'precacheable="False" source=".\Files\Default\@PROGRAMFILES@\GIMP 2\lib\gimp\2.0\plug-ins'
-
-# Save the updated content back to the file
-Set-Content -Path $FinalXapplPath -Value $fileContent
-
-WriteLog "Find and replace operations completed successfully."
-
 #########################
 ## Build Turbo Image   ##
 #########################
