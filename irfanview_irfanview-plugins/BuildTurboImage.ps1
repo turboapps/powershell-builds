@@ -121,7 +121,6 @@ StopTurboCapture
 
 CustomizeTurboXappl "$SupportFiles\PostCaptureModifications.ps1"  # Helper script for XML changes to Xappl"
 
-WriteLog "Find and replace operations completed successfully."
 
 #########################
 ## Build Turbo Image   ##

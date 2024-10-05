@@ -100,6 +100,9 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
+# Remove Uninstall shortcut from the start menu
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Uninstall IrfanView.lnk" -Recurse -Force
+
 # Capture first launch to isolate user appdata folers
 RunProcess "C:\Program Files\IrfanView\i_view64.exe" $Null $False
 Start-Sleep -Seconds 60
@@ -120,7 +123,6 @@ StopTurboCapture
 
 CustomizeTurboXappl "$SupportFiles\PostCaptureModifications.ps1"  # Helper script for XML changes to Xappl"
 
-WriteLog "Find and replace operations completed successfully."
 
 #########################
 ## Build Turbo Image   ##
