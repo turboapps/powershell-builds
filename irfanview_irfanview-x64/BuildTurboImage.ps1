@@ -102,6 +102,12 @@ WriteLog "Performing post-install customizations."
 
 # Remove Uninstall shortcut from the start menu
 Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Uninstall IrfanView.lnk" -Recurse -Force
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\About IrfanView.lnk" -Recurse -Force
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Available Languages.lnk" -Recurse -Force
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Available PlugIns.lnk" -Recurse -Force
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Command line Options.lnk" -Recurse -Force
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\IrfanView Help.lnk" -Recurse -Force
+Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\What's New.lnk" -Recurse -Force
 
 # Capture first launch to isolate user appdata folers
 RunProcess "C:\Program Files\IrfanView\i_view64.exe" $Null $False
