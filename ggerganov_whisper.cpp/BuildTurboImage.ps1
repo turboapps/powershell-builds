@@ -80,7 +80,7 @@ WriteLog "> turbo pull microsoft/vsbuildtools"
 
 # Run the compiler on the source files from a turbo container using vsbuildtools which is required for the compile action.
 # The compile.bat script will compile in the folder C:\whisper.cpp-source\build
-WriteLog "> turbo try microsoft/vsbuildtools,postgresql/postgresql --mount=$DownloadPath --isolate=merge --startup-file=$SupportFiles\compile.bat"
+WriteLog "> turbo try microsoft/vsbuildtools --mount=$DownloadPath --isolate=merge --startup-file=$SupportFiles\compile.bat"
 . turbo try microsoft/vsbuildtools --isolate=merge --startup-file="$SupportFiles\compile.bat"
 
 #########################
@@ -98,6 +98,7 @@ WriteLog "Installing the application."
 # This will capture the files because it is a change.
 echo F|. xcopy /i $SourceDir\build\bin\Release\main.exe C:\whisper.cpp\main.exe
 echo F|. xcopy /i $SourceDir\build\bin\Release\whisper.dll C:\whisper.cpp\whisper.dll
+echo F|. xcopy /i $SourceDir\build\bin\Release\ggml.dll C:\whisper.cpp\ggml.dll
 echo F|. xcopy /i $SupportFiles\ConvertAndRun.ps1 C:\whisper.cpp\ConvertAndRun.ps1
 
 ################################
