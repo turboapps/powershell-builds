@@ -103,6 +103,9 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
+# Add "C:\Program Files\OpenSSL-Win64\bin" to the PATH environment variable
+[System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";C:\Program Files\OpenSSL-Win64\bin", [System.EnvironmentVariableTarget]::Machine)
+
 
 #########################
 ## Stop Turbo Capture  ##
