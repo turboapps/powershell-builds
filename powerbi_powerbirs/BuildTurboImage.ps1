@@ -60,7 +60,7 @@ $Page = EdgeGetContent -url $url -headlessMode "old"
 $lines = $Page -split "`n"
 
 # Use regex to match URLs that end with PBIDesktopSetupRS.exe
-$regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS\.exe)'
+$regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS_x64\.exe)'
 
 # Find matches in the input string
 $matches = [regex]::matches($lines, $regex)
@@ -95,7 +95,7 @@ WriteLog "Performing post-install customizations."
 # Register .net registration-free COM objects 
 &reg.exe import "$SupportFiles\RegCOMObjects.reg" /reg:64
 
-# This prevents a Get the most out of PowerBIù dialog on second launch of PowerBI 
+# This prevents a Get the most out of PowerBI¬ù dialog on second launch of PowerBI 
 &reg.exe ADD "HKCU\SOFTWARE\Microsoft\Microsoft Power BI Desktop" /v ShowLeadGenDialog /t REG_DWORD /d 0 /f
 
 # This prevents virtual spawned msedge.exe processes from staying running when Edge is closed and keeping the container running
