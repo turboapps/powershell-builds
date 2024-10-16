@@ -18,7 +18,7 @@ $Page = EdgeGetContent -url $url -headlessMode "old"
 $lines = $Page -split "`n"
 
 # Use regex to match URLs that end with PBIDesktopSetupRS.exe
-$regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS\.exe)'
+$regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS_x64\.exe)'
 
 # Find matches in the input string
 $matches = [regex]::matches($lines, $regex)
