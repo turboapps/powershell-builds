@@ -84,6 +84,14 @@ Expand-Archive -Path $DownloadPath\InDesign_x64_en_US_WIN_64.zip -DestinationPat
 # Delete the zip files to free up disk space
 Remove-Item -Path "$DownloadPath\*.zip" -Force
 
+WriteLog "Downloading the VCRedist installer."
+# Download the VC++2015-2022 x64 Redistributable
+Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "$DownloadPath\vc_redist.x64.exe"
+
+# Install the VCRedist
+$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x64.exe" "/S" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
 # Install the Create Cloud Desktop app before starting turbo studio capture as it will be a separate image
 $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setup.exe" "--silent" $True
 
@@ -105,6 +113,17 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
+
+# Launch InDesign twice - this will speed up first launch of a new session
+# Look for the indesign.exe
+$exePath = Get-ChildItem -Path "C:\Program Files\Adobe" -Filter "indesign.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+# Launch the target application
+Start-Process -FilePath $exePath
+Start-Sleep -Seconds 60
+taskkill.exe /f /im indesign.exe /t
+Start-Process -FilePath $exePath
+Start-Sleep -Seconds 60
+taskkill.exe /f /im indesign.exe /t
 
 $InstalledVersion = GetVersionFromRegistry "Adobe InDesign"
 

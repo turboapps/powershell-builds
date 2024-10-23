@@ -83,6 +83,10 @@ Expand-Archive -Path $DownloadPath\CreativeCloudDesktop_x64_en_US_WIN_64.zip -De
 # Delete the zip files to free up disk space
 Remove-Item -Path "$DownloadPath\*.zip" -Force
 
+WriteLog "Downloading the VCRedist installer."
+# Donwload the VC++2015-2022 x64 Redistributable
+Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "$DownloadPath\vc_redist.x64.exe"
+
 #########################
 ## Start Turbo Capture ##
 #########################
@@ -93,6 +97,10 @@ StartTurboCapture
 ## Install the application ##
 #############################
 WriteLog "Installing the application."
+
+# Install the VCRedist
+$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x64.exe" "/S" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Install the Create Cloud Desktop app before starting turbo studio capture as it will be a separate image
 $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setup.exe" "--silent" $True
