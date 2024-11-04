@@ -50,7 +50,7 @@ CheckHubVersion
 ##########################################
 ## Download latest version of installer ##
 ##########################################
-WriteLog "Downloading the latest ZIP archive."
+WriteLog "Downloading the latest installer."
 
 $url = "https://filezilla-project.org/download.php?show_all=1"
 $page = EdgeGetContent -url $url -headlessMode "old"
