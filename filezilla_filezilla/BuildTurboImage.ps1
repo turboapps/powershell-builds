@@ -52,8 +52,8 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest ZIP archive."
 
-# We need to use the windows curl.exe for this page as the powershell curl is blocked by the site
-$page = curl.exe --location "https://filezilla-project.org/download.php?show_all=1" --header "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0"
+$url = "https://filezilla-project.org/download.php?show_all=1"
+$page = EdgeGetContent -url $url -headlessMode "old"
 
 # Define a regular expression pattern to match href links
 $pattern = 'href\s*=\s*"(http[^"]*)"'
@@ -64,6 +64,7 @@ $matches = [regex]::Matches($page, $pattern)
 foreach ($match in $matches) {
     $DownloadLink = $match.Groups[1].Value
     if ($DownloadLink -like "*win32-setup*") {
+        $DownloadLink = $DownloadLink -replace "amp;", ""
         break
     }
 }
@@ -76,7 +77,8 @@ $InstallerName = ([System.IO.Path]::GetFileName($DownloadLink)).split("?")[0]
 $Installer = Join-Path $DownloadPath $InstallerName
 
 # Download installer
-wget $DownloadLink -O $Installer
+$userAgent = EdgeGetUserAgentString -headlessMode "old"
+wget -Uri $DownloadLink -Headers @{"User-Agent"=$userAgent} -o $Installer
 
 #########################
 ## Start Turbo Capture ##
