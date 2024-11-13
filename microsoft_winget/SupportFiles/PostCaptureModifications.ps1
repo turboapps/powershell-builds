@@ -17,7 +17,7 @@ $Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILES@']/Directory[@name=
 ####################
 
 # Find the path to the winget.exe
-$exePath = Get-ChildItem -Path "C:\Program Files\WindowsApps" -Filter "winget.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+$exePath = Get-ChildItem -Path "C:\Program Files\WindowsApps" -Filter "winget.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -Last 1 -ExpandProperty FullName
 $parentFolder = Split-Path -Path $exePath -Parent
 $wingetFolder = Split-Path -Path $parentFolder -Leaf
 

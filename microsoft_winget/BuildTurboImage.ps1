@@ -59,8 +59,10 @@ Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "
 $progressPreference = 'silentlyContinue'
 Invoke-WebRequest -Uri https://aka.ms/getwinget -OutFile "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
+Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x86.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x86.14.00.Desktop.appx"
 Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
 Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
+Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x86.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.8.x86.appx"
 
 
 #########################
@@ -86,10 +88,12 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsStore /v DisableStoreApps /t REG_DWORD /d 0 /f
 
 WriteLog "Installing Winget and depdencies"
-Add-AppxPackage -Path "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
-Add-AppxPackage -Path "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
-Add-AppxPackage -Path "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
-Add-AppxPackage -Path "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
+Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.VCLibs.x86.14.00.Desktop.appx"
+Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
+Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
+Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.UI.Xaml.2.8.x86.appx"
+Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 
 
 ################################
@@ -97,8 +101,17 @@ Add-AppxPackage -Path "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
 ################################
 WriteLog "Performing post-install customizations."
 
+# Take ownership of C:\Program Files\WindowsApps
+takeown /f "C:\Program Files\WindowsApps" /r /d y
+
+# Grant Administrators Full control to C:\Program Files\WindowsApps
+icacls "C:\Program Files\WindowsApps" /grant administrators:F /t /c /q
+
+# Get the path to the latest winget.exe
+$exePath = Get-ChildItem -Path "C:\Program Files\WindowsApps" -Filter "winget.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -Last 1 -ExpandProperty FullName
+
 # Get the version
-$winget_ver = winget -v
+$winget_ver = . $exePath -v
 $InstalledVersion = $winget_ver -replace '^v', ''
 
 #########################
