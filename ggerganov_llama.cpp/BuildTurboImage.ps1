@@ -95,9 +95,11 @@ foreach ($Build in $Builds) {
     echo F|. xcopy /i $BuildFiles\$Build\llama-cli.exe $FinalBuildPath\llama-cli.exe
     echo F|. xcopy /i $BuildFiles\$Build\llama-server.exe $FinalBuildPath\llama-server.exe
     echo F|. xcopy /i $BuildFiles\$Build\llama-llava-cli.exe $FinalBuildPath\llama-llava-cli.exe
-    echo F|. xcopy /i $BuildFiles\$Build\ggml.dll $FinalBuildPath\ggml.dll
-    echo F|. xcopy /i $BuildFiles\$Build\llama.dll $FinalBuildPath\llama.dll
-    echo F|. xcopy /i $BuildFiles\$Build\llava_shared.dll $FinalBuildPath\llava_shared.dll
+
+    # Copy all .dll files from the source folder to the destination.
+    Get-ChildItem -Path "$BuildFiles\$Build" -Filter "*.dll" | ForEach-Object {
+        echo F|. xcopy /i $_.FullName "$FinalBuildPath\$($_.Name)"
+    }
 }
 
 ################################
