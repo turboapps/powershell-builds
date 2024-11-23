@@ -27,7 +27,10 @@ $Filesystem.SelectSingleNode("Directory[@name='@APPDATALOCAL@']/Directory[@name=
 #Remove folders @PROGRAMFILESX86@\Microsoft\EdgeUpdate and @PROGRAMFILESX86@\Microsoft\EdgeWebView
 $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeWebView']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeCore']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
+#Remove reg key @HKCU@\SOFTWARE\Microsoft\EdgeUpdate
+$Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 #Remove reg key @HKLM@\SOFTWARE\WOW6432node\Microsoft\EdgeUpdate
 $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 #Remove reg key @HKLM@\SOFTWARE\WOW6432node\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft EdgeWebView
