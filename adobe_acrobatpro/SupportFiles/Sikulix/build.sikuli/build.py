@@ -41,4 +41,5 @@ setAutoWaitTimeout(600)
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\AcrobatPro_x64_en_US_WIN_64.zip")
 while not os.path.exists(adobefile_path):
     wait(10)
+wait(30) # wait 30 seconds before closing Edge
 closeApp("Edge")
