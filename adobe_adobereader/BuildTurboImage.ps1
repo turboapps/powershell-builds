@@ -52,27 +52,35 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-## Determine the latest version of installer
-## Download SCUP cab.
-Wget https://armmf.adobe.com/arm-manifests/win/SCUP/ReaderCatalog-DC.cab -OutFile "$DownloadPath\ReaderCatalog.cab"
-## Expand cab to XML.
-Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
-
-## Parse XML for latest version
-[XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
-$Versions = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.ApplicabilityRules.MetaData.MsiPatchMetaData.MsiPatch.TargetProduct.UpdatedVersion | Sort-Object -Descending
-$Version = $Versions[0] -Replace ('\.','')
+## Determine the latest version of the DC BASE installer
+# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
+$url = "https://get.adobe.com/reader/"
+$Page = EdgeGetContent -url $url -headlessMode "old"
+$version = $Page -match 'Version \b\d+\.\d+\.\d+\b'
+$AdobeBaseVersion = $matches[0] -replace("Version ","")
+$AdobeBaseVersion = $AdobeBaseVersion -replace("\.","")
 
 ## Create download link for Reader
-$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $Version + "/AcroRdrDC" + $Version + "_en_US.exe"
-
-# NOTE: Adobe has been slow to update the public download link for the 32bit installer after a new release comes out.
-# This may cause the download to fail for a few days after a new version is released.
+$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $AdobeBaseVersion + "/AcroRdrDC" + $AdobeBaseVersion + "_en_US.exe"
+WriteLog "Downloading installer from: $DownloadLink" 
 
 # Name of the downloaded installer file
 $InstallerName = "AcroRdrDC.exe"
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+## Download the latest MSP update
+Wget https://armmf.adobe.com/arm-manifests/win/SCUP/ReaderCatalog-DC.cab -OutFile "$DownloadPath\ReaderCatalog.cab"
+## Expand cab to XML.
+Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
+
+## Parse XML for latest patch download link
+[XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
+$Patches = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.OriginFile.OriginUri | Sort-Object -Descending
+$LatestPatch = $Patches[1]  # Get the second patch as the first one is for MUI
+
+# Download the patch
+Wget $LatestPatch -OutFile "$DownloadPath\Acrobat.msp"
 
 #########################
 ## Start Turbo Capture ##
@@ -86,6 +94,10 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 $ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/sAll /rs /l /msi /qb-! /norestart ALLUSERS=1 EULA_ACCEPT=YES SUPPRESS_APP_LAUNCH=YES DISABLE_NOTIFICATIONS=1" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
+# Install the latest patch
+$ProcessExitCode = RunProcess "msiexec.exe" "/update $DownloadPath\Acrobat.msp ALLUSERS=1 /qn" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
