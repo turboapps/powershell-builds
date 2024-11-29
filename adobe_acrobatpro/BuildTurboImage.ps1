@@ -84,6 +84,20 @@ Expand-Archive -Path $DownloadPath\AcrobatPro_x64_en_US_WIN_64.zip -DestinationP
 # Delete the zip files to free up disk space
 Remove-Item -Path "$DownloadPath\*.zip" -Force
 
+
+## Download the latest MSP update
+Wget https://armmf.adobe.com/arm-manifests/win/SCUP/AcrobatCatalog-DC.cab -OutFile "$DownloadPath\AcrobatCatalog.cab"
+## Expand cab to XML.
+Expand "$DownloadPath\AcrobatCatalog.cab" -F:* "$DownloadPath\AcrobatCatalog.xml"
+
+## Parse XML for latest patch download link
+[XML]$AcrobatCatalog = Get-Content("$DownloadPath\AcrobatCatalog.xml")
+$Patches = $AcrobatCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.OriginFile.OriginUri | Sort-Object -Descending
+$LatestPatch = $Patches[0]
+
+# Download the patch
+Wget $LatestPatch -OutFile "$DownloadPath\AcroPro.msp"
+
 # Install the Create Cloud Desktop app before starting turbo studio capture as it will be a separate image
 $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setup.exe" "--silent" $True
 
@@ -99,6 +113,10 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 $ProcessExitCode = RunProcess "$DownloadPath\AcrobatPro_x64\Build\Setup.exe" "--silent" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
+# Install the latest patch
+$ProcessExitCode = RunProcess "msiexec.exe" "/update $DownloadPath\AcroPro.msp ALLUSERS=1 /qn" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
