@@ -25,6 +25,7 @@ foreach ($link in $latest)
 }
 
 $LatestWebVersion = $matches.tag
+$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
 
