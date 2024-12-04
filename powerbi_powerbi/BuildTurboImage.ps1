@@ -80,7 +80,9 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Register .net registration-free COM objects 
-&reg.exe import "$SupportFiles\RegCOMObjects.reg" /reg:64
+& "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe" "C:\Program Files\Microsoft Power BI Desktop\bin\Microsoft.AnalysisServices.AzureClient.dll"
+& "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe" "C:\Program Files\Microsoft Power BI Desktop\bin\Microsoft.AnalysisServices.DatasetSerializer.dll"
+& "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe" "C:\Program Files\Microsoft Power BI Desktop\bin\Microsoft.AnalysisServices.MInterop.dll"
 
 # This prevents a Get the most out of PowerBIù dialog on second launch of PowerBI 
 &reg.exe ADD "HKCU\SOFTWARE\Microsoft\Microsoft Power BI Desktop" /v ShowLeadGenDialog /t REG_DWORD /d 0 /f
