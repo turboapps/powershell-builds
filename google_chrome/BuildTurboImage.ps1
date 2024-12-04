@@ -54,7 +54,7 @@ WriteLog "Downloading the latest MSI installer."
 
 # Get installer link for latest version
 ## Simplified link is https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi. However, our link disables browser usage stats and installs for all users.
-$DownloadLink = "https://dl.google.com/tag/s/appguid={00000000-0000-0000-0000-000000000000}&iid={00000000-0000-0000-0000-000000000000}&lang=$language&browser=3&usagestats=0&appname=Google%20Chrome&installdataindex=defaultbrowser&needsadmin=prefers/edgedl/chrome/install/GoogleChromeStandaloneEnterprise.msi"
+$DownloadLink = "https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BFBA739C7-E41A-6744-A636-DECE043188B5%7D%26lang%3Den%26browser%3D5%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dtrue%26ap%3Dstable-arch_x86-statsdef_0%26brand%3DGCOO/dl/chrome/install/googlechromestandaloneenterprise.msi"
 
 # Name of the downloaded installer file
 $InstallerName = "googlechromestandaloneenterprise.msi"
