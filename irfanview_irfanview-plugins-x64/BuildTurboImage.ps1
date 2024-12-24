@@ -67,8 +67,12 @@ $InstallerName = $matches[1]
 # $Page -match "(https://.*iview.*_plugins_x64_setup.exe)"
 # $DownloadLink = $matches[1]
 $DownloadLink = "https://files02.tchspt.com/down/$InstallerName"
+$Installer = Join-Path "$Env:USERPROFILE\Downloads" $InstallerName
 
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+# Download installer - we have to use the headless extractor with chrome because the download page blocks wget and curl
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir "$Env:USERPROFILE\Downloads" -Url $DownloadLink
 
 $InstalledVersion = $LatestWebVersion
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
