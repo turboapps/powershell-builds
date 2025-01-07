@@ -1,7 +1,7 @@
 # This script will need ffmpeg to be accessible and in system PATH env var to function correctly
 
 # Define some paths
-$whisperCmd = "C:\whisper.cpp\main.exe"
+$whisperCmd = "C:\whisper.cpp\whisper-cli.exe"
 $convertedFilePath = "C:\whisper.cpp\tempfile.wav"
 
 # Look through all the command line args to whisper.cpp  
