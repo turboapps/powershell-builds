@@ -63,6 +63,7 @@ $InstallerName = $DownloadLink.Split("/")[-1]
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 $InstalledVersion = Get-VersionFromExe $Installer
+$InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
 
 #########################
 ## Start Turbo Capture ##
