@@ -60,12 +60,13 @@ Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $DownloadPath
 
 WriteLog "Pulling latest vsbuildtools and postgresql images from Hub."
 WriteLog "> turbo pull microsoft/vsbuildtools,postgresql/postgresql"
-. turbo pull microsoft/vsbuildtools,postgresql/postgresql
+. turbo pull microsoft/vsbuildtools,postgresql/postgresql:16
 
 # Run the compiler on the source files from a turbo container using vsbuildtools and postgresql which are required for the compile action.
+# We need to use postgresql 16 as pgvector is currently not supported with postgresql 17 as per https://github.com/pgvector/pgvector?tab=readme-ov-file
 # The compile.bat script will create the pgvector extension files in the mounted native folder C:\pgvector-files\pgsql
 WriteLog "> turbo try microsoft/vsbuildtools,postgresql/postgresql --mount=$DownloadPath --isolate=merge --startup-file=$SupportFiles\compile.bat"
-. turbo try microsoft/vsbuildtools,postgresql/postgresql --mount=$DownloadPath --isolate=merge --startup-file="$SupportFiles\compile.bat"
+. turbo try microsoft/vsbuildtools,postgresql/postgresql:16 --mount=$DownloadPath --isolate=merge --startup-file="$SupportFiles\compile.bat"
 
 # Get the version from the GitHub vector.control file
 $Page = curl 'https://github.com/pgvector/pgvector/raw/master/vector.control' -UseBasicParsing
