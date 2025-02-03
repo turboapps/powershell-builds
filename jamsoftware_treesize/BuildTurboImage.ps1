@@ -82,11 +82,21 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-# Copy a DEMO license to C:\ProgramData\JAM Software\Licenses
-Copy-Item -Path "$SupportFiles\Licenses" -Destination "$env:Programdata\JAM Software\Licenses\" -Recurse -Force
+# Launch TreeSize to generate a demo license which we will delete after
+$ProcessExitCode = RunProcess "C:\Program Files\JAM Software\TreeSize\TreeSize.exe" "" $False
+Start-Sleep -Seconds 5
+$wshell = New-Object -ComObject wscript.shell;
+$wshell.AppActivate('Change License')
+Start-Sleep -Seconds 1
+$wshell.SendKeys('{ENTER}')
+Start-Sleep -Seconds 5
+$wshell.SendKeys('{ENTER}')
+Start-Sleep -Seconds 5
+$wshell.SendKeys('%{F4}')
 
-# Launch TreeSize to generate the GlobalOptions.xml file
-$ProcessExitCode = RunProcess "C:\Program Files\JAM Software\TreeSize\TreeSize.exe" "/NOGUI /INSTALL /SAVESETTINGS /REGISTERPACKAGE /Language ""en""" $True
+while (-not (Test-Path "$env:APPDATA\JAM Software\TreeSize\GlobalOptions.xml")) {
+    Start-Sleep -Seconds 5  # Waits for 5 seconds before checking again
+}
 
 # Disable auto updates, data collection, first run prompts
 $xmlFilePath = "$env:APPDATA\JAM Software\TreeSize\GlobalOptions.xml"
@@ -101,6 +111,7 @@ $xmlContent.GlobalOptions.SendAnonymousUserStatistics = "False"
 $xmlContent.Save($xmlFilePath)
 
 Remove-Item -Path "$env:Programdata\JAM Software\Licenses\*" -Force
+Remove-Item -Path "$env:Programdata\Licenses\*" -Force
 
 
 #########################
