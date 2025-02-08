@@ -65,6 +65,12 @@ $DownloadLink = "https://download.documentfoundation.org/libreoffice/stable/$Ins
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
+WriteLog "Downloading the VCRedist installers."
+# Donwload the VC++2015-2022 x64 Redistributable
+Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "$DownloadPath\vc_redist.x64.exe"
+# Donwload the VC++2015-2022 x86 Redistributable
+Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x86.exe -OutFile "$DownloadPath\vc_redist.x86.exe"
+
 
 #########################
 ## Start Turbo Capture ##
@@ -76,6 +82,13 @@ StartTurboCapture
 ## Install the application ##
 #############################
 WriteLog "Installing the application."
+
+# Install the VCRedist x64
+$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x64.exe" "/S" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+# Install the VCRedist x86
+$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x86.exe" "/S" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 #ADDLOCAL=ALL: This parameter instructs the MSI to install all LibreOffice features.
 #CREATEDESKTOPLINK=0: When set to "0" no desktop icon is created, if you do want a desktop icon on your user’s computer change this to 1. 
