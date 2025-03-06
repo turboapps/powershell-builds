@@ -87,7 +87,6 @@ Remove-Item -Path "$DownloadPath\*.zip" -Force
 # Install the Create Cloud Desktop app before starting turbo studio capture as it will be a separate image
 $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setup.exe" "--silent" $True
 
-&reg add "HKEY_CURRENT_USER\SOFTWARE\Code Systems\Turbo Studio 24" /v "SnapshotLogs" /t REG_SZ /d "True" /f
 
 #########################
 ## Start Turbo Capture ##
