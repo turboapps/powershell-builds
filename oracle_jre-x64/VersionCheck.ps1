@@ -10,23 +10,17 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
+# Use the headless-extractor to get the download link
 $url = "https://www.java.com/en/download/manual.jsp"
-$Page = EdgeGetContent -url $url -headlessMode "new"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
-# Split the content into lines
-$lines = $Page -split "`n"
+$links = Get-Content -Path "$outputdir\links.txt"
 
-# Define a regular expression pattern
-$pattern = 'Download Java software for Windows \(64-bit\)'
-
-# Filter and output lines containing matching links
-foreach ($line in $lines) {
-    if ($line -match $pattern) {
-        $DownloadLink = [regex]::Match($line, 'href="([^"]+)"').Groups[1].Value
-        
-        break
-    }
-}
+$javaLinks = $links | Where-Object { $_ -match "https://javadl\.oracle\.com/webapps/download/AutoDL\?BundleId=" }
+$DownloadLink = $javaLinks[-1]
 
 $InstallerName = "jre-windows-x64.exe"
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
