@@ -52,23 +52,25 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-# Get main download page for application.
-# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
-$Page = EdgeGetContent -url 'https://support.8x8.com/business-phone/voice/work-desktop/download-8x8-work-for-desktop' -headlessMode "old"
+# Use the headless-extractor to get the download link
+$url = "https://support.8x8.com/business-phone/voice/work-desktop/download-8x8-work-for-desktop"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
-# Split the content into lines
-$lines = $Page -split "`n"
+$links = Get-Content -Path "$outputdir\links.txt"
 
 # Define a regular expression pattern
-$pattern = '<a\s+href="(.*?work-64-msi.*?)".*?>'
+$pattern = 'work-64-msi'
 
 # Filter and output lines containing matching links
-foreach ($line in $lines) {
+foreach ($line in $links) {
     if ($line -match $pattern) {
-        $DownloadLink = $matches[1]  # Use the first link that matches *work-64-msi*
-        break
+        $DownloadLink = $line  # Directly use the matching URL
     }
 }
+
 $InstallerName = $DownloadLink.split("/")[-1]
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
