@@ -52,25 +52,25 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
+# Use the headless-extractor to get the download link
 $url = "https://www.dymo.com/support?cfid=user-guide"
-$Page = EdgeGetContent -url $url -headlessMode "old"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
-# Split the content into lines
-$lines = $Page -split "`n"
-#$lines | Out-File -FilePath "$env:TEMP\dymopage.txt" -Append
+$links = Get-Content -Path "$outputdir\links.txt"
 
 # Define a regular expression pattern
-$pattern = 'href="([^"]+\.exe)"'
+$pattern = '.*/dymo/Software/Win/.*'
 
 # Filter and output lines containing matching links
-foreach ($line in $lines) {
+foreach ($line in $links) {
     if ($line -match $pattern) {
-        $DownloadLink = $matches[1]  # Use the first link that matches *.exe*
-        $DownloadLink
-        break
+        $DownloadLink = $line  # Directly use the matching URL
     }
 }
+
 $InstallerName = $DownloadLink.split("/")[-1]
 $Installer = Join-Path -Path $DownloadPath -ChildPath $InstallerName
 . curl.exe $DownloadLink -o $Installer
