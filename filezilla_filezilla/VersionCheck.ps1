@@ -13,23 +13,28 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # Use this section to get the latest version 
 # either from the vendor website or the downloaded installer file
 
+# Use the headless-extractor to get the download link
 $url = "https://filezilla-project.org/download.php?show_all=1"
-$page = EdgeGetContent -url $url -headlessMode "old"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
-# Define a regular expression pattern to match href links
-$pattern = 'href\s*=\s*"(http[^"]*)"'
-# Find all matches in the content
-$matches = [regex]::Matches($page, $pattern)
+$links = Get-Content -Path "$outputdir\links.txt"
 
-# Extract the first link that contains "win32-setup" and display it
-foreach ($match in $matches) {
-    $DownloadLink = $match.Groups[1].Value
-    if ($DownloadLink -like "*win32-setup*") {
+# Define a regular expression pattern
+$pattern = 'win32-setup.exe'
+
+# Filter and output lines containing matching links
+foreach ($line in $links) {
+    if ($line -match $pattern) {
+        $DownloadLink = $line  # Directly use the matching URL
         $DownloadLink = $DownloadLink -replace "amp;", ""
         break
     }
 }
 
+$DownloadLink
 
 # Get the latest version tag.
 $LatestWebVersion = $DownloadLink.split("_")[1]
