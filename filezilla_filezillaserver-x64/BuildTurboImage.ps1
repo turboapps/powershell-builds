@@ -52,23 +52,28 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest ZIP archive."
 
-# We need to use the windows curl.exe for this page as the powershell curl is blocked by the site
+# Use the headless-extractor to get the download link
 $url = "https://filezilla-project.org/download.php?type=server"
-$page = EdgeGetContent -url $url -headlessMode "old"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
-# Define a regular expression pattern to match href links
-$pattern = 'href\s*=\s*"(http[^"]*)"'
-# Find all matches in the content
-$matches = [regex]::Matches($page, $pattern)
+$links = Get-Content -Path "$outputdir\links.txt"
 
-# Extract the first link that contains "win64-setup" and display it
-foreach ($match in $matches) {
-    $DownloadLink = $match.Groups[1].Value
-    if ($DownloadLink -like "*win64-setup*") {
+# Define a regular expression pattern
+$pattern = 'win64-setup.exe'
+
+# Filter and output lines containing matching links
+foreach ($line in $links) {
+    if ($line -match $pattern) {
+        $DownloadLink = $line  # Directly use the matching URL
         $DownloadLink = $DownloadLink -replace "amp;", ""
         break
     }
 }
+
+$DownloadLink
 
 # Get the latest version tag.
 $InstalledVersion = $DownloadLink.split("_")[2]
@@ -78,7 +83,7 @@ $InstallerName = ([System.IO.Path]::GetFileName($DownloadLink)).split("?")[0]
 $Installer = Join-Path $DownloadPath $InstallerName
 
 # Download installer
-$userAgent = EdgeGetUserAgentString -headlessMode "old"
+$userAgent = EdgeGetUserAgentString -headlessMode "new"
 wget -Uri $DownloadLink -Headers @{"User-Agent"=$userAgent} -o $Installer
 
 #########################
