@@ -132,6 +132,20 @@ WriteLog "Performing post-install customizations."
 
 Start-Sleep -Seconds 90
 
+# Send the ESC Key to close the GIMP Welcome window - this will create the gimprc file in @APPDATA@
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.SendKeys]::SendWait("{ESC}")
+
+Start-Sleep -Seconds 5
+
+# End the GIMP application - required to create the user files in @APPDATA@
+$processes = Get-Process -Name "gimp*" -ErrorAction SilentlyContinue
+foreach ($process in $processes) {
+    $process.CloseMainWindow()
+}
+
+Start-Sleep -Seconds 20
+
 #########################
 ## Stop Turbo Capture  ##
 #########################
