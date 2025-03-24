@@ -21,13 +21,11 @@ $Platform = 'windows'
 $Type = 'jre'
 $ReleaseInfo = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/latest/$latestMajorVersion/hotspot?architecture=x64&image_type=$Type&os=$Platform&vendor=eclipse" -UseBasicParsing | ConvertFrom-Json
 
-# Download the zip
-$InstallerName = $ReleaseInfo.binary.package.name
-$DownloadLink = "https://api.adoptium.net/v3/binary/latest/$latestMajorVersion/ga/$Platform/x64/$Type/hotspot/normal/eclipse"
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-$LatestWebVersion = $InstallerName.Split("_")[-2]
-$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
+# Get the version from the Release json
+$majorVer = $ReleaseInfo.version.major
+$minorVer = $ReleaseInfo.version.minor
+$buildVer = $ReleaseInfo.version.build
+$LatestWebVersion = "$majorVer.$minorVer.$buildVer"
 
 WriteLog "WebVersion=$LatestWebVersion"
 
