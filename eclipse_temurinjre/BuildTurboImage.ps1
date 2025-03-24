@@ -68,7 +68,11 @@ $InstallerName = $ReleaseInfo.binary.package.name
 $DownloadLink = "https://api.adoptium.net/v3/binary/latest/$latestMajorVersion/ga/$Platform/x64/$Type/hotspot/normal/eclipse"
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-$InstalledVersion = $InstallerName.Split("_")[-2]
+# Get the version from the Release json
+$majorVer = $ReleaseInfo.version.major
+$minorVer = $ReleaseInfo.version.minor
+$buildVer = $ReleaseInfo.version.build
+$InstalledVersion = "$majorVer.$minorVer.$buildVer"
 
 #########################
 ## Start Turbo Capture ##
