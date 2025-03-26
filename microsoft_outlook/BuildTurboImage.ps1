@@ -51,10 +51,10 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# Download the latest outlook bootstrapper
-$DownloadLink = "https://go.microsoft.com/fwlink/?linkid=2207851"
-$InstallerName = "setup.exe"
-$Bootstrapper = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+# Download the latest msix installer
+$DownloadLink = "https://go.microsoft.com/fwlink/?linkid=2195164"
+$InstallerName = "Microsoft.OutlookForWindows_x64.msix"
+$MSIX = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 #########################
 ## Start Turbo Capture ##
@@ -72,8 +72,9 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 # Install Outlook
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "--provision true --quiet --start-*" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+WriteLog "Add-AppxPackage -Path $MSIX -ForceApplicationShutdown"
+Add-AppxPackage -Path $MSIX -ForceApplicationShutdown
+
 
 # Get the Outlook installdir
 $OutlookInstallDir = (Get-AppxPackage | Where-Object {$_.Name -like "Microsoft.OutlookForWindows*"}).InstallLocation
