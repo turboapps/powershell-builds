@@ -13,12 +13,17 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # Use this section to get the latest version 
 # either from the vendor website or the downloaded installer file
 
-# Download the latest outlook bootstrapper
-$DownloadLink = "https://go.microsoft.com/fwlink/?linkid=2207851"
-$InstallerName = "setup.exe"
-$Bootstrapper = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+# Download the latest msix installer
+$DownloadLink = "https://go.microsoft.com/fwlink/?linkid=2195164"
+$InstallerName = "Microsoft.OutlookForWindows_x64.msix"
+$MSIX = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-$LatestWebVersion = Get-VersionFromExe $Bootstrapper
+# use 7zip to extract the msix to get the version from the olk.exe
+. turbo try 7-zip/7-zip --isolate=merge --startup-file=@PROGRAMFILESX86@\7-Zip\7z.exe -- x $MSIX -o"$DownloadPath\Microsoft.OutlookForWindows_x64"
+
+$olkExe = "$DownloadPath\Microsoft.OutlookForWindows_x64\olk.exe"
+
+$LatestWebVersion = Get-VersionFromExe $olkExe
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
