@@ -52,15 +52,52 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-## Determine the latest version of the DC BASE installer
-# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
-$url = "https://get.adobe.com/reader/"
-$Page = EdgeGetContent -url $url -headlessMode "old"
-$version = $Page -match 'Version \b\d+\.\d+\.\d+\b'
-$AdobeBaseVersion = $matches[0] -replace("Version ","")
-$AdobeBaseVersion = $AdobeBaseVersion -replace("\.","")
+# 32bit Adobe Reader version is typically one release back from the 64bit
+# We need to get the second release version from the Release Notes page
+$DownloadPath = "C:\Users\admin\Desktop\Package\Installer"
+# Use the headless-extractor to get the HTML from the Releases page
+$url = "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+
+# Define the path to the HTML file
+$DOMFilePath = "$outputdir\dom.html"
+
+# Read the HTML file content
+$HtmlContent = Get-Content -Path $DOMFilePath -Raw
+
+# Extract hyperlinks and text using regex
+$Matches = [regex]::Matches($HtmlContent, '<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', 'IgnoreCase')
+
+# Filter links containing "dccontinuous"
+$FilteredLinks = @()
+foreach ($Match in $Matches) {
+    $Href = $Match.Groups[1].Value
+    $Text = $Match.Groups[2].Value -replace '\s+', ' '  # Clean up whitespace
+
+    if ($Href -match "#dccontinuous") {
+        $FilteredLinks += [PSCustomObject]@{
+            URL  = $Href
+            Text = $Text
+        }
+    }
+}
+
+# Get the text from the second matching link
+if ($FilteredLinks.Count -ge 2) {
+    $SecondLinkText = $FilteredLinks[1].Text
+    $SecondLinkText -match '\d+(\.\d+)+'
+    $LatestVersion = $matches[0]
+    WriteLog "Extracted Version: $LatestVersion"
+} else {
+    WriteLog "Less than two matching links found."
+}
+
 
 ## Create download link for Reader
+$AdobeBaseVersion = $LatestVersion -replace("\.","")
 $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $AdobeBaseVersion + "/AcroRdrDC" + $AdobeBaseVersion + "_en_US.exe"
 WriteLog "Downloading installer from: $DownloadLink" 
 
@@ -68,19 +105,6 @@ WriteLog "Downloading installer from: $DownloadLink"
 $InstallerName = "AcroRdrDC.exe"
 
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-## Download the latest MSP update
-Wget https://armmf.adobe.com/arm-manifests/win/SCUP/ReaderCatalog-DC.cab -OutFile "$DownloadPath\ReaderCatalog.cab"
-## Expand cab to XML.
-Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
-
-## Parse XML for latest patch download link
-[XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
-$Patches = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.OriginFile.OriginUri | Sort-Object -Descending
-$LatestPatch = $Patches[1]  # Get the second patch as the first one is for MUI
-
-# Download the patch
-Wget $LatestPatch -OutFile "$DownloadPath\Acrobat.msp"
 
 #########################
 ## Start Turbo Capture ##
@@ -96,9 +120,6 @@ WriteLog "Installing the application."
 $ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/sAll /rs /l /msi /qb-! /norestart ALLUSERS=1 EULA_ACCEPT=YES SUPPRESS_APP_LAUNCH=YES DISABLE_NOTIFICATIONS=1" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
-# Install the latest patch
-$ProcessExitCode = RunProcess "msiexec.exe" "/update $DownloadPath\Acrobat.msp ALLUSERS=1 /qn" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
 ## Customize the application  ##
