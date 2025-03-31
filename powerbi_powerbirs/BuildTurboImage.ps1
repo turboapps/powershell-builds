@@ -52,12 +52,20 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
+
+# Use the headless-extractor to get the download link
 $url = "https://aka.ms/pbireportserver"
-$Page = EdgeGetContent -url $url -headlessMode "old"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+
+# Define the path to the HTML file
+$DOMFilePath = "$outputdir\dom.html"
+$HtmlContent = Get-Content -Path $DOMFilePath -Raw
 
 # Split the content into lines
-$lines = $Page -split "`n"
+$lines = $HtmlContent -split "`n"
 
 # Use regex to match URLs that end with PBIDesktopSetupRS.exe
 $regex = '(https://download.microsoft.com/download/[a-zA-Z0-9/-]+/PBIDesktopSetupRS_x64\.exe)'
