@@ -52,12 +52,19 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest ZIP archive."
 
-# Get main download page for application.
-$Page = EdgeGetContent -url 'https://github.com/NationalSecurityAgency/ghidra/releases/latest' -headlessMode "old"
+# Use the headless-extractor to get the download link
+$url = "https://github.com/NationalSecurityAgency/ghidra/releases/latest"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
+# Define the path to the HTML file
+$DOMFilePath = "$outputdir\dom.html"
+$HtmlContent = Get-Content -Path $DOMFilePath -Raw
 
-# Split the page content into lines
-$PageLines = $Page -split "`n"
+# Split the content into lines
+$PageLines = $HtmlContent -split "`n"
 
 # Define a regular expression pattern to match installer filename
 $InstallerNamePattern = '<a\s+href="(.*?ghidra.*?zip)".*?>'
@@ -66,6 +73,7 @@ $InstallerNamePattern = '<a\s+href="(.*?ghidra.*?zip)".*?>'
 foreach ($PageLine in $PageLines) {
     if ($PageLine -match $InstallerNamePattern) {
         $DownloadLink = "https://github.com" + $matches[1]  # Use the first link that matches the $InstallerNamePattern
+        $DownloadLink
         break
     }
 }
