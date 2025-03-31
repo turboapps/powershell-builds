@@ -10,12 +10,20 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Get main download page for application.
-# The content of this page is built by javascript so we need to use Edge in headless mode to get the content
-$Page = EdgeGetContent -url 'https://github.com/NationalSecurityAgency/ghidra/releases/latest' -headlessMode "old"
+
+# Use the headless-extractor to get the download link
+$url = "https://github.com/NationalSecurityAgency/ghidra/releases/latest"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+
+# Define the path to the HTML file
+$DOMFilePath = "$outputdir\dom.html"
+$HtmlContent = Get-Content -Path $DOMFilePath -Raw
 
 # Split the content into lines
-$PageLines = $Page -split "`n"
+$PageLines = $HtmlContent -split "`n"
 
 # Define a regular expression pattern
 $InstallerNamePattern = '<a\s+href="(.*?ghidra.*?zip)".*?>'
