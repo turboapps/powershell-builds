@@ -52,10 +52,19 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-# Get main download page for application.
-$Page = EdgeGetContent -url 'https://winscp.net/eng/downloads.php' -headlessMode "old"
+# Use the headless-extractor to get the download link
+$url = "https://winscp.net/eng/downloads.php"
+$outputdir = "$DownloadPath\links"
+turbo config --domain=turbo.net
+turbo pull turbo/headless-extractor
+turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+
+# Define the path to the HTML file
+$DOMFilePath = "$outputdir\dom.html"
+$HtmlContent = Get-Content -Path $DOMFilePath -Raw
+
 # Split the content into lines
-$lines = $Page -split "`n"
+$lines = $HtmlContent -split "`n"
 
 # Define a regular expression pattern
 $pattern = 'WinSCP-[\d\.]+\.msi'
@@ -63,29 +72,14 @@ $pattern = 'WinSCP-[\d\.]+\.msi'
 # Filter and output lines containing matching links
 foreach ($line in $lines) {
     if ($line -match $pattern) {
-        $InstallerName = $matches[0]  # Use the first link that matches *.exe*
+        $InstallerName = $matches[0]  # Use the first link that matches
         break
     }
 }
 $DownloadLink =  "https://winscp.net/download/$InstallerName/download"
 
-# Get download link from the 
-$Page = EdgeGetContent -url $DownloadLink -headlessMode "old"
-# Split the content into lines
-$lines = $Page -split "`n"
-
-# Define a regular expression pattern
-$pattern = "'(https?://[^']*WinSCP[^']*\.msi[^']*)'"
-
-# Filter and output lines containing matching links
-foreach ($line in $lines) {
-    if ($line -match $pattern) {
-        $InstallerLink = $matches[0].Trim("'")  # Use the first link that matches *.exe*
-        break
-    }
-}
-
-$Installer = wget $InstallerLink -O $DownloadPath\$InstallerName
+pushd $DownloadPath
+$Installer = . C:\Windows\System32\curl.exe -L -o $InstallerName $DownloadLink
 
 #########################
 ## Start Turbo Capture ##
