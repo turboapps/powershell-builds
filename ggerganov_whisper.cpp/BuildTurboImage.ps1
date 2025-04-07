@@ -74,14 +74,14 @@ Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\"
 $SourceDir = "C:\whisper.cpp-source"
 Rename-Item -Path "C:\whisper.cpp-$InstalledVersion" -NewName $SourceDir
 
-WriteLog "Pulling latest vsbuildtools image from Hub."
-WriteLog "> turbo pull microsoft/vsbuildtools"
-. turbo pull microsoft/vsbuildtools
+WriteLog "Pulling latest vsbuildtools and git image from Hub."
+WriteLog "> turbo pull microsoft/vsbuildtools,git/git"
+. turbo pull microsoft/vsbuildtools,git/git
 
 # Run the compiler on the source files from a turbo container using vsbuildtools which is required for the compile action.
 # The compile.bat script will compile in the folder C:\whisper.cpp-source\build
-WriteLog "> turbo try microsoft/vsbuildtools --mount=$DownloadPath --isolate=merge --startup-file=$SupportFiles\compile.bat"
-. turbo try microsoft/vsbuildtools --isolate=merge --startup-file="$SupportFiles\compile.bat"
+WriteLog "> turbo try microsoft/vsbuildtools,git/git --isolate=merge --startup-file=$SupportFiles\compile.bat"
+. turbo try microsoft/vsbuildtools,git/git --isolate=merge --startup-file="$SupportFiles\compile.bat"
 
 #########################
 ## Start Turbo Capture ##
