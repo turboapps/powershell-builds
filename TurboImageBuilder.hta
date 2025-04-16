@@ -168,6 +168,7 @@
       Set fso = CreateObject("Scripting.FileSystemObject")
       scriptPath = fso.GetParentFolderName(document.location.href)
       GetHTAPath = Replace(Replace(scriptPath,"/","\"),"file:\\\","")
+      GetHTAPath = Replace(GetHTAPath,"%20"," ")
     End Function
 
     Sub DisplayLicenseTip()
