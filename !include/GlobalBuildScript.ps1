@@ -345,7 +345,7 @@ Function CustomizeTurboXappl($PostCaptureModificationsPath) {
 Function BuildTurboSvmImage() {
 
     WriteLog "Building Turbo SVM Image."
-    $ProcessExitCode = RunProcess $XStudio "$FinalXapplPath /o $SVM /l $TurboLicense" $True
+    $ProcessExitCode = RunProcess $XStudio "$FinalXapplPath /o $SVM /l `"$TurboLicense`"" $True
     CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo capture failure
     WriteLog "Waiting for .svm file to be created..."
     Wait-ForFileExistence $SVM -Iterations 3600 -SleepTime 1   # Exit if file doesn't exist after 60 minutes
