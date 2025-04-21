@@ -43,16 +43,16 @@ def adobe_adminconsole_login(username, password, optional = False):
         type(Key.ENTER)
         if exists("adobe_login_pass_dark.png",10):
             click("adobe_login_pass_dark.png")
-        if exists("adobe_login_pass.png",10):
+        elif exists("adobe_login_pass.png",10):
             click("adobe_login_pass.png")
-        if exists("adobe-password-new.png",10):
+        elif exists("adobe-password-new.png",10):
             click("adobe-password-new.png")
         wait(3)
         type(password)
         wait(3)
         type(Key.ENTER)
         if exists("save-password-prompt.png",10):
-            click(Pattern("save-password-prompt.png").targetOffset(141,-4))
+            click("save-password-prompt.png")
 
 # Get the path of the shortcut for the apps that have different shortcut names for different versions.
 # Assume there is only one match inside the folder.
