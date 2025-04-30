@@ -4,7 +4,6 @@ $PostCaptureFunctionsPath = Join-Path -Path $scriptPath -ChildPath "..\!include\
 # Configure vm settings
 $VirtualizationSettings = $xappl.Configuration.SelectSingleNode("VirtualizationSettings")
 $VirtualizationSettings.chromiumSupport = [string]$true
-$VirtualizationSettings.shutdownProcessTree = [string]$true
 
 ###################
 # Edit Filesystem #
