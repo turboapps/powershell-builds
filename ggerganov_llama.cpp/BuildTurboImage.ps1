@@ -61,7 +61,7 @@ $latest -match "b(\d+)"
 $InstalledVersion = $matches[1] + ".0"
 
 $BuildFiles = "C:\build_files"
-$Builds = "cpu","cuda12.4"
+$Builds = "cpu","cuda-12.4"
 foreach ($Build in $Builds) {
     # Get download link for latest version for build
     $DownloadLink = "https://github.com/ggerganov/llama.cpp/releases/download/$latest/llama-$latest-bin-win-$Build-x64.zip"
@@ -72,7 +72,8 @@ foreach ($Build in $Builds) {
     # Download the installer
     $DownloadLink
     $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
+    Start-Sleep -Seconds 20
+    
     # Extract .zip
     Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $BuildFiles\$Build
 }
