@@ -14,7 +14,7 @@ $URL = 'https://www.python.org/downloads/windows/'
 $Page = curl $URL -UseBasicParsing
 
 # Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*downloads/release*"})[0].href
+$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*downloads/release/python*"})[0].href
 
 $URL = 'https://www.python.org' + $LatestInstaller
 
