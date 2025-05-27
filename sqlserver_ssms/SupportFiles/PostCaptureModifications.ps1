@@ -30,17 +30,17 @@ ForEach ($childNodes in $parentNode) {
 ## NOTE: Beware of case sensitivity when making registry changes.  eg. The registry value type "String" requires an upper-case 'S'
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
-# Set Full isolation on @HKCU@\SOFTWARE\Microsoft\SQL Server Management Studio and subkeys
+# Set WriteCopy isolation on @HKCU@\SOFTWARE\Microsoft\SQL Server Management Studio and subkeys
 $parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='SQL Server Management Studio']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "WriteCopy")
 }
-# Set Full isolation on @HKCU@\SOFTWARE\Microsoft\VisualStudio and subkeys
+# Set WriteCopy isolation on @HKCU@\SOFTWARE\Microsoft\VisualStudio and subkeys
 $parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='VisualStudio']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "WriteCopy")
 }
-# Set Full isolation on @HKCU@\SOFTWARE\Microsoft\VSCommon and subkeys
+# Set WriteCopy isolation on @HKCU@\SOFTWARE\Microsoft\VSCommon and subkeys
 $parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='VSCommon']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "WriteCopy")
