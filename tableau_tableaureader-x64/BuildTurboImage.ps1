@@ -63,7 +63,7 @@ $Installer = Invoke-WebRequest -Uri "https://www.tableau.com/downloads/reader/pc
 
 # Get the installed version
 $response = Invoke-WebRequest -Uri "https://www.tableau.com/support/releases" -Headers $headers  -UseBasicParsing
-$VersionLink = ($response.Links | Where-Object {$_.href -like "*desktop*"})[1].href
+$VersionLink = ($response.Links | Where-Object {$_.href -like "*desktop*"})[2].href
 $InstalledVersion = $VersionLink.Split("/")[-1]
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
 
