@@ -19,7 +19,7 @@ $headers = @{
 
 $response = Invoke-WebRequest -Uri "https://www.tableau.com/support/releases" -Headers $headers  -UseBasicParsing
 
-$VersionLink = ($response.Links | Where-Object {$_.href -like "*desktop*"})[1].href
+$VersionLink = ($response.Links | Where-Object {$_.href -like "*desktop*"})[2].href
 $LatestWebVersion = $VersionLink.Split("/")[-1]
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
