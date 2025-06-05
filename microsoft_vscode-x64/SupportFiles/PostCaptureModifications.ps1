@@ -16,5 +16,5 @@ $VirtualizationSettings.shutdownProcessTree = [string]$true
 $NamedObjectIsolation = $xappl.Configuration.SelectSingleNode("NamedObjectIsolation")
 
 $node = $xappl.CreateElement("Exception")
-$node.SetAttribute("regex","39ba74c1-.*-main-sock")
+$node.SetAttribute("regex","main-sock")
 $NamedObjectIsolation.AppendChild($node)
