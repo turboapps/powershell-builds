@@ -108,7 +108,7 @@ $ProcessExitCode = RunProcess "C:\Program Files (x86)\Microsoft\Edge\Application
 Copy-Item -Path "$SupportFiles\Local State" -Destination "$env:LOCALAPPDATA\Microsoft\Edge\User Data\" -Recurse -Force
 
 # Stop and delete all services matching the pattern "*edge*"
-$pattern = "^(edge)"
+$pattern = "(?i)edge"
 $services = Get-Service | Where-Object { $_.Name -match $pattern }
 
 # Iterate through each service and stop it if it's running, then remove it
