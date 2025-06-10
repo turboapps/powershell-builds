@@ -79,7 +79,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Stop and delete all services matching the pattern "*edge*"
-$pattern = "^(edge)"
+$pattern = "(?i)edge"
 $services = Get-Service | Where-Object { $_.Name -match $pattern }
 
 # Iterate through each service and stop it if it's running, then remove it
