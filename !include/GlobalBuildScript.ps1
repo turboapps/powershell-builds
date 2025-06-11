@@ -233,12 +233,12 @@ Function GetTurboNetHubVersion($HubOrg) {
 # Exits the script if Hub is the same or newer.
 function Compare-Versions($Version1, $Version2) {
     WriteLog "Comparing Current Turbo Hub version to Latest available version."
-    If ($Version1 -eq $null -or $Version1 -eq ".0") {
+    If ($Version1 -eq $null -or $Version1 -eq ".0" -or $Version1 -eq "") {
          WriteLog "Failed to get Hub Version. Exiting."
          WriteLog "BuildResult=failed"
          Exit 0
     }
-    If ($Version2 -eq $null -or $Version2 -eq ".0") {
+    If ($Version2 -eq $null -or $Version2 -eq ".0" -or $Version2 -eq "") {
          WriteLog "Failed to get Web Version. Exiting."
          WriteLog "BuildResult=failed"
          Exit 0
