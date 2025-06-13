@@ -61,9 +61,11 @@ $headers = @{
 
 $Installer = Invoke-WebRequest -Uri "https://www.tableau.com/downloads/reader/pc64" -Headers $headers  -UseBasicParsing -OutFile "$DownloadPath\TableauReader.exe"
 
-# Get the installed version
-$response = Invoke-WebRequest -Uri "https://www.tableau.com/support/releases" -Headers $headers  -UseBasicParsing
-$VersionLink = ($response.Links | Where-Object {$_.href -like "*desktop*"})[2].href
+$html = curl.exe "https://www.tableau.com/support/releases"
+$matches = Select-String -InputObject $html -Pattern '<a\s+(?:[^>]*?\s+)?href="([^"]*)"' -AllMatches
+$links = $matches.Matches | ForEach-Object { $_.Groups[1].Value }
+$VersionLink = ($links | Where-Object {$_ -like "*desktop*"})[2]
+
 $InstalledVersion = $VersionLink.Split("/")[-1]
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
 

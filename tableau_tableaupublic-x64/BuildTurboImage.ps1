@@ -52,7 +52,6 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# We must pass these header values or the web request will get access denied
 $headers = @{
     "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
     "Accept-Encoding" = "gzip, deflate, br, zstd"
@@ -62,8 +61,12 @@ $headers = @{
 $Installer = Invoke-WebRequest -Uri "https://www.tableau.com/downloads/public/pc64" -Headers $headers  -UseBasicParsing -OutFile "$DownloadPath\TableauPublic.exe"
 
 # Get the installed version
-$response = Invoke-WebRequest -Uri "https://www.tableau.com/support/releases" -Headers $headers  -UseBasicParsing
-$VersionLink = ($response.Links | Where-Object {$_.href -like "*desktop*"})[2].href
+
+$html = curl.exe "https://www.tableau.com/support/releases"
+$matches = Select-String -InputObject $html -Pattern '<a\s+(?:[^>]*?\s+)?href="([^"]*)"' -AllMatches
+$links = $matches.Matches | ForEach-Object { $_.Groups[1].Value }
+$VersionLink = ($links | Where-Object {$_ -like "*desktop*"})[2]
+
 $InstalledVersion = $VersionLink.Split("/")[-1]
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
 
