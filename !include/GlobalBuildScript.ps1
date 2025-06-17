@@ -63,30 +63,13 @@ Function GetHubRevisions($HubOrg,$URL) {
 # Get Current Hub Version of application
 Function GetCurrentHubVersion($HubOrg,$URL) {
     $response = GetHubRevisions $HubOrg $URL
-
-    # Get the first imageID from the repo
-    if ($response.imageid.count -gt 1) {
-        $imageID = $response.imageID[0]
-        }
-    else {
-        $imageID = $response.imageID
-    }
-
-    # Get all the versions from the first image
-    $Objects = $response | Where-Object {$_.imageID -eq $imageID}
-    $CurrentHubVersion = $Objects.tags
-    
-    If ($CurrentHubVersion.Count -gt 1) { # If there are more than 1 version for the latest image get the first one with a decimal
-        $LatestHubVer = $CurrentHubVersion | Where-Object {$_ -match '\.'} | Select-Object -First 1 # Select first version with a decimal
-        }
-    Else {  # If there is only 1 version set as the latest
-        $LatestHubVer = $CurrentHubVersion
-    }
-
+    $VersionList = $response.tags| Sort-Object { [System.Version]$_ } -Descending
+    $VersionList | ForEach-Object { Write-Host $_ }
+    $LatestHubVer = $VersionList | Select-Object -First 1
     $LatestHubVer = RemoveTrailingZeros $LatestHubVer
     WriteLog "HubVersion=$LatestHubVer"
-
-    Return $LatestHubVer
+    
+    return $LatestHubVer
 }
 
 # Get the current Hub hash of the application
