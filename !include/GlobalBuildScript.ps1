@@ -64,7 +64,6 @@ Function GetHubRevisions($HubOrg,$URL) {
 Function GetCurrentHubVersion($HubOrg,$URL) {
     $response = GetHubRevisions $HubOrg $URL
     $VersionList = $response.tags| Sort-Object { [System.Version]$_ } -Descending
-    $VersionList | ForEach-Object { Write-Host $_ }
     $LatestHubVer = $VersionList | Select-Object -First 1
     $LatestHubVer = RemoveTrailingZeros $LatestHubVer
     WriteLog "HubVersion=$LatestHubVer"
