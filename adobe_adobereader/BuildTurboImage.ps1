@@ -63,17 +63,36 @@ Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
 
 ## Parse XML for latest version
 [XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
-$Versions = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.ApplicabilityRules.MetaData.MsiPatchMetaData.MsiPatch.TargetProduct.UpdatedVersion | Sort-Object -Descending| Select-Object -Unique
-$Version = $Versions[1] -Replace ('\.','')
+$Versions = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.ApplicabilityRules.MetaData.MsiPatchMetaData.MsiPatch.TargetProduct.UpdatedVersion | Sort-Object -Descending | Select-Object -Unique
+$Version = $Versions[0] -replace '\.', ''
 
 ## Create download link for Reader
-$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/" + $Version + "/AcroRdrDC" + $Version + "_en_US.exe"
-WriteLog "Downloading installer from: $DownloadLink"  
+$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$Version/AcroRdrDC${Version}_en_US.exe"
+WriteLog "Downloading installer from: $DownloadLink"
 
 # Name of the downloaded installer file
 $InstallerName = "AcroRdrDC.exe"
 
+# Attempt to download the installer
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+
+# Check if the installer exists
+if (-not (Test-Path $Installer)) {
+    WriteLog "Download failed for version $Version. Trying fallback version..."
+
+    # Use the second version in the list
+    $Version = $Versions[1] -replace '\.', ''
+    $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$Version/AcroRdrDC${Version}_en_US.exe"
+    WriteLog "Retrying with fallback download link: $DownloadLink"
+
+    $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+}
+
+# You can now check again or throw an error if it still fails
+if (-not (Test-Path $Installer)) {
+    throw "Failed to download Acrobat Reader installer from both primary and fallback URLs."
+}
+
 
 #########################
 ## Start Turbo Capture ##
