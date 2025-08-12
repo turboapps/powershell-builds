@@ -70,7 +70,7 @@ $version = $versionTag -replace '^v', '' -replace '-r\d+$', ''
 $InstalledVersion = RemoveTrailingZeros "$version"
 
 # Get installer link for latest version
-$DownloadLink = "https://github.com/Hibbiki/chromium-win64/releases/download/$versionTag/mini_installer.sync.exe"
+$DownloadLink = "https://github.com/Hibbiki/chromium-win64/releases/download/$versionTag/mini_installer.exe"
 
 # Name of the downloaded installer file
 $InstallerName = $DownloadLink.Split("/")[-1]
