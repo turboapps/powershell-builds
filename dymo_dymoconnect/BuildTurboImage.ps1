@@ -90,8 +90,20 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 # Install the application silently using cmd to run the installer otherwise the /D param doesn't work
-$ProcessExitCode = RunProcess $Installer "/S /v`"ALLUSERS=1 COLLECTDATA=0 /qn`"" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+$ProcessExitCode = RunProcess $Installer "/S /v`"ALLUSERS=1 COLLECTDATA=0 /qn`"" $False
+
+# Kill the driver install
+# Wait until dpinst.exe is running
+while (-not (Get-Process -Name "dpinst" -ErrorAction SilentlyContinue)) {
+    Start-Sleep -Seconds 1
+}
+# Wait 5 seconds once dpinst.exe is found
+Start-Sleep -Seconds 5
+# Kill the process
+Get-Process -Name "dpinst" -ErrorAction SilentlyContinue | Stop-Process -Force
+# Wait 30 seconds after killing the driver install for the install to complete
+Start-Sleep -Seconds 30
+
 
 ################################
 ## Customize the application  ##
