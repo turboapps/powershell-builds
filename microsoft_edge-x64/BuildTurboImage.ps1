@@ -132,6 +132,9 @@ $InstalledVersion = GetVersionFromRegistry "Microsoft Edge"
 &reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v BackgroundModeEnabled /t REG_DWORD /d 0 /f
 &reg.exe ADD "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v StartupBoostEnabled /t REG_DWORD /d 0 /f
 
+# Set the policy key to disable the chrome audio sandbox service
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge /v AudioSandboxEnabled /t REG_DWORD /d 0 /f
+
 #########################
 ## Stop Turbo Capture  ##
 #########################
