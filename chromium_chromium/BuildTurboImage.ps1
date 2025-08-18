@@ -102,6 +102,9 @@ WriteLog "Performing post-install customizations."
 # Set the policy key to prevent the Sign In prompt on first launch
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Chromium /v BrowserSignin /t REG_DWORD /d 0 /f
 
+# Set the policy key to disable the chrome audio sandbox service
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Chromium /v AudioSandboxEnabled /t REG_DWORD /d 0 /f
+
 # Delete the Installer folder to reduce the image size
 Get-ChildItem -Path "C:\Program Files\Chromium\Application" -Directory -Recurse -Filter "Installer" | Remove-Item -Recurse -Force
 
