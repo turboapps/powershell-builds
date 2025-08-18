@@ -117,6 +117,9 @@ Remove-Item -Path "C:\Program Files (x86)\Google\Chrome\Application\$InstalledVe
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v PrivacySandboxPromptEnabled /t REG_DWORD /d 0 /f
 
+# Set the policy key to disable the chrome audio sandbox service
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v AudioSandboxEnabled /t REG_DWORD /d 0 /f
+
 #########################
 ## Stop Turbo Capture  ##
 #########################
