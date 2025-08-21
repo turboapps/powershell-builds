@@ -89,12 +89,15 @@ cd c:\temp
 $ProcessExitCode = RunProcess "$Installer" "--quiet-mode --local-package-dir C:\temp\cygwin --root C:\Cygwin64 --arch x86_64 --site http://cygwin.mirror.constant.com --categories Base --packages make,openssh --force-current" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
+# Copy the installer to include in the capture
+Copy-Item -Path $Installer -Destination "C:\Cygwin64\setup-x86_64.exe" -Force
+
 ################################
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
 
-
+# Create shortcut for Cygwin64 Terminal
 $exePath = "C:\Cygwin64\bin\mintty.exe"
 $arguments = '-i /Cygwin-Terminal.ico -'
 $iconPath = "C:\Cygwin64\Cygwin.ico"
@@ -116,6 +119,21 @@ $publicDesktop = "C:\Users\Public\Desktop"
 Copy-Item -Path $shortcutPath -Destination $publicDesktop -Force
 
 WriteLog "Start menu and desktop shortcuts created: $shortcutPath"
+
+# Create shortcut for Cygwin Installer
+$exePath = "C:\Cygwin64\setup-x86_64.exe"
+$iconPath = "C:\Cygwin64\Cygwin.ico"
+
+# Create Start Menu shortcut
+$shortcutPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Cygwin\Cygwin64 Setup.lnk"
+
+$WshShell = New-Object -ComObject WScript.Shell
+$shortcut = $WshShell.CreateShortcut($shortcutPath)
+$shortcut.TargetPath = $exePath
+$shortcut.IconLocation = $iconPath
+$shortcut.Save()
+
+WriteLog "Start menu shortcut created: $shortcutPath"
 
 #########################
 ## Stop Turbo Capture  ##
