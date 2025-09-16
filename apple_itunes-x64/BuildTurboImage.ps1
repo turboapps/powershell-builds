@@ -78,10 +78,6 @@ WriteLog "Installing the application."
 $ProcessExitCode = RunProcess "msiexec.exe" "/I $DownloadPath\AppleMobileDeviceSupport64.msi ALLUSERS=1 REBOOT=ReallySuppress /qn" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
-# Install Bonjour
-$ProcessExitCode = RunProcess "msiexec.exe" "/I $DownloadPath\Bonjour64.msi ALLUSERS=1 REBOOT=ReallySuppress /qn" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
-
 # Install iTunes without setting iTunes as the Default Media player (MEDIA_DEFAULTS=0)
 $ProcessExitCode = RunProcess "msiexec.exe" "/I $DownloadPath\iTunes64.msi MEDIA_DEFAULTS=0 REBOOT=ReallySuppress ALLUSERS=1 /qn" $True
 CheckForError "Checking process exit code:" 3010 $ProcessExitCode $False # Expected to exit with 3010 (reboot required) but will proceed on error in case exit code is 0.
