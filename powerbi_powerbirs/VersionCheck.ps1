@@ -15,7 +15,7 @@ $url = "https://aka.ms/pbireportserver"
 $outputdir = "$DownloadPath\links"
 turbo config --domain=turbo.net
 turbo pull turbo/headless-extractor
-turbo run turbo/headless-extractor --using=google/chrome --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+turbo run turbo/headless-extractor --using=google/chrome-x64 --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
 # Define the path to the HTML file
 $DOMFilePath = "$outputdir\dom.html"
