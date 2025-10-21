@@ -38,7 +38,7 @@ if (-not $elevated) {
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Foxit"
-$AppDesc = "View, annotate, form fill, and sign PDF across desktop, mobile, and web – no matter if you’re at the office, home, or on the go."
+$AppDesc = "View, annotate, form fill, and sign PDF across desktop, mobile, and web â€“ no matter if youâ€™re at the office, home, or on the go."
 $AppName = "PDF Reader"
 $VendorURL = "https://www.foxit.com/"
 
@@ -72,7 +72,7 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 # Perform Full install and include desktop shortcut
-$ProcessExitCode = RunProcess $Installer "/VERYSILENT /NORESTART /TYPE=`"FULL`" /COMPONENTS=`"pdfviewer,ffse,ffaddin,ffspellcheck`" /TASKS=`"desktopicon,startmenufolder,displayinbrowser`" /ALLUSERS /CLOSEAPPLICATIONS /NOCANCEL /SUPPRESSMSGBOXES" $True
+$ProcessExitCode = RunProcess $Installer "/quiet" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
@@ -83,7 +83,7 @@ WriteLog "Performing post-install customizations."
 # Stop and delete the update service
 &sc.exe stop FoxitReaderUpdateService
 &sc.exe delete FoxitReaderUpdateService
-Remove-Item -Path "C:\Program Files (x86)\Common Files\Foxit\Foxit PDF Reader\FoxitPDFReaderUpdateService.exe" -Recurse -Force
+Remove-Item -Path "C:\Program Files\Common Files\Foxit\Foxit PDF Reader\FoxitPDFReaderUpdateService.exe" -Recurse -Force
 
 # Disables updates, data collection, start page, ads, register prompt, welcome dialog, foxitsign prompt
 &reg.exe import "$SupportFiles\prefs.reg"
