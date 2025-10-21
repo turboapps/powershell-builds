@@ -53,7 +53,7 @@ CheckHubVersion
 WriteLog "Downloading the latest installer."
 
 # Get installer link for latest version
-$DownloadLink = "https://go.microsoft.com/fwlink/?linkid=2261844"
+$DownloadLink = "https://go.microsoft.com/fwlink/?linkid=2324716"
 
 # Name of the downloaded installer file
 $InstallerName = "azuredatastudio-windows-setup-x64.exe"
