@@ -38,7 +38,7 @@ if (-not $elevated) {
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Foxit"
-$AppDesc = "View, annotate, form fill, and sign PDF across desktop, mobile, and web – no matter if you’re at the office, home, or on the go."
+$AppDesc = "View, annotate, form fill, and sign PDF across desktop, mobile, and web no matter if you’re at the office, home, or on the go."
 $AppName = "PDF Reader"
 $VendorURL = "https://www.foxit.com/"
 
