@@ -30,7 +30,7 @@ $turboArgs = "pull xvm,base,sikulix/sikulixide,microsoft/openjdk"
 $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
 
 # Launch SikulixIDE to get the latest version from Adobe Admin Console
-$turboArgs = "try sikulixide --using=microsoft/openjdk --offline --disable=spawnvm --isolate=merge-user --startup-file=java -- -jar @SYSDRIVE@\SikulixIDE\sikulixide-2.0.5.jar -r $sikulixPath\version.sikuli -f $DesktopPath\version-sikulix-log.txt"
+$turboArgs = "try sikulixide --using=oracle/jre-x64 --offline --disable=spawnvm --isolate=merge-user --startup-file=java -- -jar @SYSDRIVE@\SikulixIDE\sikulixide-2.0.5.jar -r $sikulixPath\version.sikuli -f $DesktopPath\version-sikulix-log.txt"
 $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
