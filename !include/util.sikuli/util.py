@@ -38,7 +38,7 @@ def adobe_adminconsole_login(username, password, optional = False):
     if exists("adobe-login.png",20):
         click(Pattern("adobe-login.png").targetOffset(-113,-21))
         wait(3)
-        type(username)
+        paste(username)
         wait(3)
         type(Key.ENTER)
         if exists("adobe_login_pass_dark.png",10):
@@ -48,7 +48,7 @@ def adobe_adminconsole_login(username, password, optional = False):
         elif exists("adobe-password-new.png",10):
             click("adobe-password-new.png")
         wait(3)
-        type(password)
+        paste(password)
         wait(3)
         type(Key.ENTER)
         if exists("save-password-prompt.png",10):
@@ -122,7 +122,7 @@ def build_ccd():
     click("next-button.png")
     wait("search-button.png")
     click("search-button.png")
-    type("creative cloud desktop")
+    paste("creative cloud desktop")
     click(Pattern("select-ccd-app.png").targetOffset(161,0))
     click("next-button.png")
     click("next-button.png")
@@ -130,7 +130,7 @@ def build_ccd():
     click(Pattern("scroll-down.png").targetOffset(1,35))
     click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
     click("next-button.png")
-    type("CreativeCloudDesktop_x64")
+    paste("CreativeCloudDesktop_x64")
     click("create-package-button.png")
     wait("folder-button.png",90)
     waitVanish("wait-preparing.png")
@@ -165,7 +165,7 @@ def get_adobeapp_version1(adobeApp):
     click("next-button.png")
     wait("search-button.png")
     click("search-button.png")
-    type(adobeApp)
+    paste(adobeApp)
     wait("version.png")
 
 def get_adobeapp_version2(adobeApp):
@@ -176,7 +176,8 @@ def get_adobeapp_version2(adobeApp):
     wait(2)
     type("s", Key.CTRL)
     wait(2)
-    type("%USERPROFILE%\\desktop\\version.txt")
+    paste("%USERPROFILE%\\desktop\\version.txt")
+    wait(2)
     type(Key.ENTER)
     wait(5)
     closeApp("Notepad")
