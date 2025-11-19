@@ -26,6 +26,7 @@ $pattern = '.*/dymo/Software/Win/.*'
 foreach ($line in $links) {
     if ($line -match $pattern) {
         $DownloadLink = $line  # Directly use the matching URL
+        break # get out after first match
     }
 }
 
