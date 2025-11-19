@@ -38,7 +38,7 @@ if (-not $elevated) {
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Dymo"
-$AppDesc = "Supports all LabelWriter® 5 series, 450 series, 4XL, and LabelManager® 280, 420P and 500TS®."
+$AppDesc = "Supports all LabelWriterÂ® 5 series, 450 series, 4XL, and LabelManagerÂ® 280, 420P and 500TSÂ®."
 $AppName = "Dymo Connect"
 $VendorURL = "https://www.dymo.com/"
 
@@ -68,6 +68,7 @@ $pattern = '.*/dymo/Software/Win/.*'
 foreach ($line in $links) {
     if ($line -match $pattern) {
         $DownloadLink = $line  # Directly use the matching URL
+        break # get out after first match
     }
 }
 
