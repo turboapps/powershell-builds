@@ -38,9 +38,9 @@ if (-not $elevated) {
 
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "ggerganov"
-$AppDesc = "A port of OpenAI's Whisper model in C/C++."
-$AppName = "whisper.cpp"
-$VendorURL = "https://github.com/ggerganov/whisper.cpp"
+$AppDesc = "LLM inference in C/C++."
+$AppName = "llama-cpp"
+$VendorURL = "https://github.com/ggerganov/llama.cpp"
 
 ########################################
 ## Compare Hub Version to Web Version ##
@@ -50,38 +50,33 @@ CheckHubVersion
 ##########################################
 ## Download latest version of installer ##
 ##########################################
-WriteLog "Downloading the latest .ZIP."
+WriteLog "Downloading the latest .ZIPs."
 
 # Get latest version tag from repo
-$URL = "https://api.github.com/repos/ggerganov/whisper.cpp/releases/latest"
+$URL = "https://api.github.com/repos/ggerganov/llama.cpp/releases/latest"
 $response = Invoke-WebRequest -Uri $URL -UseBasicParsing
 $latest = (ConvertFrom-Json $response.Content).tag_name
-$latest -match "v(\d.\d.\d)"
+$latest -match "b(\d+)"
 
-$InstalledVersion = $matches[1]
+$InstalledVersion = $matches[1] + ".0"
 
-# Get download link for latest version
-$DownloadLink = "https://github.com/ggerganov/whisper.cpp/archive/refs/tags/v$InstalledVersion.zip"
+$BuildFiles = "C:\build_files"
+$Builds = "cpu","cuda-12.4"
+foreach ($Build in $Builds) {
+    # Get download link for latest version for build
+    $DownloadLink = "https://github.com/ggerganov/llama.cpp/releases/download/$latest/llama-$latest-bin-win-$Build-x64.zip"
 
-# Name of the .zip file
-$InstallerName = "whisper.zip"
+    # Name of the .zip file
+    $InstallerName = [System.IO.Path]::GetFileName($DownloadLink)
 
-# Download the installer
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-# Extract .zip
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\"
-$SourceDir = "C:\whisper.cpp-source"
-Rename-Item -Path "C:\whisper.cpp-$InstalledVersion" -NewName $SourceDir
-
-WriteLog "Pulling latest vsbuildtools and git image from Hub."
-WriteLog "> turbo pull microsoft/vsbuildtools,git/git"
-. turbo pull microsoft/vsbuildtools,git/git
-
-# Run the compiler on the source files from a turbo container using vsbuildtools which is required for the compile action.
-# The compile.bat script will compile in the folder C:\whisper.cpp-source\build
-WriteLog "> turbo try microsoft/vsbuildtools,git/git --isolate=merge --startup-file=$SupportFiles\compile.bat"
-. turbo try microsoft/vsbuildtools,git/git --isolate=merge --startup-file="$SupportFiles\compile.bat"
+    # Download the installer
+    $DownloadLink
+    $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+    Start-Sleep -Seconds 20
+    
+    # Extract .zip
+    Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $BuildFiles\$Build
+}
 
 #########################
 ## Start Turbo Capture ##
@@ -94,17 +89,27 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Copy whisper.cpp files to folder.
+# Copy all files for all llama.cpp builds to folders.
 # This will capture the files because it is a change.
-echo F|. xcopy /i /h $SourceDir\build\bin\Release\* C:\whisper.cpp\
-echo F|. xcopy /i $SupportFiles\ConvertAndRun.ps1 C:\whisper.cpp\ConvertAndRun.ps1
+foreach ($Build in $Builds) {
+    $FinalBuildPath = "C:\llama-$Build"
+    mkdir "C:\llama-$build"
+    echo F|. xcopy /i $BuildFiles\$Build\llama-cli.exe $FinalBuildPath\llama-cli.exe
+    echo F|. xcopy /i $BuildFiles\$Build\llama-server.exe $FinalBuildPath\llama-server.exe
+    echo F|. xcopy /i $BuildFiles\$Build\llama-llava-cli.exe $FinalBuildPath\llama-llava-cli.exe
+
+    # Copy all .dll files from the source folder to the destination.
+    Get-ChildItem -Path "$BuildFiles\$Build" -Filter "*.dll" | ForEach-Object {
+        echo F|. xcopy /i $_.FullName "$FinalBuildPath\$($_.Name)"
+    }
+}
 
 ################################
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
 
-# whisper.cpp is built from source, it is not installed
+# llama.cpp is not installed
 # $InstalledVersion = GetVersionFromRegistry ""
 
 #########################

@@ -83,7 +83,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Launch TreeSize to generate the GlobalOptions.xml file
-$ProcessExitCode = RunProcess "C:\Program Files\JAM Software\TreeSize Free\TreeSizeFree.exe" "" $False
+$ProcessExitCode = RunProcess "$env:LOCALAPPDATA\Programs\JAM Software\TreeSize Free\TreeSizeFree.exe" "" $False
 Start-Sleep -Seconds 5
 taskkill.exe /f /im TreeSizeFree.exe /t
 
