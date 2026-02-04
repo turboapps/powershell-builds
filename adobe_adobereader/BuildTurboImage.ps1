@@ -64,7 +64,7 @@ Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
 ## Parse XML for latest version
 [XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
 $Versions = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.ApplicabilityRules.MetaData.MsiPatchMetaData.MsiPatch.TargetProduct.UpdatedVersion | Sort-Object -Descending | Select-Object -Unique
-$Version = $Versions[0] -replace '\.', ''
+$Version = $Versions[1] -replace '\.', ''
 
 ## Create download link for Reader
 $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$Version/AcroRdrDC${Version}_en_US.exe"
