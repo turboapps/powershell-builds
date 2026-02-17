@@ -10,11 +10,24 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Add code here to get the latest version available
+$URL = "https://versionsof.net/core/"
+$Page = Invoke-WebRequest $URL -UseBasicParsing
 
-$Page = curl 'https://versionsof.net/core/' -UseBasicParsing
+$MajorVersions = (($Page.Links | Where-Object {$_.href -match '^/core/\d+\.\d+/$'} | Select-Object -Skip 1))
 
-$LatestWebVersion = (($Page.Links | Where-Object {$_.href -like "*core*"})[2])
+ForEach ($MajorVersion in $MajorVersions) {
+ # Find the first link that doesn't have "preview"
+    if ($MajorVersion -notmatch '(?i)preview') {
+        $LatestStableVersion = ($MajorVersion -split '<a.*?>|</a>')[1]
+        Break
+    }
+}
+
+Write-Host "Latest Stable Version: $LatestStableVersion"
+
+$URL = "https://versionsof.net/core/$LatestStableVersion"
+$Page1 = Invoke-WebRequest $URL -UseBasicParsing
+$LatestWebVersion = (($Page1.Links | Where-Object {$_.outerHTML -match '>(\d+(\.\d+)*)<'})[1])
 $LatestWebVersion = ($LatestWebVersion -split '<a.*?>|</a>')[1]
 
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"

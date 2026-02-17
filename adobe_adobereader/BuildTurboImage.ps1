@@ -63,34 +63,49 @@ Expand "$DownloadPath\ReaderCatalog.cab" -F:* "$DownloadPath\ReaderCatalog.xml"
 
 ## Parse XML for latest version
 [XML]$ReaderCatalog = Get-Content("$DownloadPath\ReaderCatalog.xml")
-$Versions = $ReaderCatalog.SystemsManagementCatalog.SoftwareDistributionPackage.InstallableItem.ApplicabilityRules.MetaData.MsiPatchMetaData.MsiPatch.TargetProduct.UpdatedVersion | Sort-Object -Descending | Select-Object -Unique
-$Version = $Versions[1] -replace '\.', ''
 
-## Create download link for Reader
-$DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$Version/AcroRdrDC${Version}_en_US.exe"
-WriteLog "Downloading installer from: $DownloadLink"
+# Get latest versions (already sorted descending)
+$Versions = $ReaderCatalog.SystemsManagementCatalog.
+    SoftwareDistributionPackage.InstallableItem.
+    ApplicabilityRules.MetaData.
+    MsiPatchMetaData.MsiPatch.TargetProduct.
+    UpdatedVersion |
+    Sort-Object -Descending |
+    Select-Object -Unique
 
-# Name of the downloaded installer file
 $InstallerName = "AcroRdrDC.exe"
+$Installer = $null
 
-# Attempt to download the installer
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+# Try the first 4 versions
+foreach ($RawVersion in $Versions | Select-Object -First 4) {
 
-# Check if the installer exists
-if (-not (Test-Path $Installer)) {
-    WriteLog "Download failed for version $Version. Trying fallback version..."
-
-    # Use the second version in the list
-    $Version = $Versions[1] -replace '\.', ''
+    $Version = $RawVersion -replace '\.', ''
     $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$Version/AcroRdrDC${Version}_en_US.exe"
-    WriteLog "Retrying with fallback download link: $DownloadLink"
 
-    $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
+    WriteLog "Attempting download for version $Version"
+    WriteLog "URL: $DownloadLink"
+
+    try {
+        # IMPORTANT: must throw on failure
+        $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName -ErrorAction Stop
+
+        if (Test-Path $Installer) {
+            WriteLog "Download succeeded for version $Version"
+            break
+        }
+        else {
+            throw "Installer file missing after download."
+        }
+    }
+    catch {
+        WriteLog "Download failed for version $Version"
+        WriteLog $_.Exception.Message
+        $Installer = $null
+    }
 }
 
-# You can now check again or throw an error if it still fails
-if (-not (Test-Path $Installer)) {
-    throw "Failed to download Acrobat Reader installer from both primary and fallback URLs."
+if (-not $Installer) {
+    throw "Failed to download Acrobat Reader installer after trying 4 versions."
 }
 
 

@@ -53,11 +53,29 @@ CheckHubVersion
 WriteLog "Downloading the latest installer."
 
 # Get the latest .NET major version:
-$Page = curl 'https://versionsof.net/core/' -UseBasicParsing
-$LatestMajorVer = (($Page.Links | Where-Object {$_.href -like "*core*"})[1])
-$InstalledVersion = ($LatestMajorVer -split '<a.*?>|</a>')[1]
-$LatestMajorVer = ($InstalledVersion -split '\.')[0]
+$URL = "https://versionsof.net/core/"
+$Page = Invoke-WebRequest $URL -UseBasicParsing
+
+$MajorVersions = (($Page.Links | Where-Object {$_.href -match '^/core/\d+\.\d+/$'} | Select-Object -Skip 1))
+
+ForEach ($MajorVersion in $MajorVersions) {
+ # Find the first link that doesn't have "preview"
+    if ($MajorVersion -notmatch '(?i)preview') {
+        $LatestStableVersion = ($MajorVersion -split '<a.*?>|</a>')[1]
+        Break
+    }
+}
+
+WriteLog "Latest Stable Version: $LatestStableVersion"
+$LatestMajorVer = ($LatestStableVersion -split '\.')[0]
 WriteLog "Latest Major version: $LatestMajorVer"
+
+$URL = "https://versionsof.net/core/$LatestStableVersion"
+$Page1 = Invoke-WebRequest $URL -UseBasicParsing
+$LatestVersion = (($Page1.Links | Where-Object {$_.outerHTML -match '>(\d+(\.\d+)*)<'})[1])
+$LatestVersion = ($LatestVersion -split '<a.*?>|</a>')[1]
+
+$InstalledVersion = RemoveTrailingZeros "$LatestVersion"
 
 # We will use the winget image from Turbo.net to download and install this app
 WriteLog "Pulling microsoft/winget from Turbo.net"
