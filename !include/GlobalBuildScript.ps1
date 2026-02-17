@@ -346,7 +346,7 @@ Function PushImage($PushVersion) {
         WriteLog "Importing image: $HubOrg`:$PushVersion"
         WriteLog "Push URL parameter = $PushURL"
         WriteLog "ApiKey parameter = $ApiKey"
-        $ProcessExitCode = RunProcess $Turbo "import svm $SVM --name=$HubOrg`:$PushVersion" $True
+        $ProcessExitCode = RunProcess $Turbo "import svm $SVM --overwrite --name=$HubOrg`:$PushVersion" $True
         CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo import failure
        # $ProcessExitCode = RunProcess $Turbo "check $HubOrg" $True
        # CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo check failure

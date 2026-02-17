@@ -72,7 +72,7 @@ WriteLog "Latest Major version: $LatestMajorVer"
 
 $URL = "https://versionsof.net/core/$LatestStableVersion"
 $Page1 = Invoke-WebRequest $URL -UseBasicParsing
-$LatestVersion = (($Page1.Links | Where-Object {$_.outerHTML -match '>(\d+(\.\d+)*)<'})[1])
+$LatestVersion = (($Page1.Links | Where-Object {$_.outerHTML -match '>(\d+(\.\d+)*)<'})[0])
 $LatestVersion = ($LatestVersion -split '<a.*?>|</a>')[1]
 
 $InstalledVersion = RemoveTrailingZeros "$LatestVersion"

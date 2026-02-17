@@ -28,7 +28,7 @@ Write-Host "Latest Stable Version: $LatestStableVersion"
 $URL = "https://versionsof.net/core/$LatestStableVersion"
 $Page1 = Invoke-WebRequest $URL -UseBasicParsing
 $LatestWebVersion = (($Page1.Links | Where-Object {$_.outerHTML -match '>(\d+(\.\d+)*)<'})[1])
-$LatestWebVersion = ($LatestWebVersion -split '<a.*?>|</a>')[1]
+$LatestWebVersion = ($LatestWebVersion -split '<a.*?>|</a>')[0]
 
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
