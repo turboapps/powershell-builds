@@ -169,6 +169,8 @@ def get_adobeapp_version1(adobeApp):
     wait("version.png")
 
 def get_adobeapp_version2(adobeApp):
+    wait(3)
+    rightClick()
     click("click-copy.png")
     run('explorer "C:\\windows\\system32\\notepad.exe"') 
     wait("wait-notepad.png")
