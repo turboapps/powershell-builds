@@ -127,7 +127,7 @@ def build_ccd():
     click("next-button.png")
     click("next-button.png")
     click(Pattern("self-service-checkbox.png").targetOffset(-83,-2))
-    click(Pattern("scroll-down.png").targetOffset(-1,237))
+    click(Pattern("scroll-down.png").targetOffset(-1,203))
     click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
     click("next-button.png")
     paste("CreativeCloudDesktop_x64")
