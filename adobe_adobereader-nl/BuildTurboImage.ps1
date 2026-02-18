@@ -77,7 +77,7 @@ $InstallerName = "AcroRdrDC.exe"
 $Installer = $null
 
 # Try the first 4 versions
-foreach ($RawVersion in $Versions | Select-Object -First 4) {
+foreach ($RawVersion in $Versions | Select-Object -First 6) {
 
     $Version = $RawVersion -replace '\.', ''
     $DownloadLink = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$Version/AcroRdrDC${Version}_nl_NL.exe"
