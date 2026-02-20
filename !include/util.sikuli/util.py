@@ -41,17 +41,17 @@ def adobe_adminconsole_login(username, password, optional = False):
         paste(username)
         wait(3)
         type(Key.ENTER)
-        if exists("adobe_login_pass_dark.png",10):
+        if exists("adobe_login_pass_dark.png",5):
             click("adobe_login_pass_dark.png")
-        elif exists("adobe_login_pass.png",10):
+        elif exists("adobe_login_pass.png",5):
             click("adobe_login_pass.png")
-        elif exists("adobe-password-new.png",10):
+        elif exists("adobe-password-new.png",5):
             click("adobe-password-new.png")
         wait(3)
         paste(password)
         wait(3)
         type(Key.ENTER)
-        if exists("save-password-prompt.png",10):
+        if exists("save-password-prompt.png",5):
             click("save-password-prompt.png")
 
 # Get the path of the shortcut for the apps that have different shortcut names for different versions.
@@ -170,10 +170,11 @@ def get_adobeapp_version1(adobeApp):
 
 def get_adobeapp_version2(adobeApp):
     wait(3)
-    rightClick()
-    click("click-copy.png")
+    type("c", Key.CTRL)
+    wait(2)
     run('explorer "C:\\windows\\system32\\notepad.exe"') 
     wait("wait-notepad.png")
+    wait(2)
     type("v", Key.CTRL)
     wait(2)
     type("s", Key.CTRL)
