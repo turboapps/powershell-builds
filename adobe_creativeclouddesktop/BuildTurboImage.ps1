@@ -114,9 +114,6 @@ WriteLog "Performing post-install customizations."
 &sc.exe stop AdobeUpdateService
 &sc.exe delete AdobeUpdateService
 
-# Remove start menu shortcut.
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Creative Cloud.lnk" -Recurse -Force
-
 $InstalledVersion = GetVersionFromRegistry "Adobe Creative"
 
 #########################
