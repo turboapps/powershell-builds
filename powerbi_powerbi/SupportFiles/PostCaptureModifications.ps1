@@ -25,9 +25,14 @@ $Filesystem.SelectSingleNode("Directory[@name='@APPDATALOCAL@']/Directory[@name=
 ######################
 
 #Remove folders @PROGRAMFILESX86@\Microsoft\EdgeUpdate and @PROGRAMFILESX86@\Microsoft\EdgeWebView
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='Edge']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeWebView']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='EdgeCore']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='edge']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='edgeupdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='edgewebview']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Microsoft']/Directory[@name='edgecore']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 #Remove reg key @HKCU@\SOFTWARE\Microsoft\EdgeUpdate
 $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='EdgeUpdate']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
