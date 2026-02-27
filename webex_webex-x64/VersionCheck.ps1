@@ -14,7 +14,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # either from the vendor website or the downloaded installer file
 
 # Get installer link for latest version
-$DownloadLink = "https://binaries.webex.com/WebexTeamsDesktop-Windows-Gold/Webex_en.msi"
+$DownloadLink = "https://binaries.webex.com/WebexOfclDesktop-Win-64-Gold/Webex_en.msi"
 
 # Name of the downloaded installer file
 $InstallerName = "Webex_en.msi"
