@@ -14,8 +14,62 @@ $DownloadPath = New-Item -Path $packagePath -Name "Installer" -ItemType "directo
 #####################
 ## Turbo Variables ##
 #####################
-$XStudio = Get-ChildItem -Path "C:\Program Files (x86)\Turbo.net" -Recurse -Filter "XStudio.exe" -File | Select-Object -ExpandProperty FullName  
-$Turbo = "C:\Program Files (x86)\Turbo\Cmd\turbo.exe" # The path to Turbo.exe
+
+# The path to XStudio.exe (Turbo Studio CLI)
+$XStudio = $null
+
+# Candidate root paths for XStudio.exe (ordered by preference)
+$possibleXStudioPaths = @(
+	"C:\Program Files (x86)\Turbo.net",
+	"C:\Program Files (x86)\OpenText"
+)
+
+# Check explicit candidate paths for XStudio
+foreach ($path in $possibleXStudioPaths) {
+	if (Test-Path -Path $path) {
+		$XStudio = Get-ChildItem -Path $path -Recurse -Filter "XStudio.exe" -File | Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+		if ($XStudio) {
+			break
+		}
+	}
+}
+
+if ($XStudio) {
+    Write-Host "Found XStudio.exe at: $XStudio"
+} else {
+    Write-Error "XStudio.exe was not found in expected locations.`nChecked:`n - $($possibleXStudioPaths -join "`n - ")"
+}
+
+# The path to turbo.exe (Turbo Client)
+$Turbo = $null
+
+# Candidate paths for turbo.exe (ordered by preference)
+$possibleTurboPaths = @(
+    Join-Path ${env:ProgramFiles(x86)}  'Turbo\Cmd\turbo.exe'    # All users Turbo Client installation
+    Join-Path ${env:LOCALAPPDATA}       'Turbo\Cmd\turbo.exe'    # Per user Turbo Client installation
+)
+
+# Check explicit candidate paths for turbo.exe first
+foreach ($path in $possibleTurboPaths) {
+    if (Test-Path -LiteralPath $path) {
+        $Turbo = $path
+        break
+    }
+}
+
+# Fallback: try resolving from PATH if not found in known locations
+if (-not $Turbo) {
+    if ((Get-Command 'turbo.exe') -and (Test-Path -LiteralPath (Get-Command 'turbo.exe').Source)) {
+        $Turbo = $cmd.Path
+    }
+}
+
+# Print path used / throw error if turbo.exe cannot be found
+if ($Turbo) {
+    Write-Host "Found turbo.exe at: $Turbo"
+} else {
+    Write-Error "turbo.exe was not found in expected locations or in PATH.`nChecked:`n - $($possibleTurboPaths -join "`n - ")"
+}
 $TurboCaptureDir = "$packagePath\TurboCapture"  # The folder that the Turbo capture will be saved to
 $XapplPath = "$TurboCaptureDir\Capture.xappl"  #  Path to the captured XAPPL file
 $SVM = "$TurboCaptureDir\build.svm"  # Path to the Turbo SVM build
