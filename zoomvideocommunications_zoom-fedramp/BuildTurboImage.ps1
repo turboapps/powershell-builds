@@ -53,7 +53,7 @@ CheckHubVersion
 WriteLog "Downloading the latest MSI installer."
 
 # Use the headless-extractor to get the download link
-$url = "https://zoomgov.com/download"
+$url = "https://zoomgov.com/download/admin"
 $outputdir = "$DownloadPath\links"
 turbo config --domain=turbo.net
 turbo pull turbo/headless-extractor
