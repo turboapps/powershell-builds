@@ -57,7 +57,13 @@ Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "
 
 # Download the required installers
 $progressPreference = 'silentlyContinue'
-Invoke-WebRequest -Uri https://aka.ms/getwinget -OutFile "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+
+$release = Invoke-RestMethod "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
+$asset = $release.assets | Where-Object { $_.name -like "*.msixbundle" }
+$DownloadLink = $asset.browser_download_url
+WriteLog "Downloading msixbundle from: $DownloadLink"
+
+Invoke-WebRequest -Uri $DownloadLink -OutFile "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x86.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x86.14.00.Desktop.appx"
 Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
