@@ -52,18 +52,20 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-$Page = curl 'https://www.hec.usace.army.mil/software/hec-hms/downloads.aspx' -UseBasicParsing
+$releases = Invoke-RestMethod "https://api.github.com/repos/HydrologicEngineeringCenter/hec-downloads/releases?per_page=20"
+$asset = $releases | ForEach-Object { $_.assets } | Where-Object { $_.name -like "HEC-HMS_*_Setup.exe" } | Select-Object -First 1
 
-# Get installer link for latest version
-$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*.exe"})[0].href
+if (-not $asset) {
+    WriteLog "ERROR: Could not find HEC-HMS setup asset in recent GitHub releases."
+    exit 1
+}
 
-# Name of the downloaded installer file
-$InstallerName = $DownloadLink.Split("/")[-1]
-
+$DownloadLink = $asset.browser_download_url
+$InstallerName = $asset.name
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-$InstalledVersion = Get-VersionFromExe $Installer
-$InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
+$asset.name -match 'HEC-HMS_(\d)(\d+)_Setup\.exe' | Out-Null
+$InstalledVersion = RemoveTrailingZeros "$($Matches[1]).$($Matches[2])"
 
 #########################
 ## Start Turbo Capture ##
