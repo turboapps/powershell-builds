@@ -52,30 +52,15 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# Get the latest .NET major version:
-$URL = "https://versionsof.net/core/"
-$Page = Invoke-WebRequest $URL -UseBasicParsing
-
-$MajorVersions = (($Page.Links | Where-Object {$_.href -match '^/core/\d+\.\d+/$'} | Select-Object -Skip 1))
-
-ForEach ($MajorVersion in $MajorVersions) {
- # Find the first link that doesn't have "preview"
-    if ($MajorVersion -notmatch '(?i)preview') {
-        $LatestStableVersion = ($MajorVersion -split '<a.*?>|</a>')[1]
-        Break
-    }
-}
-
-WriteLog "Latest Stable Version: $LatestStableVersion"
-$LatestMajorVer = ($LatestStableVersion -split '\.')[0]
-WriteLog "Latest Major version: $LatestMajorVer"
-
-$URL = "https://versionsof.net/core/$LatestStableVersion"
-$Page1 = Invoke-WebRequest $URL -UseBasicParsing
-$LatestVersion = (($Page1.Links | Where-Object {$_.outerHTML -match '>(\d+(\.\d+)*)<'})[0])
-$LatestVersion = ($LatestVersion -split '<a.*?>|</a>')[1]
-
-$InstalledVersion = RemoveTrailingZeros "$LatestVersion"
+$releasesIndex = Invoke-RestMethod "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/releases-index.json"
+$latestStable = $releasesIndex.'releases-index' |
+    Where-Object { $_.'support-phase' -eq 'active' } |
+    Sort-Object { [version]$_.'channel-version' } -Descending |
+    Select-Object -First 1
+$LatestVersion = $latestStable.'latest-release'
+$InstalledVersion = RemoveTrailingZeros $LatestVersion
+$LatestMajorVer = ($LatestVersion -split '\.')[0]
+WriteLog "Latest Version: $LatestVersion"
 
 # We will use the winget image from Turbo.net to download and install this app
 WriteLog "Pulling microsoft/winget from Turbo.net"
