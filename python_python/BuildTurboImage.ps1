@@ -86,7 +86,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ################################
 WriteLog "Performing post-install customizations."
 
-$InstalledVersion = $InstallerName.Split("-")[1]
+$InstalledVersion = ([System.IO.Path]::GetFileNameWithoutExtension($InstallerName)).Split("-")[1]
 $InstalledVersion = RemoveTrailingZeros $InstalledVersion
 
 #########################

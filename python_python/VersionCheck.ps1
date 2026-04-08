@@ -23,9 +23,7 @@ $DownloadLink = ($Page.Links | Where-Object {$_.outerHTML -like "*Windows instal
 
 $InstallerName = $DownloadLink.Split("/")[-1]
 
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-$LatestWebVersion = $InstallerName.Split("-")[1]
+$LatestWebVersion = ([System.IO.Path]::GetFileNameWithoutExtension($InstallerName)).Split("-")[1]
 $LatestWebVersion = RemoveTrailingZeros $LatestWebVersion
 
 WriteLog "WebVersion=$LatestWebVersion"
