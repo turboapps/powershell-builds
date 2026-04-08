@@ -52,20 +52,9 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# Get main download page for application.
-$Page = curl 'https://support.google.com/earth/answer/168344#zippy=%2Cdownload-a-google-earth-pro-direct-installer' -UseBasicParsing
-
-# Get download page for latest version.
-$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*x64.exe"}).href[0]
-
-# Name of the downloaded installer file
-$InstallerName = $DownloadLink.split("/")[-1]
-
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-# Get the latest version tag.
-$InstalledVersion = $InstallerName.split("-")[1]
-$InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
+$DownloadLink = "https://dl.google.com/earth/client/advanced/current/GoogleEarthProWin-x64.exe"
+$InstallerName = "GoogleEarthProWin-x64.exe"
+DownloadInstaller $DownloadLink $DownloadPath $InstallerName | Out-Null
 
 #########################
 ## Start Turbo Capture ##
@@ -85,6 +74,8 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
+
+$InstalledVersion = GetVersionFromRegistry "Google Earth Pro"
 
 # Add the registry to prevent tips on startup
 &reg.exe ADD "HKCU\SOFTWARE\Google\Google Earth Pro" /v enableTips /t REG_SZ /d "false" /f
