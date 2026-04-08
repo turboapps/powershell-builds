@@ -11,12 +11,10 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 #############################################
 
 # Get installer link for latest version
-$Page = curl 'https://www.7-zip.org/download.html' -UseBasicParsing
-
-# Get installer link for latest version
-$LatestInstaller = ($Page.Links | Where-Object {$_.href -like "*.msi"})[1].href
-$DownloadLink = "https://www.7-zip.org/" + $LatestInstaller
-$InstallerName = $LatestInstaller.Split("/")[1]
+$release = Invoke-RestMethod "https://api.github.com/repos/ip7z/7zip/releases/latest"
+$asset = $release.assets | Where-Object { $_.name -like "*.msi" -and $_.name -notlike "*-x64.msi" }
+$DownloadLink = $asset.browser_download_url
+$InstallerName = $asset.name
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 $LatestWebVersion = Get-MsiProductVersion "$Installer"
