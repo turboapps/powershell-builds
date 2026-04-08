@@ -10,15 +10,8 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Get installer link for latest version
 $release = Invoke-RestMethod "https://api.github.com/repos/ip7z/7zip/releases/latest"
-$asset = $release.assets | Where-Object { $_.name -like "*-x64.msi" }
-$DownloadLink = $asset.browser_download_url
-$InstallerName = $asset.name
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-$LatestWebVersion = Get-MsiProductVersion "$Installer"
-$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
+$LatestWebVersion = RemoveTrailingZeros $release.tag_name
 
 WriteLog "WebVersion=$LatestWebVersion"
 
