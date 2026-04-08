@@ -61,15 +61,17 @@ turbo run turbo/headless-extractor --using=google/chrome-x64 --isolate=merge-use
 
 $links = Get-Content -Path "$outputdir\links.txt"
 
-# Define a regular expression pattern
-$pattern = '.*/dymo/Software/Win/.*'
-
-# Filter and output lines containing matching links
+# Filter links for the x64 Windows installer
 foreach ($line in $links) {
-    if ($line -match $pattern) {
-        $DownloadLink = $line  # Directly use the matching URL
-        break # get out after first match
+    if ($line -match 'DCDWIN.*X64.*\.exe') {
+        $DownloadLink = $line
+        break
     }
+}
+
+if (-not $DownloadLink) {
+    WriteLog "ERROR: No DYMO installer link found. Check if the download page structure changed."
+    exit 1
 }
 
 $InstallerName = $DownloadLink.split("/")[-1]
