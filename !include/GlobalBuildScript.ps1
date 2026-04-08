@@ -117,7 +117,10 @@ Function GetHubRevisions($HubOrg,$URL) {
 # Get Current Hub Version of application
 Function GetCurrentHubVersion($HubOrg,$URL) {
     $response = GetHubRevisions $HubOrg $URL
-    $VersionList = $response.tags| Sort-Object { [System.Version]$_ } -Descending
+    $VersionList = $response.tags | Sort-Object {
+        $parts = ($_ -split '\.').Count
+        if ($parts -eq 1) { [System.Version]("$_" + ".0") } else { [System.Version]$_ }
+    } -Descending
     $LatestHubVer = $VersionList | Select-Object -First 1
     $LatestHubVer = RemoveTrailingZeros $LatestHubVer
     WriteLog "HubVersion=$LatestHubVer"
