@@ -10,18 +10,9 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-$Page = curl 'https://git-scm.com/downloads/win' -UseBasicParsing
-
-# Get installer link for latest version
-$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*64-bit.exe"})[0].href
-
-# Name of the downloaded installer file
-$InstallerName = $DownloadLink.Split("/")[-1]
-
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-$LatestWebVersion = Get-VersionFromExe "$Installer"
-$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
+$release = Invoke-RestMethod "https://api.github.com/repos/git-for-windows/git/releases/latest"
+$asset = $release.assets | Where-Object { $_.name -like "Git-*-64-bit.exe" } | Select-Object -First 1
+$LatestWebVersion = RemoveTrailingZeros ($asset.name -split '-')[1]
 
 WriteLog "WebVersion=$LatestWebVersion"
 

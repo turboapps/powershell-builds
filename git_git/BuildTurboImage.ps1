@@ -52,18 +52,13 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-$Page = curl 'https://git-scm.com/downloads/win' -UseBasicParsing
-
-# Get installer link for latest version
-$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*64-bit.exe"})[0].href
-
-# Name of the downloaded installer file
-$InstallerName = $DownloadLink.Split("/")[-1]
-
+$release = Invoke-RestMethod "https://api.github.com/repos/git-for-windows/git/releases/latest"
+$asset = $release.assets | Where-Object { $_.name -like "Git-*-64-bit.exe" } | Select-Object -First 1
+$DownloadLink = $asset.browser_download_url
+$InstallerName = $asset.name
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-$InstalledVersion = Get-VersionFromExe $Installer
-$InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
+$InstalledVersion = RemoveTrailingZeros ($InstallerName -split '-')[1]
 
 #########################
 ## Start Turbo Capture ##
