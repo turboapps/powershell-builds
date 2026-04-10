@@ -82,7 +82,9 @@ WriteLog $finalRedirect
 $InstallerName = $finalRedirect.Split("/")[-1]
 WriteLog $InstallerName
 
-$Installer = DownloadInstaller $finalRedirect $DownloadPath $InstallerName
+$Installer = "$DownloadPath\$InstallerName"
+Start-BitsTransfer -Source $finalRedirect -Destination $Installer
+
 
 # Get the latest version tag.
 $InstalledVersion = Get-VersionFromExe $Installer
