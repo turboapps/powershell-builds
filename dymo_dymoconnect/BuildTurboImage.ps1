@@ -52,27 +52,16 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# Use the headless-extractor to get the download link
-$url = "https://www.dymo.com/support?cfid=user-guide"
-$outputdir = "$DownloadPath\links"
-turbo config --domain=turbo.net
-turbo pull turbo/headless-extractor
-turbo run turbo/headless-extractor --using=google/chrome-x64 --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+$versions = Invoke-RestMethod "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/d/DYMO/DYMOConnect"
+$latestVersion = ($versions | Sort-Object { [version]$_.name } -Descending | Select-Object -First 1).name
 
-$links = Get-Content -Path "$outputdir\links.txt"
-
-# Define a regular expression pattern
-$pattern = '.*/dymo/Software/Win/.*'
-
-# Filter and output lines containing matching links
-foreach ($line in $links) {
-    if ($line -match $pattern) {
-        $DownloadLink = $line  # Directly use the matching URL
-        break # get out after first match
-    }
+if (-not $latestVersion) {
+    WriteLog "ERROR: Could not find DYMO Connect version in winget-pkgs."
+    exit 1
 }
 
-$InstallerName = $DownloadLink.split("/")[-1]
+$InstallerName = "DCDSetup$latestVersion-X64.exe"
+$DownloadLink = "https://dymoreleasecontent.blob.core.windows.net/dymo-release/DCDWIN/$InstallerName"
 $Installer = Join-Path -Path $DownloadPath -ChildPath $InstallerName
 . curl.exe $DownloadLink -o $Installer
 

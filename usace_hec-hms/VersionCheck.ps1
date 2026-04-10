@@ -10,18 +10,14 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-$Page = curl 'https://www.hec.usace.army.mil/software/hec-hms/downloads.aspx' -UseBasicParsing
+$releases = Invoke-RestMethod "https://api.github.com/repos/HydrologicEngineeringCenter/hec-downloads/releases?per_page=20"
+$asset = $releases | ForEach-Object { $_.assets } | Where-Object { $_.name -like "HEC-HMS_*_Setup.exe" } | Select-Object -First 1
 
-# Get installer link for latest version
-$DownloadLink = ($Page.Links | Where-Object {$_.href -like "*.exe"})[0].href
-
-# Name of the downloaded installer file
-$InstallerName = $DownloadLink.Split("/")[-1]
-
-$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
-
-$LatestWebVersion = Get-VersionFromExe $Installer
-$LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
+if ($asset.name -notmatch 'HEC-HMS_(\d)(\d+)_Setup\.exe') {
+    WriteLog "ERROR: Could not find HEC-HMS setup asset in recent GitHub releases."
+    exit 1
+}
+$LatestWebVersion = RemoveTrailingZeros "$($Matches[1]).$($Matches[2])"
 
 WriteLog "WebVersion=$LatestWebVersion"
 
