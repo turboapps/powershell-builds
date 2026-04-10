@@ -93,7 +93,7 @@ Function GetHubRevisions($HubOrg,$URL) {
         $URL = $PushURL
     }
     # Split the repo parts into owner and name values
-    $repoOwner, $repoName = $HubOrg -split "_"
+    $repoOwner, $repoName = $HubOrg -split "[_/]", 2
     WriteLog "Getting the current $HubOrg version from $URL"
     
     # Get token from API Key
@@ -226,7 +226,7 @@ function RemoveTrailingZeros {
 	# Find first non-zero index
 	$index = 0
     $len = $verArray.length
-	ForEach ($v in $verArray[0..$len]) {
+	ForEach ($v in $verArray[0..($len-1)]) {
 	  if ([int]$v -ne 0) {
 		$index = $verArray.IndexOf($v)
 		break
@@ -234,7 +234,7 @@ function RemoveTrailingZeros {
 	}
 	
 	# Copy array from first non-zero index to end.
-	$verArrayTrimmed = $verArray[$index..($verArray.length)]
+	$verArrayTrimmed = $verArray[$index..($verArray.length - 1)]
 	# Reverse back to normal version order
 	[array]::Reverse($verArrayTrimmed)
     If ($verArrayTrimmed.Length -eq 1) {
