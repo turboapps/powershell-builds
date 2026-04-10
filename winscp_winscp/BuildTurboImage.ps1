@@ -52,31 +52,14 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest MSI installer."
 
-# Use the headless-extractor to get the download link
-$url = "https://winscp.net/eng/downloads.php"
-$outputdir = "$DownloadPath\links"
-turbo config --domain=turbo.net
-turbo pull turbo/headless-extractor
-turbo run turbo/headless-extractor --using=google/chrome-x64 --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
-
-# Define the path to the HTML file
-$DOMFilePath = "$outputdir\dom.html"
-$HtmlContent = Get-Content -Path $DOMFilePath -Raw
-
-# Split the content into lines
-$lines = $HtmlContent -split "`n"
-
-# Define a regular expression pattern
-$pattern = 'WinSCP-[\d\.]+\.msi'
-
-# Filter and output lines containing matching links
-foreach ($line in $lines) {
-    if ($line -match $pattern) {
-        $InstallerName = $matches[0]  # Use the first link that matches
-        break
-    }
+$response = Invoke-WebRequest -Uri "https://winscp.net/eng/downloads.php" -UseBasicParsing
+if ($response.Content -match 'WinSCP-([\d.]+)\.msi') {
+    $InstallerName = "WinSCP-$($Matches[1]).msi"
+} else {
+    WriteLog "ERROR: Could not find WinSCP MSI installer on downloads page."
+    exit 1
 }
-$DownloadLink =  "https://winscp.net/download/$InstallerName/download"
+$DownloadLink = "https://winscp.net/download/$InstallerName/download"
 
 pushd $DownloadPath
 $Installer = . C:\Windows\System32\curl.exe -L -o $InstallerName $DownloadLink

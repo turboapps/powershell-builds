@@ -10,36 +10,14 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Use the headless-extractor to get the download link
-$url = "https://www.dymo.com/support?cfid=user-guide"
-$outputdir = "$DownloadPath\links"
-turbo config --domain=turbo.net
-turbo pull turbo/headless-extractor
-turbo run turbo/headless-extractor --using=google/chrome-x64 --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
+$versions = Invoke-RestMethod "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/d/DYMO/DYMOConnect"
+$latestVersion = ($versions | Sort-Object { [version]$_.name } -Descending | Select-Object -First 1).name
 
-$links = Get-Content -Path "$outputdir\links.txt"
-
-# Filter links for the x64 Windows installer
-foreach ($line in $links) {
-    if ($line -match 'DCDWIN.*X64.*\.exe') {
-        $DownloadLink = $line
-        break
-    }
-}
-
-if (-not $DownloadLink) {
-    WriteLog "ERROR: No DYMO installer link found. Check if the download page structure changed."
+if (-not $latestVersion) {
+    WriteLog "ERROR: Could not find DYMO Connect version in winget-pkgs."
     exit 1
 }
-
-# Extract version from filename: DCDSetup1.6.0.36-X64.exe -> 1.6.0.36
-$InstallerName = $DownloadLink.split("/")[-1]
-if ($InstallerName -match 'DCDSetup([\d.]+)') {
-    $LatestWebVersion = RemoveTrailingZeros $Matches[1]
-} else {
-    WriteLog "ERROR: Could not parse version from installer filename: $InstallerName"
-    exit 1
-}
+$LatestWebVersion = RemoveTrailingZeros $latestVersion
 
 WriteLog "WebVersion=$LatestWebVersion"
 
