@@ -327,6 +327,7 @@ Function Get-VersionFromExe {
 }
 
 Function GetVersionFromRegistry($AppPartName) {
+ $RegistryVersion = $null
  # Get the installed version from the 64 bit registry
  $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
  $subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
