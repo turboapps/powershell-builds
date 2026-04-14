@@ -18,4 +18,5 @@ if exists("folder-button.png"):
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\CreativeCloudDesktop_x64_en_US_WIN_64.zip")
 while not os.path.exists(adobefile_path):
     wait(20)
+wait(15)
 closeApp("Edge")

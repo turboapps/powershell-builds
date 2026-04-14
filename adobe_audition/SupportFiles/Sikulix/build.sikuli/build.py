@@ -41,4 +41,5 @@ setAutoWaitTimeout(600)
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\Audition_x64_en_US_WIN_64.zip")
 while not os.path.exists(adobefile_path):
     wait(10)
+wait(15)
 closeApp("Edge")
