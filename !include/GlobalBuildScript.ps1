@@ -11,6 +11,13 @@ $NewLine = "`r`n"  #  Adds a blank line to the Log file
 $DownloadPath = New-Item -Path $packagePath -Name "Installer" -ItemType "directory" -Force # create an Installer directory in the Desktop Package folder
 
 
+# WriteLog - writes string message parameter to log file and console.
+Function WriteLog([String]$message) {
+    Write-Host "$message"
+    $timestamp = Get-Date -Format o | foreach {$_ -replace ":", "."}
+    ("$timestamp $message").replace($NewLine,"") | Out-File -FilePath $LogFile -Append # Strip new lines from message then output to log
+}
+
 #####################
 ## Turbo Variables ##
 #####################
@@ -36,6 +43,8 @@ foreach ($path in $possibleXStudioPaths) {
 
 if ($XStudio) {
     Write-Host "Found XStudio.exe at: $XStudio"
+    $turboStudioVersion = (Get-Item $XStudio).VersionInfo.ProductVersion
+    WriteLog "TurboStudioVersion=$turboStudioVersion"
 } else {
     Write-Error "XStudio.exe was not found in expected locations.`nChecked:`n - $($possibleXStudioPaths -join "`n - ")"
 }
@@ -79,13 +88,6 @@ $FinalXapplPath = "$TurboCaptureDir\FinalCapture.xappl"  #  XAPPL with any modif
 ###############
 ## Functions ##
 ###############
-
-# WriteLog - writes string message parameter to log file and console.
-Function WriteLog([String]$message) {
-    Write-Host "$message"
-    $timestamp = Get-Date -Format o | foreach {$_ -replace ":", "."}
-    ("$timestamp $message").replace($NewLine,"") | Out-File -FilePath $LogFile -Append # Strip new lines from message then output to log
-}
 
 # Get current Hub revisions of application
 Function GetHubRevisions($HubOrg,$URL) {
@@ -166,8 +168,11 @@ Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
         WriteLog "File already downloaded: $DownloadPath\$InstallerName"
     } else {
         WriteLog "Downloading latest installer to $DownloadPath\$InstallerName"
+        WriteLog "DownloadUrl=$DownloadLink"
         wget $DownloadLink -O $DownloadPath\$InstallerName
         Wait-ForFileExistence $DownloadPath\$InstallerName -Iterations 3600 -SleepTime 1  # Exit if file doesn't exist after 60 minutes
+        $hash = (Get-FileHash "$DownloadPath\$InstallerName" -Algorithm SHA256).Hash
+        WriteLog "DownloadHash=sha256:$($hash.ToLower())"
     }
     Return "$DownloadPath\$InstallerName"
 }
