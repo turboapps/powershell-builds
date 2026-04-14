@@ -36,6 +36,8 @@ foreach ($path in $possibleXStudioPaths) {
 
 if ($XStudio) {
     Write-Host "Found XStudio.exe at: $XStudio"
+    $turboStudioVersion = (Get-Item $XStudio).VersionInfo.ProductVersion
+    Write-Host "TurboStudioVersion=$turboStudioVersion"
 } else {
     Write-Error "XStudio.exe was not found in expected locations.`nChecked:`n - $($possibleXStudioPaths -join "`n - ")"
 }
@@ -166,8 +168,11 @@ Function DownloadInstaller($DownloadLink,$DownloadPath, $InstallerName) {
         WriteLog "File already downloaded: $DownloadPath\$InstallerName"
     } else {
         WriteLog "Downloading latest installer to $DownloadPath\$InstallerName"
+        WriteLog "DownloadUrl=$DownloadLink"
         wget $DownloadLink -O $DownloadPath\$InstallerName
         Wait-ForFileExistence $DownloadPath\$InstallerName -Iterations 3600 -SleepTime 1  # Exit if file doesn't exist after 60 minutes
+        $hash = (Get-FileHash "$DownloadPath\$InstallerName" -Algorithm SHA256).Hash
+        WriteLog "DownloadHash=sha256:$($hash.ToLower())"
     }
     Return "$DownloadPath\$InstallerName"
 }
