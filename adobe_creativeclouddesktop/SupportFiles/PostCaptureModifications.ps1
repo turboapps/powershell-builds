@@ -19,6 +19,8 @@ $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESCOMMONX86@']/Directory[@n
 ## Remove @PROGRAMFILESCOMMONX86@\Adobe\Adobe Desktop Common\AdobeGenuineClient directory
 $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESCOMMONX86@']/Directory[@name='Adobe']/Directory[@name='Adobe Desktop Common']/Directory[@name='AdobeGenuineClient']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
+## Remove @PROGRAMFILESCOMMONX86@\Adobe\caps directory - This folder contains the hdpim.db file which should be included from the Adobe product that is used with this image
+$Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESCOMMONX86@']/Directory[@name='Adobe']/Directory[@name='caps']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 #################
 # Edit Registry #
