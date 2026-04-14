@@ -327,7 +327,6 @@ Function Get-VersionFromExe {
 }
 
 Function GetVersionFromRegistry($AppPartName) {
- $RegistryVersion = $null
  # Get the installed version from the 64 bit registry
  $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
  $subKey = $key.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall")
@@ -343,9 +342,9 @@ Function GetVersionFromRegistry($AppPartName) {
 
  if ([string]::IsNullOrWhiteSpace($RegistryVersion)) { # Check the 32bit reg keys if no version found
       foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-        $name = Get-ItemPropertyValue $subkey.PSPath -Name DisplayName -ErrorAction SilentlyContinue
+        $name = (Get-ItemProperty $subkey.PSPath).DisplayName
         if ($name -match "$AppPartName") {
-            $RegistryVersion = Get-ItemPropertyValue $subkey.PSPath -Name DisplayVersion -ErrorAction SilentlyContinue
+            $RegistryVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
         }
       }
  }
