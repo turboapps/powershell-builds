@@ -343,9 +343,9 @@ Function GetVersionFromRegistry($AppPartName) {
 
  if ([string]::IsNullOrWhiteSpace($RegistryVersion)) { # Check the 32bit reg keys if no version found
       foreach ($subkey in Get-ChildItem ("HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")) {
-        $name = (Get-ItemProperty $subkey.PSPath).DisplayName
+        $name = Get-ItemPropertyValue $subkey.PSPath -Name DisplayName -ErrorAction SilentlyContinue
         if ($name -match "$AppPartName") {
-            $RegistryVersion = (Get-ItemProperty $subkey.PSPath).DisplayVersion
+            $RegistryVersion = Get-ItemPropertyValue $subkey.PSPath -Name DisplayVersion -ErrorAction SilentlyContinue
         }
       }
  }
