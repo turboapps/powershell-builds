@@ -83,7 +83,7 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Copy initial_prefernces file - this file doesn't currently contain any changes to defaults but allows for future changes if required.
-Copy-Item "$SupportFiles\initial_preferences" -Destination "C:\Program Files\Google\Chrome\Application\"  -Force
+Copy-Item "$SupportFiles\initial_preferences" -Destination "$env:LOCALAPPDATA\Google\Chrome SxS\Application\"  -Force
 # Copy Google folder to localappdata - this folder contains files to prevent the Google Welcome page on first launch.
 Copy-Item -Path "$SupportFiles\Google" -Destination "$env:LOCALAPPDATA\" -Recurse -Force
 
