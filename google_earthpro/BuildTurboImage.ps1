@@ -117,3 +117,6 @@ BuildTurboSvmImage
 
 PushImage $InstalledVersion
 
+# Write the final pushed version so log parsing in Invoke-AppCapture.ps1 picks up
+# the correct (post-push) version, not the pre-push value from GetCurrentHubVersion.
+WriteLog "HubVersion=$InstalledVersion"
