@@ -87,6 +87,18 @@ $InstalledVersion = GetVersionFromRegistry "Google Earth Pro"
 
 StopTurboCapture
 
+##############################################################
+## Compare installed version to hub version (post-install) ##
+## VersionCheck.ps1 cannot detect the version without      ##
+## downloading and installing, so we compare here instead. ##
+##############################################################
+
+WriteLog "WebVersion=$InstalledVersion"
+If ($PushURL) {
+    $CurrentHubVersion = GetCurrentHubVersion $HubOrg $PushURL
+    Compare-Versions $CurrentHubVersion $InstalledVersion
+}
+
 ######################
 ## Customize XAPPL  ##
 ######################
