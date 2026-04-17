@@ -75,20 +75,25 @@
         End If
     End Sub
 
-    Function RetrieveRegistryLicense
-        Dim keyPath, valueName, regCommand, shell, exec, output
-            
-	    cmd = "%SystemRoot%\sysnative\WindowsPowerShell\v1.0\powershell.exe " &chr(40) &"Get-ItemProperty -Path 'HKLM:\SOFTWARE\Code Systems\Turbo Studio 24' -Name 'LicenseCertificate'" &chr(41) &".LicenseCertificate"
-        Set shell = CreateObject("WScript.Shell")
-        Set exec = shell.Exec(cmd)
-            
-        output = ""
-        Do While Not exec.StdOut.AtEndOfStream
-            output = output & exec.StdOut.ReadLine()
-        Loop
-        
-        RetrieveRegistryLicense = output
-    End Function
+	Function RetrieveRegistryLicense
+		Dim cmd, shell, exec, output
+		
+		cmd = "%SystemRoot%\sysnative\WindowsPowerShell\v1.0\powershell.exe -NoProfile -Command " & _
+		"""Get-ChildItem -Path 'HKLM:\SOFTWARE\Code Systems' -Recurse -ErrorAction SilentlyContinue | " & _
+		"ForEach-Object { try { (Get-ItemProperty -Path $_.PSPath -Name 'LicenseCertificate' -ErrorAction Stop).LicenseCertificate } catch {} } | " & _
+		"Select-Object -First 1 | ForEach-Object { $_ -replace '\r|\n','' }"""
+
+		Set shell = CreateObject("WScript.Shell")
+		Set exec = shell.Exec(cmd)
+		
+		output = ""
+		Do While Not exec.StdOut.AtEndOfStream
+			output = exec.StdOut.ReadLine()   ' only take the first line
+			Exit Do
+		Loop
+		
+		RetrieveRegistryLicense = output
+	End Function
 
     Function updateLicense
       Dim licenseText, fso, licenseFile, filePath, htaPath

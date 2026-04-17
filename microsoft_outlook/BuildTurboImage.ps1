@@ -62,7 +62,7 @@ $MSIX = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 # Replace the SnapshotSettings_21.xml file to include C:\Program Files\WindowsApps folder in the capture
 New-Item -ItemType Directory -Force -Path $env:LOCALAPPDATA\Turbo.net
-Copy-Item -Path "$SupportFiles\Turbo Studio 25" -Destination "$env:LOCALAPPDATA\Turbo.net" -Recurse -Force
+Copy-Item -Path "$SupportFiles\Turbo Studio" -Destination "$env:LOCALAPPDATA\Turbo.net" -Recurse -Force
 
 StartTurboCapture
 
