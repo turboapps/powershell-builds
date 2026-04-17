@@ -16,7 +16,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 $url = "https://filezilla-project.org/download.php?type=server"
 $outputdir = "$DownloadPath\links"
 turbo config --domain=turbo.net
-turbo pull turbo/headless-extractor
+turbo pull --format=json turbo/headless-extractor
 turbo run turbo/headless-extractor --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
 $links = Get-Content -Path "$outputdir\links.txt"

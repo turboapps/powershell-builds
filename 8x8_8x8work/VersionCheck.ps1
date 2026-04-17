@@ -15,7 +15,7 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 $url = "https://support.8x8.com/business-phone/voice/work-desktop/download-8x8-work-for-desktop"
 $outputdir = "$DownloadPath\links"
 turbo config --domain=turbo.net
-turbo pull turbo/headless-extractor
+turbo pull --format=json turbo/headless-extractor
 turbo run turbo/headless-extractor --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
 $links = Get-Content -Path "$outputdir\links.txt"

@@ -56,7 +56,7 @@ WriteLog "Downloading the latest ZIP archive."
 $url = "https://github.com/NationalSecurityAgency/ghidra/releases/latest"
 $outputdir = "$DownloadPath\links"
 turbo config --domain=turbo.net
-turbo pull turbo/headless-extractor
+turbo pull --format=json turbo/headless-extractor
 turbo run turbo/headless-extractor --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
 # Define the path to the HTML file

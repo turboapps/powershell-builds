@@ -52,8 +52,8 @@ CheckHubVersion
 ##########################################
 
 WriteLog "Pulling latest opensearch image from Hub."
-WriteLog "> turbo pull opensearch/opensearch"
-. turbo pull opensearch/opensearch
+WriteLog "> turbo pull --format=json opensearch/opensearch"
+. turbo pull --format=json opensearch/opensearch
 
 # Copy config file out of image using a temporary container (turbo try).
 # Mount the package folder to write the file out to the native filesystem from the container.

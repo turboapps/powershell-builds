@@ -59,8 +59,8 @@ $Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath\$InstallerName
 Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $DownloadPath
 
 WriteLog "Pulling latest vsbuildtools and postgresql images from Hub."
-WriteLog "> turbo pull microsoft/vsbuildtools,postgresql/postgresql"
-. turbo pull microsoft/vsbuildtools,postgresql/postgresql:16
+WriteLog "> turbo pull --format=json microsoft/vsbuildtools,postgresql/postgresql"
+. turbo pull --format=json microsoft/vsbuildtools,postgresql/postgresql:16
 
 # Run the compiler on the source files from a turbo container using vsbuildtools and postgresql which are required for the compile action.
 # We need to use postgresql 16 as pgvector is currently not supported with postgresql 17 as per https://github.com/pgvector/pgvector?tab=readme-ov-file

@@ -75,8 +75,8 @@ $SourceDir = "C:\whisper.cpp-source"
 Rename-Item -Path "C:\whisper.cpp-$InstalledVersion" -NewName $SourceDir
 
 WriteLog "Pulling latest vsbuildtools and git image from Hub."
-WriteLog "> turbo pull microsoft/vsbuildtools,git/git"
-. turbo pull microsoft/vsbuildtools,git/git
+WriteLog "> turbo pull --format=json microsoft/vsbuildtools,git/git"
+. turbo pull --format=json microsoft/vsbuildtools,git/git
 
 # Run the compiler on the source files from a turbo container using vsbuildtools which is required for the compile action.
 # The compile.bat script will compile in the folder C:\whisper.cpp-source\build

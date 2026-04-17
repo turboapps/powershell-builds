@@ -64,7 +64,7 @@ WriteLog "Latest Version: $LatestVersion"
 
 # We will use the winget image from Turbo.net to download and install this app
 WriteLog "Pulling microsoft/winget from Turbo.net"
-turbo pull microsoft/winget
+turbo pull --format=json microsoft/winget
 
 #########################
 ## Start Turbo Capture ##
