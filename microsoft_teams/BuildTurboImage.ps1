@@ -103,13 +103,13 @@ WriteLog "Performing post-install customizations."
 
 # Write registry keys to create the URL Protocol handlers
 New-Item -Path "HKCU:\Software\Classes\msteams\shell\open\command" -Force
-New-ItemProperty -Path "HKCU:\Software\Classes\msteams" -Name "(Default)" -Value "URL:msteams" -PropertyType String
-New-ItemProperty -Path "HKCU:\Software\Classes\msteams" -Name "URL Protocol" -PropertyType String
+New-ItemProperty -Path "HKCU:\Software\Classes\msteams" -Name "(Default)" -Value "URL:msteams" -PropertyType String -Force
+New-ItemProperty -Path "HKCU:\Software\Classes\msteams" -Name "URL Protocol" -PropertyType String -Force
 New-ItemProperty -Path "HKCU:\Software\Classes\msteams\shell\open\command" -Name "(Default)" -Value "`"$TeamsEXE`" `"%1`"" -PropertyType String -Force
 
 New-Item -Path "HKCU:\Software\Classes\ms-teams\shell\open\command" -Force
-New-ItemProperty -Path "HKCU:\Software\Classes\ms-teams" -Name "(Default)" -Value "URL:msteams" -PropertyType String
-New-ItemProperty -Path "HKCU:\Software\Classes\ms-teams" -Name "URL Protocol" -PropertyType String
+New-ItemProperty -Path "HKCU:\Software\Classes\ms-teams" -Name "(Default)" -Value "URL:msteams" -PropertyType String -Force
+New-ItemProperty -Path "HKCU:\Software\Classes\ms-teams" -Name "URL Protocol" -PropertyType String -Force
 New-ItemProperty -Path "HKCU:\Software\Classes\ms-teams\shell\open\command" -Name "(Default)" -Value "`"$TeamsEXE`" `"%1`"" -PropertyType String -Force
 
 # Write this key to isolate to the container to prevent Teams lauching to a blank white window
