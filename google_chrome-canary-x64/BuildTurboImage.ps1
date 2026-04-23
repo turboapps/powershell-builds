@@ -102,14 +102,8 @@ if (Test-Path "$env:LOCALAPPDATA\Google\GoogleUpdater") {
 }
 
 # Get installed version from registry
-Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall" |
-Where-Object {
-    (Get-ItemProperty $_.PSPath).DisplayName -eq "Google Chrome SxS"
-} |
-ForEach-Object {
-    $RegistryVersion = (Get-ItemProperty $_.PSPath).DisplayVersion
-}
-WriteLog "Installed Version from registry: $InstalledVersion"
+$RegistryVersion = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome SxS").DisplayVersion
+WriteLog "Installed Version from registry: $RegistryVersion"
 
 # Delete installer files
 if (Test-Path "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$RegistryVersion\Installer") { 
