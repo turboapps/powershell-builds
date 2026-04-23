@@ -88,8 +88,11 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 WriteLog "Performing post-install customizations."
 
 # Disable update check
-    # Get all the files named "gimprc" in the subfolders
-    $files = Get-ChildItem -Path "C:\Program Files" -Recurse -Filter "gimprc" -File
+$gimpDirs = Get-ChildItem -Path "C:\Program Files" -Directory -Filter "gimp*"
+
+foreach ($dir in $gimpDirs) {
+# Find gimprc files only inside these folders
+$files = Get-ChildItem -Path $dir.FullName -Recurse -Filter "gimprc" -File
 
     foreach ($file in $files) {
         # Read the content of the file
@@ -103,6 +106,7 @@ WriteLog "Performing post-install customizations."
 
         WriteLog "Updated file: $($file.FullName)"
     }
+}
 
 # Launch GIMP - this will speed up first launch of a new session
     # Define the path to the Start Menu Programs directory for all users
