@@ -105,13 +105,19 @@ foreach ($service in $services) {
 }
 
 # Delete Google update folders
-Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
-Remove-Item -Path "C:\Program Files (x86)\Google\GoogleUpdater\*" -Recurse -Force
+if (Test-Path "C:\Program Files (x86)\Google\Update") { 
+    Remove-Item -Path "C:\Program Files (x86)\Google\Update\*" -Recurse -Force
+}
+if (Test-Path "C:\Program Files (x86)\Google\GoogleUpdater") { 
+    Remove-Item -Path "C:\Program Files (x86)\Google\GoogleUpdater\*" -Recurse -Force
+}
 
 $InstalledVersion = GetVersionFromRegistry "Google Chrome"
 
 # Delete installer files
-Remove-Item -Path "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force
+if (Test-Path "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer") { 
+    Remove-Item "C:\Program Files\Google\Chrome\Application\$InstalledVersion\Installer\*" -Recurse -Force 
+}
 
 # Set the policy key to prevent the default browser banner
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
