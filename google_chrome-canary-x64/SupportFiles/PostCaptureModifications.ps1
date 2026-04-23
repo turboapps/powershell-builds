@@ -30,8 +30,6 @@ ForEach ($childNodes in $parentNode) {
 
 # Sets Isolation on the folders
 $Filesystem.SelectSingleNode("Directory[@name='@APPDATALOCAL@']/Directory[@name='Google']").isolation = "Full"
-$Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Google']").isolation = "Full"
-$Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILES@']/Directory[@name='Google']").isolation = "Full"
 
 #################
 # Edit Registry #
@@ -64,9 +62,7 @@ AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']/Key[@na
 AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']/Key[@name='Chrome SxS']/Key[@name='NativeMessagingHosts']" "net.spoon.chromenativehost" "Merge" "False" "False"
 
 # Delete registry keys - unnecessary keys
-$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Active Setup']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='MediaPlayer']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-
 
 # Add reg key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
 # This will prevent Chrome Apps from creating Programs and Features entries
