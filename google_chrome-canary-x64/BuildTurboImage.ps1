@@ -101,11 +101,19 @@ if (Test-Path "$env:LOCALAPPDATA\Google\GoogleUpdater") {
     Remove-Item -Path "$env:LOCALAPPDATA\Google\GoogleUpdater\*" -Recurse -Force
 }
 
-$InstalledVersion = GetVersionFromRegistry "Google Chrome Canary"
+# Get installed version from registry
+Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall" |
+Where-Object {
+    (Get-ItemProperty $_.PSPath).DisplayName -eq "Google Chrome SxS"
+} |
+ForEach-Object {
+    $RegistryVersion = (Get-ItemProperty $_.PSPath).DisplayVersion
+}
+WriteLog "Installed Version from registry: $InstalledVersion"
 
 # Delete installer files
-if (Test-Path "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$InstalledVersion\Installer") { 
-    Remove-Item "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$InstalledVersion\Installer\*" -Recurse -Force 
+if (Test-Path "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$RegistryVersion\Installer") { 
+    Remove-Item "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$RegistryVersion\Installer\*" -Recurse -Force 
 }
 
 # Set the policy key to prevent the default browser banner
@@ -137,5 +145,6 @@ BuildTurboSvmImage
 ## Push Turbo Image   ##
 ########################
 
+$InstalledVersion = RemoveTrailingZeros $RegistryVersion
 PushImage $InstalledVersion
 
