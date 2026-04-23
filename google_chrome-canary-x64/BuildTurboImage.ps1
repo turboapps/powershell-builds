@@ -94,10 +94,19 @@ Copy-Item -Path "$SupportFiles\Chrome Apps" -Destination "$env:APPDATA\Microsoft
 taskkill.exe /f /im updater.exe /t
 
 # Delete Google update folders
-Remove-Item -Path "$env:LOCALAPPDATA\Google\Update\*" -Recurse -Force
-Remove-Item -Path "$env:LOCALAPPDATA\Google\GoogleUpdater\*" -Recurse -Force
+if (Test-Path "$env:LOCALAPPDATA\Google\Update") {
+    Remove-Item -Path "$env:LOCALAPPDATA\Google\Update\*" -Recurse -Force
+}
+if (Test-Path "$env:LOCALAPPDATA\Google\GoogleUpdater") {
+    Remove-Item -Path "$env:LOCALAPPDATA\Google\GoogleUpdater\*" -Recurse -Force
+}
 
 $InstalledVersion = GetVersionFromRegistry "Google Chrome Canary"
+
+# Delete installer files
+if (Test-Path "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$InstalledVersion\Installer") { 
+    Remove-Item "$env:LOCALAPPDATA\Google\Chrome SxS\Application\$InstalledVersion\Installer\*" -Recurse -Force 
+}
 
 # Set the policy key to prevent the default browser banner
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome /v DefaultBrowserSettingEnabled /t REG_DWORD /d 0 /f
