@@ -4,5 +4,6 @@
     "update.showReleaseNotes": false,
     "telemetry.telemetryLevel": "off",
     "window.autoDetectColorScheme": false,
-    "workbench.preferredLightColorTheme": "Visual Studio Dark"
+    "workbench.preferredLightColorTheme": "Visual Studio Dark",
+    "workbench.startupEditor": "none"
 }
