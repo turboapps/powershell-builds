@@ -39,6 +39,11 @@ $Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILES@']/Directory[@name=
 ## NOTE: Beware of case sensitivity when making registry changes.  eg. The registry value type "String" requires an upper-case 'S'
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
+# Create HKCU\SOFTWARE
+$userSoftwareKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']")
+if (-not $userSoftwareKey) {
+    AddRegKey "Key[@name='@HKCU@']" "SOFTWARE" "WriteCopy" "False" "False"
+}
 
 # Set Full isolation on HKCU\SOFTWARE\Google and subkeys
 $userGoogleKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']")
@@ -72,6 +77,9 @@ $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Micr
 # This will prevent Chrome Apps from creating Programs and Features entries
 $uninstallNode = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']")
 if (-not $uninstallNode) {
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']" "Microsoft" "WriteCopy" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']" "Windows" "WriteCopy" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']" "CurrentVersion" "WriteCopy" "False" "False"
     AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
 }
 $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']").isolation = "Full"
