@@ -37,14 +37,32 @@ Function AddDirectory($parentDir,$name,$isolation,$readOnly,$hide,$noSync) {
 
 # Adds a registry key to a parent - usage example: AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']" "Chrome" "Full" "False" "False"
 Function AddRegKey($parentKey,$name,$isolation,$readOnly,$hide,$noSync) {
-  $parentNode = $Registry.SelectSingleNode($parentKey)
-  $node = $xappl.CreateElement("Key")
-  $node.SetAttribute("name",$name)
-  $node.SetAttribute("isolation",$isolation)
-  $node.SetAttribute("readOnly",$readOnly)
-  $node.SetAttribute("hide",$hide)
-  $node.SetAttribute("noSync",$noSync)
-  $parentNode.AppendChild($node)
+    $parentNode = $Registry.SelectSingleNode($parentKey)
+
+    if (-not $parentNode) {
+        throw "Parent node not found: $parentKey"
+    }
+
+    # Check if key already exists
+    $existingNode = $parentNode.SelectSingleNode("Key[@name='$name']")
+
+    if ($existingNode) {
+        # Optional: update attributes instead of skipping
+        $existingNode.SetAttribute("isolation",$isolation)
+        $existingNode.SetAttribute("readOnly",$readOnly)
+        $existingNode.SetAttribute("hide",$hide)
+        $existingNode.SetAttribute("noSync",$noSync)
+    }
+    else {
+        # Create new node
+        $node = $xappl.CreateElement("Key")
+        $node.SetAttribute("name",$name)
+        $node.SetAttribute("isolation",$isolation)
+        $node.SetAttribute("readOnly",$readOnly)
+        $node.SetAttribute("hide",$hide)
+        $node.SetAttribute("noSync",$noSync)
+        $parentNode.AppendChild($node)
+    }
 }
 
 # Adds a registry value to a parent - usage example: AddRegValue "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']" "Chrome" "Full" "False" "False" "String" "some string"
