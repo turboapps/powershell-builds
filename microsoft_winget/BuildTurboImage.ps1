@@ -108,10 +108,10 @@ Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Mic
 WriteLog "Performing post-install customizations."
 
 # Take ownership of C:\Program Files\WindowsApps
-takeown /f "C:\Program Files\WindowsApps" /r /d y
+takeown /f "C:\Program Files\WindowsApps" /r /d y | Out-Null
 
 # Grant Administrators Full control to C:\Program Files\WindowsApps
-icacls "C:\Program Files\WindowsApps" /grant administrators:F /t /c /q
+icacls "C:\Program Files\WindowsApps" /grant administrators:F /t /c /q | Out-Null
 
 # Get the path to the latest winget.exe
 $exePath = Get-ChildItem -Path "C:\Program Files\WindowsApps" -Filter "winget.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -Last 1 -ExpandProperty FullName
