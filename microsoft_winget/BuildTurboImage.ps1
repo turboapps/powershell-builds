@@ -63,12 +63,15 @@ $asset = $release.assets | Where-Object { $_.name -like "*.msixbundle" }
 $DownloadLink = $asset.browser_download_url
 WriteLog "Downloading msixbundle from: $DownloadLink"
 
-Invoke-WebRequest -Uri $DownloadLink -OutFile "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+# App Installer
+Invoke-WebRequest -Uri $DownloadLink -OutFile "$DownloadPath\Microsoft.DesktopAppInstaller.msixbundle"
+
+# Windows App SDK (REQUIRED)
+Invoke-WebRequest -Uri https://download.microsoft.com/download/1c9cc7e4-4453-4ed5-97bf-9347457fa09b/WindowsAppRuntimeInstall-x64.exe -OutFile "$DownloadPath\WindowsAppRuntimeInstall-x64.exe"
+
+# VCLibs (REQUIRED)
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x86.14.00.Desktop.appx -OutFile "$DownloadPath\Microsoft.VCLibs.x86.14.00.Desktop.appx"
-Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
-Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
-Invoke-WebRequest -Uri https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x86.appx -OutFile "$DownloadPath\Microsoft.UI.Xaml.2.8.x86.appx"
 
 
 #########################
@@ -90,17 +93,23 @@ WriteLog "Installing the application."
 $ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x64.exe" "/S" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
+# Install the Windows App SDK
+$ProcessExitCode = RunProcess "$DownloadPath\WindowsAppRuntimeInstall-x64.exe" "-q -f" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+
 # Make sure there is no policy blocking Windows Store apps
 &reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsStore /v DisableStoreApps /t REG_DWORD /d 0 /f
 
 WriteLog "Installing Winget and depdencies"
-Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
-Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.VCLibs.x86.14.00.Desktop.appx"
-Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.UI.Xaml.2.7.x64.appx"
-Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.UI.Xaml.2.8.x64.appx"
-Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.UI.Xaml.2.8.x86.appx"
-Add-AppxProvisionedPackage -SkipLicense -Online -PackagePath  "$DownloadPath\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+$pkg    = "$DownloadPath\Microsoft.DesktopAppInstaller.msixbundle"
+$v64    = "$DownloadPath\Microsoft.VCLibs.x64.14.00.Desktop.appx"
+$v86    = "$DownloadPath\Microsoft.VCLibs.x86.14.00.Desktop.appx"
 
+dism /online /add-provisionedappxpackage `
+ /packagepath:$pkg `
+ /dependencyPackagePath:$v64 `
+ /dependencyPackagePath:$v86 `
+ /skiplicense
 
 ################################
 ## Customize the application  ##
