@@ -74,7 +74,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$Installer" "/VERYSILENT /SUPPRESSMSGBOXES" $True
+$ProcessExitCode = RunProcess "$Installer" "/ALLUSERS /VERYSILENT /SUPPRESSMSGBOXES" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
