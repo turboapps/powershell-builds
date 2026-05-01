@@ -35,7 +35,7 @@ type("Bridge_x64")
 click("create-package-button.png")
 setAutoWaitTimeout(90)
 if exists("folder-button.png"):
-    click(Pattern("folder-button.png").targetOffset(-14,0))
+    click("folder-button.png")
 setAutoWaitTimeout(600)
 
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\Bridge_x64_en_US_WIN_64.zip")
