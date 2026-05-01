@@ -164,7 +164,7 @@ def get_adobeapp_version1(adobeApp):
     click(Pattern("64bit-dropdown.png").targetOffset(-41,0))
     click("next-button.png")
     wait("search-button.png")
-    click("search-button.png")
+    click(Pattern("search-button.png").targetOffset(-4,24))
     paste(adobeApp)
     wait("version.png")
 
@@ -173,7 +173,7 @@ def get_adobeapp_version2(adobeApp):
     type("c", Key.CTRL)
     wait(2)
     run('explorer "C:\\windows\\system32\\notepad.exe"') 
-    wait("wait-notepad.png")
+    wait()
     wait(2)
     type("v", Key.CTRL)
     wait(2)
