@@ -67,11 +67,6 @@ AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "http
 AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
 AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "https" "Full" "False" "False"
 AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
-# Duplicating with upper case CLASSES
-AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='CLASSES']" "http" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='CLASSES']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
-AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='CLASSES']" "https" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='CLASSES']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
 
 # Clone the MSEdgeHTM ProgID node to http and https
 $EdgeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='MSEdgeHTM']").CloneNode($true)
