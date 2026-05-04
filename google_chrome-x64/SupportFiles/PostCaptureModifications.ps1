@@ -39,57 +39,57 @@ $Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILES@']/Directory[@name=
 ## NOTE: Beware of case sensitivity when making registry changes.  eg. The registry value type "String" requires an upper-case 'S'
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
-# Create HKCU\SOFTWARE
-$userSoftwareKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']")
+# Create HKCU\Software
+$userSoftwareKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']")
 if (-not $userSoftwareKey) {
-    AddRegKey "Key[@name='@HKCU@']" "SOFTWARE" "WriteCopy" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']" "Software" "WriteCopy" "False" "False"
 }
 
-# Set Full isolation on HKCU\SOFTWARE\Google and subkeys
-$userGoogleKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']")
+# Set Full isolation on HKCU\Software\Google and subkeys
+$userGoogleKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']")
 if (-not $userGoogleKey) {
-    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']" "Google" "Full" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']" "Google" "Full" "False" "False"
 }
-$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']/descendant-or-self::*")
+$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
-# Set Full isolation on HKLM\SOFTWARE\WOW6432Node\Google and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='WOW6432Node']/Key[@name='Google']/descendant-or-self::*")
+# Set Full isolation on HKLM\Software\WOW6432Node\Google and subkeys
+$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Google']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
 
 # set net.spoon.chromenativehost key to merge isolation, so Turbo VM Extension is able to establish connection with a message host installed natively
-$userChromeKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']/Key[@name='Chrome']")
+$userChromeKey = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']")
 if (-not $userChromeKey) {
-    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']" "Chrome" "Full" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']" "Chrome" "Full" "False" "False"
 }
-AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']/Key[@name='Chrome']" "NativeMessagingHosts" "Full" "False" "False"
-AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Google']/Key[@name='Chrome']/Key[@name='NativeMessagingHosts']" "net.spoon.chromenativehost" "Merge" "False" "False"
+AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']" "NativeMessagingHosts" "Full" "False" "False"
+AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']/Key[@name='NativeMessagingHosts']" "net.spoon.chromenativehost" "Merge" "False" "False"
 
 # Delete registry keys - unnecessary keys
-$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Active Setup']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='MediaPlayer']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Active Setup']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='MediaPlayer']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 
-# Add reg key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
+# Add reg key HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
 # This will prevent Chrome Apps from creating Programs and Features entries
-$uninstallNode = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']")
+$uninstallNode = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']")
 if (-not $uninstallNode) {
-    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']" "Microsoft" "WriteCopy" "False" "False"
-    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']" "Windows" "WriteCopy" "False" "False"
-    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']" "CurrentVersion" "WriteCopy" "False" "False"
-    AddRegKey "Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']" "Microsoft" "WriteCopy" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']" "Windows" "WriteCopy" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']" "CurrentVersion" "WriteCopy" "False" "False"
+    AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']" "Uninstall" "Full" "False" "False"
 }
-$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']").isolation = "Full"
+$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='Uninstall']").isolation = "Full"
 
 # This will add the ProgIDs for HTTP and HTTPS allowing users to set Chrome as the default browser
 # Create Classes reg keys for http and https
-AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "http" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
-AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "https" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "http" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "https" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
 # Clone the ChromeHTML ProgID node to http and https
 $chromeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='ChromeHTML']").CloneNode($true)
 # Modify the ProgId name and description for HTTP and HTTPS

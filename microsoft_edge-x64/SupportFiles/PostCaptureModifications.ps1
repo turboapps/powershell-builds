@@ -37,36 +37,36 @@ $Filesystem.SelectSingleNode("Directory[@name='@APPDATALOCAL@']/Directory[@name=
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
 
-# Set Full isolation on HKCU\SOFTWARE\Microsoft\Edge and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Edge']/descendant-or-self::*")
+# Set Full isolation on HKCU\Software\Microsoft\Edge and subkeys
+$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Edge']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
-# Set Full isolation on HKLM\SOFTWARE\WOW6432Node\Microsoft\Edge and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='Edge']/descendant-or-self::*")
+# Set Full isolation on HKLM\Software\WOW6432Node\Microsoft\Edge and subkeys
+$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='Edge']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
-# Set Full isolation on HKLM\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='EdgeUpdate']/descendant-or-self::*")
+# Set Full isolation on HKLM\Software\WOW6432Node\Microsoft\EdgeUpdate and subkeys
+$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Microsoft']/Key[@name='EdgeUpdate']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
-# Set Full isolation on HKLM\SOFTWARE\Microsoft\Edge and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Edge']/descendant-or-self::*")
+# Set Full isolation on HKLM\Software\Microsoft\Edge and subkeys
+$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Edge']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
 
 # Delete registry keys - unnecessary keys
-$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SYSTEM']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='System']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 # This will add the ProgIDs for HTTP and HTTPS allowing users to set Edge as the default browser
 # Create Classes reg keys for http and https
-AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "http" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
-AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "https" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "http" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "https" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
 
 # Clone the MSEdgeHTM ProgID node to http and https
 $EdgeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='MSEdgeHTM']").CloneNode($true)

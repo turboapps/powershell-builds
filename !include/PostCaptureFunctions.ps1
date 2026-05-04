@@ -180,3 +180,25 @@ SetMetaData
 
 ## Remove script log file directory from each build
 $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+
+## Rename keys to keep case uniform for all builds
+$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='SOFTWARE']")
+    if ($node) {
+        $node.SetAttribute("name","Software")
+    }
+$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='CLASSES']")
+    if ($node) {
+        $node.SetAttribute("name","Classes")
+    }
+$node = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']")
+    if ($node) {
+        $node.SetAttribute("name","Software")
+    }
+$node = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='CLASSES']")
+    if ($node) {
+        $node.SetAttribute("name","Classes")
+    }
+$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='SYSTEM']")
+    if ($node) {
+        $node.SetAttribute("name","System")
+    }
