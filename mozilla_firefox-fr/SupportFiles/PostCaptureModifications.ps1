@@ -13,7 +13,7 @@ $VirtualizationSettings.chromiumSupport = [string]$true
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
 # Set Full isolation on HKCU\SOFTWARE\Mozilla\Firefox\Launcher - This fixes an issue loading web pages if Firefox is installed natively
-$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Mozilla']/Key[@name='Firefox']/Key[@name='Launcher']").isolation= "Full"
+$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Mozilla']/Key[@name='Firefox']/Key[@name='Launcher']").isolation= "Full"
 
 #################
 # Other Changes #

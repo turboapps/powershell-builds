@@ -54,8 +54,8 @@ $parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/K
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }
-# Set Full isolation on HKLM\Software\WOW6432Node\Google and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='WOW6432Node']/Key[@name='Google']/descendant-or-self::*")
+# Set Full isolation on HKLM\SOFTWARE\WOW6432Node\Google and subkeys
+$parentNode = $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='WOW6432Node']/Key[@name='Google']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "Full")
 }

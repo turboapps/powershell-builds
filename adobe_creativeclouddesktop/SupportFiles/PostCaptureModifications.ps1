@@ -33,7 +33,7 @@ $Filesystem.SelectNodes("Directory[@name='@PROGRAMFILESCOMMONX86@']/Directory[@n
 $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Adobe']/Key[@name='Adobe Genuine Service']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 # Delete registry keys @HKCU@\SOFTWARE\RegisteredApplications
-$Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='RegisteredApplications']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='RegisteredApplications']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 # Delete registry keys @HKLM@\System\CurrentControlSet\Services
 $Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SYSTEM']/Key[@name='CurrentControlSet']/Key[@name='Services']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }

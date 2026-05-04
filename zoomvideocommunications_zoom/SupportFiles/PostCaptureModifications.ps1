@@ -19,4 +19,4 @@ $Services.SelectSingleNode("Service[@name='ZoomCptService']").start= "LoadOnDema
 
 
 # Set Hide isolation on HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce\zoommsirepair to prevent MSI healing
-$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='RunOnce']/Value[@name='zoommsirepair']").isolation= "Hide"
+$Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Windows']/Key[@name='CurrentVersion']/Key[@name='RunOnce']/Value[@name='zoommsirepair']").isolation= "Hide"
