@@ -78,8 +78,15 @@ AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Classes']" "http
 AddRegValue "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Classes']" "https" "Full" "False" "False"
 AddRegValue "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
-# Clone the ChromeSSHTM.4HPY6QU5NX6S6GHX42D2W4VUCE ProgID node to http and https
-$chromeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='ChromeSSHTM.SHBV4SGIFAUWKZIVXJKOW5JBFM']").CloneNode($true)
+
+# Clone the ChromeSSHTM ProgID node to http and https
+# Find the ChromeSSHTM ProgId node dynamically
+$chromeHtmlNode = $xappl.SelectSingleNode("//ProgId[starts-with(@name,'ChromeSSHTM.')]")
+# Then clone it
+if ($chromeHtmlNode) {
+    $clonedNode = $chromeHtmlNode.CloneNode($true)
+}
+
 # Modify the ProgId name and description for HTTP and HTTPS
 $httpNode = $chromeHtmlNode.Clone()
 $httpNode.SetAttribute("name", "http")
