@@ -69,8 +69,8 @@ AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@na
 AddRegKey "Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Google']/Key[@name='Chrome']/Key[@name='NativeMessagingHosts']" "net.spoon.chromenativehost" "Merge" "False" "False"
 
 # Delete registry keys - unnecessary keys
-$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='Active Setup']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='MediaPlayer']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='Active Setup']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+$Registry.SelectNodes("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='MediaPlayer']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 
 # Add reg key HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall and set to Full Isolation
@@ -86,10 +86,10 @@ $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name=
 
 # This will add the ProgIDs for HTTP and HTTPS allowing users to set Chrome as the default browser
 # Create Classes reg keys for http and https
-AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "http" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
-AddRegKey "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']" "https" "Full" "False" "False"
-AddRegValue "Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "http" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='http']" "URL Protocol" "Full" "False" "False" "String" ""
+AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "https" "Full" "False" "False"
+AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
 # Clone the ChromeHTML ProgID node to http and https
 $chromeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='ChromeHTML']").CloneNode($true)
 # Modify the ProgId name and description for HTTP and HTTPS

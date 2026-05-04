@@ -181,12 +181,12 @@ SetMetaData
 ## Remove script log file directory from each build
 $Filesystem.SelectNodes("Directory[@name='@DESKTOP@']/Directory[@name='Package']") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
-## Rename keys to keep case uniform for all builds
-$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='SOFTWARE']")
+## Rename keys to fix case sensitivity in XML to: HKCU\Software\Classes and HKLM\SOFTWARE\Classes and HKLM\SYSTEM
+$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']")
     if ($node) {
-        $node.SetAttribute("name","Software")
+        $node.SetAttribute("name","SOFTWARE")
     }
-$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='Software']/Key[@name='CLASSES']")
+$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='CLASSES']")
     if ($node) {
         $node.SetAttribute("name","Classes")
     }
@@ -198,7 +198,7 @@ $node = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[@name='Software']/Ke
     if ($node) {
         $node.SetAttribute("name","Classes")
     }
-$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='SYSTEM']")
+$node = $Registry.SelectSingleNode("Key[@name='@HKLM@']/Key[@name='System']")
     if ($node) {
-        $node.SetAttribute("name","System")
+        $node.SetAttribute("name","SYSTEM")
     }
