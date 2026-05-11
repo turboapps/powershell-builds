@@ -89,6 +89,10 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
+# Make sure there is no policy blocking Windows Store apps
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsStore /v DisableStoreApps /t REG_DWORD /d 0 /f
+&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock /t REG_DWORD /f /v AllowDevelopmentWithoutDevLicense /d 1
+
 # Install the VCRedist
 $ProcessExitCode = RunProcess "$DownloadPath\vc_redist.x64.exe" "/S" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
@@ -96,9 +100,6 @@ CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on i
 # Install the Windows App SDK
 $ProcessExitCode = RunProcess "$DownloadPath\WindowsAppRuntimeInstall-x64.exe" "-q -f" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
-
-# Make sure there is no policy blocking Windows Store apps
-&reg add HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsStore /v DisableStoreApps /t REG_DWORD /d 0 /f
 
 WriteLog "Installing Winget and depdencies"
 $pkg    = "$DownloadPath\Microsoft.DesktopAppInstaller.msixbundle"
