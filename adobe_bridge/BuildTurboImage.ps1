@@ -82,7 +82,7 @@ Expand-Archive -Path $DownloadPath\CreativeCloudDesktop_x64_en_US_WIN_64.zip -De
 Expand-Archive -Path $DownloadPath\Bridge_x64_en_US_WIN_64.zip -DestinationPath $DownloadPath
 
 # Delete the zip files to free up disk space
-Remove-Item -Path "$DownloadPath\*.zip" -Force
+
 
 # Install the Create Cloud Desktop app before starting turbo studio capture as it will be a separate image
 $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setup.exe" "--silent" $True

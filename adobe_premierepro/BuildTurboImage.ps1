@@ -84,7 +84,7 @@ $ProcessExitCode = RunProcess "$SupportFiles\7za.exe" "x $DownloadPath\PremiereP
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Delete the zip files to free up disk space
-Remove-Item -Path "$DownloadPath\*.zip" -Force
+
 
 # Install the Create Cloud Desktop app before starting turbo studio capture as it will be a separate image
 $ProcessExitCode = RunProcess "$DownloadPath\CreativeCloudDesktop_x64\Build\Setup.exe" "--silent" $True

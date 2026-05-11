@@ -82,7 +82,7 @@ Expand-Archive -Path $DownloadPath\CreativeCloudDesktop_x64_en_US_WIN_64.zip -De
 Expand-Archive -Path $DownloadPath\Illustrator_x64_en_US_WIN_64.zip -DestinationPath $DownloadPath
 
 # Delete the zip files to free up disk space
-Remove-Item -Path "$DownloadPath\*.zip" -Force
+
 
 WriteLog "Downloading the VCRedist installer."
 # Donwload the VC++2015-2022 x64 Redistributable
