@@ -134,6 +134,7 @@ WriteLog "Performing post-install customizations."
 &reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown" /t REG_DWORD /d 1 /v bWhatsNewExp /f
 &reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown" /t REG_DWORD /d 0 /v bProtectedMode /f
 &reg.exe add "HKLM\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cServices" /t REG_DWORD /d 0 /v bUpdater /f
+&reg.exe add "HKLM\SOFTWARE\Adobe\Adobe Acrobat\DC\Installer" /t REG_DWORD /d 1 /v DisableRepairOnLaunch /f /reg:64
 
 # Delete Adobe ARM service
 &sc.exe stop adobearmservice
