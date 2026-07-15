@@ -53,15 +53,15 @@ $downloadUrl = $null
 $matches = [regex]::Matches($downloadHtml.Content, 'https://[^"\s<>]+')
 foreach ($match in $matches) {
     $candidate = $match.Value
-    if ($candidate -match 'klayout' -and $candidate -match '\.exe$' -and $candidate -match 'win|windows|x64|64') {
+    if ($candidate -match 'klayout' -and $candidate -match '\.exe$' -and $candidate -match '(?i)(win64|64-bit|64bit|x64)') {
         $downloadUrl = $candidate
         break
     }
 }
 
 if (-not $downloadUrl) {
-    $downloadUrl = "https://www.klayout.de/downloads/klayout-0.30.9-win64.exe"
-    WriteLog "Falling back to default KLayout installer URL: $downloadUrl"
+    WriteLog "No suitable KLayout Windows x64 installer URL was found on the download page."
+    throw "Unable to determine the current KLayout Windows x64 installer URL."
 }
 
 $InstallerName = [System.IO.Path]::GetFileName($downloadUrl)
