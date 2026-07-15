@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+ <tip-window-hidden>only-top-level-shown-by-default=3,editor-mode=4,editor-mode=0</tip-window-hidden>
+</config>
