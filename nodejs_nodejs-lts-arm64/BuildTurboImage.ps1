@@ -82,8 +82,11 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Install the VCRedist ARM64
-$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.arm64.exe" "/S" $True
+# Install the VCRedist ARM64. /norestart matters: the redist is a WiX burn bundle and
+# burn's silent mode will otherwise initiate a required reboot on its own, which kills
+# the capture VM mid-run (the runner drops offline and the job dies with
+# "runner lost communication").
+$ProcessExitCode = RunProcess "$DownloadPath\vc_redist.arm64.exe" "/install /quiet /norestart" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Install the application

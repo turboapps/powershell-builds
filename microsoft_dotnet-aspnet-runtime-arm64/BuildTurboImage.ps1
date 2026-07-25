@@ -62,9 +62,12 @@ $InstalledVersion = RemoveTrailingZeros $LatestVersion
 $LatestMajorVer = ($LatestVersion -split '\.')[0]
 WriteLog "Latest Version: $LatestVersion"
 
-# We will use the winget image from Turbo.net to download and install this app
-WriteLog "Pulling microsoft/winget from Turbo.net"
-turbo pull --format=json microsoft/winget
+# The x64 variant installs via the microsoft/winget Turbo image, but that container does
+# not run on the Windows-on-ARM capture VMs (turbo try exits -1 immediately). Download
+# the ARM64 installer directly instead; same source the winget manifest points at.
+$InstallerName = "aspnetcore-runtime-$LatestVersion-win-arm64.exe"
+$DownloadLink = "https://builds.dotnet.microsoft.com/dotnet/aspnetcore/Runtime/$LatestVersion/$InstallerName"
+$Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 #########################
 ## Start Turbo Capture ##
@@ -77,9 +80,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$turboCmd = "try winget --isolate=merge -- /C winget install Microsoft.DotNet.AspNetCore.$LatestMajorVer -a arm64 --silent --accept-source-agreements"
-
-$ProcessExitCode = RunProcess "turbo" $turboCmd $True
+$ProcessExitCode = RunProcess $Installer "/install /quiet /norestart" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################

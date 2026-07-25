@@ -28,10 +28,16 @@ ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("noSync", "False")
 }
 
-# Sets Isolation on the folders
-$Filesystem.SelectSingleNode("Directory[@name='@APPDATALOCAL@']/Directory[@name='Google']").isolation = "Full"
-$Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Google']").isolation = "Full"
-$Filesystem.SelectSingleNode("Directory[@name='@PROGRAMFILES@']/Directory[@name='Google']").isolation = "Full"
+# Sets Isolation on the folders. Null-guarded because the ARM64 capture does not
+# produce all of these -- there is no Program Files (x86)\Google dir on the ARM64
+# install, and dereferencing the missing node kills the whole post-capture step.
+foreach ($googleDirPath in @(
+    "Directory[@name='@APPDATALOCAL@']/Directory[@name='Google']",
+    "Directory[@name='@PROGRAMFILESX86@']/Directory[@name='Google']",
+    "Directory[@name='@PROGRAMFILES@']/Directory[@name='Google']")) {
+    $googleDir = $Filesystem.SelectSingleNode($googleDirPath)
+    if ($googleDir) { $googleDir.isolation = "Full" }
+}
 
 #################
 # Edit Registry #
