@@ -1,0 +1,9 @@
+{
+    "update.enableWindowsBackgroundUpdates": false,
+    "update.mode": "none",
+    "update.showReleaseNotes": false,
+    "telemetry.telemetryLevel": "off",
+    "window.autoDetectColorScheme": false,
+    "workbench.preferredLightColorTheme": "Visual Studio Dark",
+    "workbench.startupEditor": "none"
+}
