@@ -84,6 +84,10 @@ WriteLog "Installing the application."
 # the capture VM mid-run (the runner drops offline and the job dies with
 # "runner lost communication").
 $ProcessExitCode = RunProcess "$DownloadPath\vc_redist.arm64.exe" "/install /quiet /norestart" $True
+# 3010 = ERROR_SUCCESS_REBOOT_REQUIRED: the install succeeded and only a reboot is
+# pending. The ARM64 CRT consistently returns this on the clean win11-arm image; the
+# reboot is irrelevant inside a capture, so treat it as success.
+if ($ProcessExitCode -eq 3010) { $ProcessExitCode = 0 }
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Install the application
