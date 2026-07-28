@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "OpenJS"
 $AppDesc = "As an asynchronous event-driven JavaScript runtime, Node.js is designed to build scalable network applications."
-$AppName = "Node.js LTS"
+$AppName = "Node.js LTS ARM64"
 $VendorURL = "https://nodejs.org/"
 
 ########################################

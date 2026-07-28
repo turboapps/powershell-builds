@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Eclipse Adoptium"
 $AppDesc = "Eclipse Temurin is the open source Java SE build based upon OpenJDK"
-$AppName = "Temurin JDK LTS"
+$AppName = "Temurin JDK LTS ARM64"
 $VendorURL = "https://adoptium.net/"
 
 ########################################

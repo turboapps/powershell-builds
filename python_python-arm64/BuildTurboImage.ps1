@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Python Software Foundation"
 $AppDesc = "Programming language that lets you work quickly and integrate systems more effectively."
-$AppName = "Python"
+$AppName = "Python ARM64"
 $VendorURL = "www.python.org"
 
 ########################################

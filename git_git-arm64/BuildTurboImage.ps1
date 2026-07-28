@@ -39,7 +39,7 @@ if (-not $elevated) {
 $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name based on the folder path of the script assuming the folder is vendor_appname
 $Vendor = "Git"
 $AppDesc = "A fast, scalable, distributed revision control system."
-$AppName = "Git"
+$AppName = "Git ARM64"
 $VendorURL = "http://git-scm.com/"
 
 ########################################
