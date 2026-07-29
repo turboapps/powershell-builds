@@ -59,7 +59,7 @@ $Page -match "Version (.*)</span>"
 $LatestWebVersion = $matches[1]
 $DLVersion = $LatestWebVersion -replace '\.',''
 
-$InstallerName = "iview" + $DLVersion + "_plugins_arm64_setup.exe"
+$InstallerName = "iview" + $DLVersion + "_plugins_arm64.zip"
 $DownloadLink = "https://www.irfanview.info/files/" + $InstallerName
 
 # Download installer - we have to use the curl.exe from System32 or you will get permission denied from the site
@@ -72,13 +72,6 @@ $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
 
 
 #########################
-## Pre-install Config  ##
-#########################
-
-# Plugin installer checks for the reg value below to install in the correct directory
-&reg add HKEY_CLASSES_ROOT\IrfanView\shell\open\command /v '""' /t REG_SZ /d '"""C:\Program Files\IrfanView\i_view64.exe""" """%1"""' /f
-
-#########################
 ## Start Turbo Capture ##
 #########################
 
@@ -89,17 +82,17 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Perform silent installation
-## silent = unattended install
-$ProcessExitCode = RunProcess $DownloadPath\$InstallerName "/silent" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
+# IrfanView's arm64 silent plugin installer does not perform an install - extract the
+# official ARM64 plugins zip (flat DLLs) into the app's Plugins directory instead.
+# The DLLs are ARM64EC: they report x64 in the PE header but run natively on ARM64.
+# The x64 recipe's pre-seeded registry key is not needed since no installer runs.
+New-Item -ItemType Directory -Force -Path "C:\Program Files\IrfanView\Plugins"
+Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\Program Files\IrfanView\Plugins"
 
 ################################
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
-
-Start-Sleep -Seconds 90
 
 #########################
 ## Stop Turbo Capture  ##

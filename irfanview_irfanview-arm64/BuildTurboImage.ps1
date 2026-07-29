@@ -59,7 +59,7 @@ $Page -match "Version (.*)</span>"
 $LatestWebVersion = $matches[1]
 $DLVersion = $LatestWebVersion -replace '\.',''
 
-$InstallerName = "iview" + $DLVersion + "_arm64_setup.exe"
+$InstallerName = "iview" + $DLVersion + "_arm64.zip"
 $DownloadLink = "https://www.irfanview.info/files/" + $InstallerName
 
 # Download installer - we have to use the curl.exe from System32 or you will get permission denied from the site
@@ -81,40 +81,35 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Perform silent MSI installation
-## silent = unattended install
-## desktop = create desktop shortcut
-## thumbs = create desktop shortcut for thumbnails
-## group = create group in Start Menu
-## allusers = install in program folder for all users
-## assoc = set file associations
-## https://www.irfanview.com/faq.htm
-$ProcessExitCode = RunProcess $DownloadPath\$InstallerName "/silent /desktop=1 /thumbs=1 /group=1 /allusers=1 /assoc=1" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
-
-# The arm64 setup exe returns exit 0 immediately and completes the install in a spawned
-# process (the x64 installer blocks until done). Wait for the install to actually land
-# before touching shortcuts or launching the app; exits the build if it never appears.
-# Wildcard because the arm64 build's exe name is not guaranteed to be i_view64.exe.
-Wait-ForFileExistence "C:\Program Files\IrfanView\i_view*.exe" -Iterations 120 -SleepTime 1
+# IrfanView's arm64 setup exe exits 0 without installing anything when run with the
+# documented silent switches, so install from the official ARM64 zip instead.
+# The binaries are ARM64EC: they report x64 in the PE header (by design, for x64
+# interop) but run natively on ARM64 - verified via the CHPE metadata pointer.
+New-Item -Path "C:\Program Files" -Name "IrfanView" -ItemType Directory
+Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\Program Files\IrfanView"
 
 ################################
 ## Customize the application  ##
 ################################
 WriteLog "Performing post-install customizations."
 
-# Remove Uninstall shortcut from the start menu
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Uninstall IrfanView.lnk" -Recurse -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\About IrfanView.lnk" -Recurse -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Available Languages.lnk" -Recurse -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Available PlugIns.lnk" -Recurse -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\Command line Options.lnk" -Recurse -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\IrfanView Help.lnk" -Recurse -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\What's New.lnk" -Recurse -Force
-
-# Capture first launch to isolate user appdata folers
 # Resolve the exe by wildcard - the arm64 build's exe name is not guaranteed to be i_view64.exe
 $IviewExe = (Get-ChildItem "C:\Program Files\IrfanView" -Filter "i_view*.exe" | Select-Object -First 1)
+
+# The zip install creates no shortcuts - create the Start Menu and Desktop shortcuts
+# the x64 installer would have created (the x64 recipe instead deletes the extras)
+function CreateIrfanViewShortcut($shortcutPath) {
+    $WshShell = New-Object -ComObject WScript.Shell
+    $shortcut = $WshShell.CreateShortcut($shortcutPath)
+    $shortcut.TargetPath = $IviewExe.FullName
+    $shortcut.Save()
+    WriteLog "Shortcut created: $shortcutPath"
+}
+New-Item -ItemType Directory -Force -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView"
+CreateIrfanViewShortcut "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanView\IrfanView.lnk"
+CreateIrfanViewShortcut "$env:USERPROFILE\Desktop\IrfanView.lnk"
+
+# Capture first launch to isolate user appdata folers
 RunProcess $IviewExe.FullName $Null $False
 Start-Sleep -Seconds 60
 # Stop application
