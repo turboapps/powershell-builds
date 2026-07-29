@@ -10,27 +10,19 @@ $virtualizationSettings.launchChildProcsAsUser = [string]$true
 ######################
 # Edit Startup Files #
 ######################
-# Get the path to the Ssms.exe file
-# SSMS 22 (arm64) installs under Program Files, not Program Files (x86) like 20.x - check both
-$ssmsDir = Get-ChildItem -Path "C:\Program Files" -Recurse -Filter "Ssms.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
-if ($ssmsDir) {
-    $installDir = $ssmsDir.Directory.FullName
-    $installDir = $installDir -replace [regex]::Escape($env:ProgramFiles), "@PROGRAMFILES@"
-} else {
-    $ssmsDir = Get-ChildItem -Path "C:\Program Files (x86)" -Recurse -Filter "Ssms.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
-    $installDir = $ssmsDir.Directory.FullName
-    $installDir = $installDir -replace [regex]::Escape("${env:ProgramFiles(x86)}"), "@PROGRAMFILESX86@"
-}
-$installDir
-
 ## Change the container startup file to SSMS.exe
-## Null-guarded: arm64 captures don't always auto-register the same StartupFiles as x64
+## The SSMS 22 capture also brings in the Visual Studio Installer, whose exe gets
+## auto-registered as a default startup file and would launch instead of SSMS.
+## Disable every startup file, then enable only Ssms.exe (matched by filename -
+## the VS-installer-based layout makes the full path unreliable).
 $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
-$deployNode = $StartupFiles.SelectSingleNode("StartupFile[@node='$installDir\Microsoft.AnalysisServices.Deployment.exe']")
-if ($deployNode) { $deployNode.default = 'False' }
-$parentNode = $StartupFiles.SelectNodes("StartupFile[@node='$installDir\Ssms.exe']")
-ForEach ($childNodes in $parentNode) {
-    $childNodes.SetAttribute("default", "True")
+foreach ($sf in $StartupFiles.SelectNodes("StartupFile")) {
+    if ($sf.node -like '*\Ssms.exe') {
+        $sf.SetAttribute("default", "True")
+    }
+    else {
+        $sf.SetAttribute("default", "False")
+    }
 }
 
 #################
