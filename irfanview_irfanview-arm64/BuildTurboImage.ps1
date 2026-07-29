@@ -92,6 +92,12 @@ WriteLog "Installing the application."
 $ProcessExitCode = RunProcess $DownloadPath\$InstallerName "/silent /desktop=1 /thumbs=1 /group=1 /allusers=1 /assoc=1" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
+# The arm64 setup exe returns exit 0 immediately and completes the install in a spawned
+# process (the x64 installer blocks until done). Wait for the install to actually land
+# before touching shortcuts or launching the app; exits the build if it never appears.
+# Wildcard because the arm64 build's exe name is not guaranteed to be i_view64.exe.
+Wait-ForFileExistence "C:\Program Files\IrfanView\i_view*.exe" -Iterations 120 -SleepTime 1
+
 ################################
 ## Customize the application  ##
 ################################
