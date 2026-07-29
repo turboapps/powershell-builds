@@ -84,15 +84,18 @@ WriteLog "Performing post-install customizations."
 # Get the year version from the Unintall registry key (eg Microsoft Visual C++ 2022 ARM64 Minimum Runtime - 14.38.33135)
 # The arm64 runtime registers in the native hive, not WOW6432Node - check both
 $UninstallPaths = @("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
-foreach ($subkey in ($UninstallPaths | Where-Object { Test-Path $_ } | Get-ChildItem)) {
-    $name = (Get-ItemProperty $subkey.PSPath).DisplayName
-    if ($name -match "Minimum Runtime") {
-        $RegistryVersion = (Get-ItemProperty $subkey.PSPath).DisplayName
-    }
+$UninstallNames = $UninstallPaths | Where-Object { Test-Path $_ } | Get-ChildItem | ForEach-Object { (Get-ItemProperty $_.PSPath).DisplayName }
+
+$RegistryVersion = $UninstallNames | Where-Object { $_ -match "Minimum Runtime" } | Select-Object -Last 1
+# The arm64 redist registers only the bundle entry (eg Microsoft Visual C++ 2015-2022 Redistributable (Arm64) - 14.44.35211),
+# not the per-MSI "Minimum Runtime" entries the x64 recipe matches on - fall back to the bundle name
+if (-not $RegistryVersion) {
+    $RegistryVersion = $UninstallNames | Where-Object { $_ -match "Visual C\+\+.*Redistributable" } | Select-Object -Last 1
 }
 
-# Parse out the year from the registry key
-$extractedVersion = $RegistryVersion -replace ".*C\+\+\s(\d{4}).*", '$1'
+# Parse out the year from the registry key - take the last year so "2015-2022" yields 2022.
+# Lookarounds require exactly 4 digits, so version numbers like 35211 never match.
+$extractedVersion = ([regex]::Matches("$RegistryVersion", '(?<!\d)\d{4}(?!\d)') | Select-Object -Last 1).Value
 
 
 #########################
@@ -119,5 +122,11 @@ BuildTurboSvmImage
 
 PushImage $InstalledVersion
 #Publish a second time using the Year version (eg 2022)
-PushImage $extractedVersion
+# Guarded - a failed parse must skip this push, not publish an empty tag
+if ($extractedVersion -match '^\d{4}$') {
+    PushImage $extractedVersion
+}
+else {
+    WriteLog "Could not determine year version from uninstall entries - skipping the year-tagged push."
+}
 
