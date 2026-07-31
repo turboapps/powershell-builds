@@ -111,14 +111,46 @@ Function GetHubRevisions($HubOrg,$URL) {
     $headers.Add("X-Turbo-Api-Version", "1")
 
     # Get the revisions array for the repo
+    # A 404 here means the repo has never been published: a brand-new app or variant
+    # whose first build has to create it. That is the bootstrap case, not an error, so
+    # return $null and let the caller decide. Only this call is guarded -- a 404 from
+    # the login endpoint above is a bad hub URL and must still fail loudly. Any other
+    # status (401, 5xx, network) is rethrown so real outages are never mistaken for a
+    # new repo.
     $reqUrl = $URL + '/io/_hub/repo/' + $repoOwner + '/' + $repoName + '/revisions?withTags'
-    $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers
+    try {
+        $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers
+    } catch {
+        $statusCode = $null
+        if ($_.Exception.Response) {
+            # Windows PowerShell 5.1 exposes HttpStatusCode (value__ for the int);
+            # PowerShell 7 exposes HttpResponseMessage. Both cast cleanly to int.
+            $statusCode = [int]$_.Exception.Response.StatusCode
+        }
+        if ($statusCode -eq 404) {
+            WriteLog "Repo $HubOrg does not exist on $URL. Treating as a first build."
+            Return $null
+        }
+        throw
+    }
     Return $response
 }
 
 # Get Current Hub Version of application
 Function GetCurrentHubVersion($HubOrg,$URL) {
     $response = GetHubRevisions $HubOrg $URL
+
+    # Repo not on the hub yet (first build): report 0.0 rather than an empty string.
+    # Compare-Versions treats null/""/".0" as "failed to read the hub" and aborts the
+    # build, which is right for a lookup failure but wrong here -- nothing is published,
+    # so any real web version is newer and the build should proceed. 0.0 casts to
+    # [Version] and loses that comparison to every real version, so the existing
+    # comparison logic handles this case unchanged.
+    if ($null -eq $response) {
+        WriteLog "HubVersion=0.0 (nothing published for $HubOrg yet)"
+        Return '0.0'
+    }
+
     $VersionList = $response.tags | Sort-Object {
         $parts = ($_ -split '\.').Count
         if ($parts -eq 1) { [System.Version]("$_" + ".0") } else { [System.Version]$_ }
@@ -133,6 +165,12 @@ Function GetCurrentHubVersion($HubOrg,$URL) {
 # Get the current Hub hash of the application
 Function GetCurrentHubHash($HubOrg,$URL) {
     $response = GetHubRevisions $HubOrg $URL
+
+    # No repo on the hub means no image and so no hash. Return $null explicitly rather
+    # than indexing into a null response.
+    if ($null -eq $response) {
+        Return $null
+    }
 
     # Get the first imageID from the repo (this is the hash)
     if ($response.imageid.count -gt 1) {
