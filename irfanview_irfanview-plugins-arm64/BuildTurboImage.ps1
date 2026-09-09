@@ -86,8 +86,8 @@ WriteLog "Installing the application."
 # official ARM64 plugins zip (flat DLLs) into the app's Plugins directory instead.
 # The DLLs are ARM64EC: they report x64 in the PE header but run natively on ARM64.
 # The x64 recipe's pre-seeded registry key is not needed since no installer runs.
-New-Item -ItemType Directory -Force -Path "C:\Program Files\IrfanView\Plugins"
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\Program Files\IrfanView\Plugins"
+New-Item -ItemType Directory -Force -Path "C:\Program Files\IrfanViewARM\Plugins"
+Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\Program Files\IrfanViewARM\Plugins"
 
 ################################
 ## Customize the application  ##
