@@ -76,6 +76,9 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
+# Remove the pre-installed Teams on Windows 11
+Get-AppxPackage -AllUsers -Name MSTeams | Remove-AppxPackage -AllUsers
+
 # Install Teams
 $ProcessExitCode = RunProcess $Bootstrapper "-p -o $MSIX" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
