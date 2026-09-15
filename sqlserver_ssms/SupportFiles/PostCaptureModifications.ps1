@@ -10,18 +10,20 @@ $virtualizationSettings.launchChildProcsAsUser = [string]$true
 ######################
 # Edit Startup Files #
 ######################
-# Get the path to the Ssms.exe file
-$ssmsDir = Get-ChildItem -Path "C:\Program Files (x86)" -Recurse -Filter "Ssms.exe" -ErrorAction SilentlyContinue
-$installDir = $ssmsDir.Directory.FullName
-$installDir = $installDir -replace [regex]::Escape("${env:ProgramFiles(x86)}"), "@PROGRAMFILESX86@"
-$installDir
 
 ## Change the container startup file to SSMS.exe
+## The SSMS 22 capture also brings in the Visual Studio Installer, whose exe gets
+## auto-registered as a default startup file and would launch instead of SSMS.
+## Disable every startup file, then enable only Ssms.exe (matched by filename -
+## the VS-installer-based layout makes the full path unreliable).
 $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
-$StartupFiles.SelectSingleNode("StartupFile[@node='$installDir\Microsoft.AnalysisServices.Deployment.exe']").default = 'False'
-$parentNode = $StartupFiles.SelectNodes("StartupFile[@node='$installDir\Ssms.exe']")
-ForEach ($childNodes in $parentNode) {
-    $childNodes.SetAttribute("default", "True")
+foreach ($sf in $StartupFiles.SelectNodes("StartupFile")) {
+    if ($sf.node -like '*\Ssms.exe') {
+        $sf.SetAttribute("default", "True")
+    }
+    else {
+        $sf.SetAttribute("default", "False")
+    }
 }
 
 #################
@@ -31,17 +33,17 @@ ForEach ($childNodes in $parentNode) {
 ##       When specifying a registry value, "OpenWithProgids" is different from "OpenWithProgIds"
 
 # Set WriteCopy isolation on @HKCU@\SOFTWARE\Microsoft\SQL Server Management Studio and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='SQL Server Management Studio']/descendant-or-self::*")
+$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='SQL Server Management Studio']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "WriteCopy")
 }
 # Set WriteCopy isolation on @HKCU@\SOFTWARE\Microsoft\VisualStudio and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='VisualStudio']/descendant-or-self::*")
+$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='VisualStudio']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "WriteCopy")
 }
 # Set WriteCopy isolation on @HKCU@\SOFTWARE\Microsoft\VSCommon and subkeys
-$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']/Key[@name='Microsoft']/Key[@name='VSCommon']/descendant-or-self::*")
+$parentNode = $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='SOFTWARE']/Key[@name='Microsoft']/Key[@name='VSCommon']/descendant-or-self::*")
 ForEach ($childNodes in $parentNode) {
     $childNodes.SetAttribute("isolation", "WriteCopy")
 }
