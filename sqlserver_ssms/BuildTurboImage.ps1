@@ -70,7 +70,10 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$Installer" "DoNotInstallAzureDataStudio=1 /S" $True
+# VS-installer bootstrapper silent install; --wait keeps the bootstrapper alive until setup finishes
+$ProcessExitCode = RunProcess "$Installer" "--quiet --norestart --wait DoNotInstallAzureDataStudio=1" $True
+# 3010 = ERROR_SUCCESS_REBOOT_REQUIRED: install succeeded, only a reboot is pending - treat as success
+if ($ProcessExitCode -eq 3010) { $ProcessExitCode = 0 }
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
