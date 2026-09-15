@@ -53,7 +53,7 @@ CheckHubVersion
 WriteLog "Downloading the latest MSI installer."
 
 # Use the headless-extractor to get the download link
-$url = "https://support.8x8.com/business-phone/voice/work-desktop/download-8x8-work-for-desktop"
+$url = "https://help.8x8.com/docs/download-8x8-work-for-desktop"
 $outputdir = "$DownloadPath\links"
 turbo config --domain=turbo.net
 turbo pull --format=json turbo/headless-extractor
