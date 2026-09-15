@@ -74,7 +74,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/S" $True
+$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/allusers /S" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
