@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory=$false)]
     [string]$Import,  # If -Import is $true the image will be imported after built
     [Parameter(Mandatory=$false)]
@@ -136,7 +136,29 @@ $files = Get-ChildItem -Path $dir.FullName -Recurse -Filter "gimprc" -File
         WriteLog "GIMP shortcut not found."
     }
 
-Start-Sleep -Seconds 90
+# Wait for GIMP to write the pluginrc file, which indicates plugin registration is complete
+$gimpAppDataPath = Join-Path $env:APPDATA "GIMP"
+$pluginrcTimeout = 600  # Maximum seconds to wait for pluginrc to appear
+$pluginrcTimer = [System.Diagnostics.Stopwatch]::StartNew()
+$pluginrcFile = $null
+
+WriteLog "Waiting for a pluginrc file to be created under $gimpAppDataPath."
+
+while (-not $pluginrcFile -and $pluginrcTimer.Elapsed.TotalSeconds -lt $pluginrcTimeout) {
+    $pluginrcFile = Get-ChildItem -Path $gimpAppDataPath -Recurse -Filter "pluginrc" -File -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $pluginrcFile) {
+        Start-Sleep -Seconds 5
+    }
+}
+
+if ($pluginrcFile) {
+    WriteLog "Found $($pluginrcFile.FullName) after $([int]$pluginrcTimer.Elapsed.TotalSeconds) seconds."
+} else {
+    WriteLog "Timed out after $pluginrcTimeout seconds waiting for a pluginrc file under $gimpAppDataPath."
+}
+
+# Give GIMP additional time to finish loading before sending keystrokes
+Start-Sleep -Seconds 20
 
 # Send the ESC Key to close the GIMP Welcome window - this will create the gimprc file in @APPDATA@
 Add-Type -AssemblyName System.Windows.Forms
