@@ -162,7 +162,7 @@ Start-Sleep -Seconds 20
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.SendKeys]::SendWait("{ESC}")
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 20
 
 # End the GIMP application - required to create the user files in @APPDATA@
 $processes = Get-Process -Name "gimp*" -ErrorAction SilentlyContinue
