@@ -109,7 +109,7 @@ Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanVie
 Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\IrfanViewARM\What's New.lnk" -Recurse -Force
 
 # Capture first launch to isolate user appdata folers
-RunProcess "C:\Program Files\IrfanView\i_view64.exe" $Null $False
+RunProcess "C:\Program Files\IrfanViewARM\i_view64.exe" $Null $False
 Start-Sleep -Seconds 60
 # Stop application
 RunProcess "taskkill.exe" "/im i_view64.exe" $True
