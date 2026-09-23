@@ -52,44 +52,34 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# Get major version of the latest release
-$url = "https://api.adoptium.net/v3/info/available_releases"
-$response = curl -Uri $url -UseBasicParsing
-$jsonData = $response.Content | ConvertFrom-Json
-
-# Adoptium does not ship windows/aarch64 binaries for every LTS major (as of 2026-07 only
-# JDK/JRE 21 has them; 25 does not yet). Walk the LTS list newest-first and take the first
-# major that actually has an aarch64 Windows release, so this picks 25 automatically the
-# day those binaries appear.
 $Platform = 'windows'
 $Type = 'jre'
-$Arch = 'aarch64'
+$arch = 'aarch64'
+
+# List of feature releases, newest first
+$releases = (Invoke-RestMethod -Uri "https://api.adoptium.net/v3/info/available_releases").available_lts_releases | Sort-Object -Descending
+
+# The newest listed release may not have a GA build for this platform yet, so walk down until one does
 $ReleaseInfo = $null
-foreach ($candidateMajor in ($jsonData.available_lts_releases | Sort-Object -Descending)) {
-    $Assets = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/latest/$candidateMajor/hotspot?architecture=$Arch&image_type=$Type&os=$Platform&vendor=eclipse" -UseBasicParsing | ConvertFrom-Json
-    if ($Assets) {
-        $latestMajorVersion = $candidateMajor
-        $ReleaseInfo = $Assets
-        break
-    }
-    WriteLog "No windows/$Arch Temurin JRE binaries for JDK $candidateMajor, trying next-oldest LTS."
+foreach ($major in $releases) {
+    $ReleaseInfo = Invoke-RestMethod -Uri "https://api.adoptium.net/v3/assets/latest/$major/hotspot?architecture=$arch&image_type=$Type&os=$Platform&vendor=eclipse" |
+        Select-Object -First 1
+    if ($ReleaseInfo) { break }
 }
-if (-not $ReleaseInfo) {
-    WriteLog "No LTS major has windows/$Arch Temurin JRE binaries. Exiting."
-    WriteLog "BuildResult=failed"
-    Exit 0
-}
+if (-not $ReleaseInfo) { throw "No $Type release found for $Platform $arch" }
+
+# Build the version string: major.minor.security (plus .patch when present, e.g. 26.0.2.1)
+$v = $ReleaseInfo.version
+$latestMajorVersion = $($v.major)
+$LatestWebVersion = "$($v.major).$($v.minor).$($v.security)"
+if ($v.patch) { $LatestWebVersion += ".$($v.patch)" }
 
 # Download the zip
 $InstallerName = $ReleaseInfo.binary.package.name
-$DownloadLink = "https://api.adoptium.net/v3/binary/latest/$latestMajorVersion/ga/$Platform/$Arch/$Type/hotspot/normal/eclipse"
+$DownloadLink = "https://api.adoptium.net/v3/binary/latest/$latestMajorVersion/ga/$Platform/$arch/$Type/hotspot/normal/eclipse"
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-# Get the version from the Release json
-$majorVer = $ReleaseInfo.version.major
-$minorVer = $ReleaseInfo.version.minor
-$buildVer = $ReleaseInfo.version.build
-$InstalledVersion = "$majorVer.$minorVer.$buildVer"
+$InstalledVersion = $LatestWebVersion
 
 #########################
 ## Start Turbo Capture ##
