@@ -8,5 +8,5 @@ $StartupFiles = $xappl.Configuration.SelectSingleNode("StartupFiles")
 $defaultNode = $StartupFiles.SelectSingleNode("StartupFile[@default='True']")
 if ($defaultNode) { $defaultNode.default = 'False' }
 # Set default to True for the main application exe that doesn't have any arguments.
-$mainExeNode = $StartupFiles.SelectSingleNode("StartupFile[starts-with(@node,'@PROGRAMFILES@\IrfanView\i_view') and @commandLine='']")
+$mainExeNode = $StartupFiles.SelectSingleNode("StartupFile[starts-with(@node,'@PROGRAMFILES@\IrfanViewARM\i_view') and @commandLine='']")
 if ($mainExeNode) { $mainExeNode.SetAttribute("default", "True") }
