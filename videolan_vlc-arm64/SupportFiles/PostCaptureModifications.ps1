@@ -17,5 +17,5 @@ if ($vlcStartup) { $vlcStartup.commandLine = '--no-qt-privacy-ask --no-qt-update
 $Shortcuts = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Shortcuts")
 $desktopShortcut = $Shortcuts.SelectSingleNode("Folder[@name='Desktop']/Shortcut[@name='VLC media player']")
 if ($desktopShortcut) { $desktopShortcut.arguments = '--no-qt-privacy-ask --no-qt-updates-notif' }
-$programsShortcut = $Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Folder[@name='VideoLAN']/Folder[@name='VLC']/Shortcut[@name='VLC media player']")
+$programsShortcut = $Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Folder[@name='VideoLAN']/Shortcut[@name='VLC media player']")
 if ($programsShortcut) { $programsShortcut.arguments = '--no-qt-privacy-ask --no-qt-updates-notif' }

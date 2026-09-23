@@ -14,4 +14,4 @@ $StartupFiles.SelectSingleNode("StartupFile[@tag='vlc']").commandLine = '--no-qt
 # add arguments to the shortcuts to disable update check and send usage information
 $Shortcuts = $xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']").SelectSingleNode("Shortcuts")
 $Shortcuts.SelectSingleNode("Folder[@name='Desktop']/Shortcut[@name='VLC media player']").arguments = '--no-qt-privacy-ask --no-qt-updates-notif'
-$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Folder[@name='VideoLAN']/Folder[@name='VLC']/Shortcut[@name='VLC media player']").arguments = '--no-qt-privacy-ask --no-qt-updates-notif'
+$Shortcuts.SelectSingleNode("Folder[@name='Programs Menu']/Folder[@name='VideoLAN']/Shortcut[@name='VLC media player']").arguments = '--no-qt-privacy-ask --no-qt-updates-notif'
