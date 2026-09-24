@@ -198,6 +198,7 @@ def get_adobeapp_version2(adobeApp):
     run('explorer "C:\\windows\\system32\\notepad.exe"') 
     wait("wait-notepad.png",10)
     wait(2)
+    click("wait-notepad.png")
     type("v", Key.CTRL)
     wait(2)
     type("s", Key.CTRL)
