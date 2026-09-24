@@ -1,5 +1,6 @@
 # Common operations used in app test scripts.
 from sikuli import *
+import time
 
 # Useful paths.
 util_script_path = os.path.dirname(os.path.abspath(sys.argv[0])) 
@@ -14,10 +15,31 @@ def minimize_app(appName):
         type(Key.DOWN, Key.WIN)
 
 # Maximize a window
-def maximize_app(appName):
-    appToMax = App().focus(appName)
-    if (appToMax.isValid(),10):
+def maximize_app(appName, timeout=10):
+    app = App.focus(appName)
+    if not app.isValid():
+        print("maximize_app: could not find/focus '%s'" % appName)
+        return False
+
+    # Wait for the focused window to be available
+    win = None
+    end = time.time() + timeout
+    while time.time() < end:
+        win = App.focusedWindow()
+        if win is not None and win.w > 0:
+            break
+        wait(0.5)
+    if win is None:
+        print("maximize_app: no focused window for '%s'" % appName)
+        return False
+
+    scr = SCREEN
+    # A maximized window is about the size of the screen, minus the taskbar
+    # only maximize a window that is not already maximized
+    if win.w < scr.w - 20 or win.h < scr.h - 80:
         type(Key.UP, Key.WIN)
+        wait(0.5)
+    return True
 
 # Get credentials from secrets.txt. That secret file locates under the "resources" folder of the app script folder.
 def get_credentials(path):
