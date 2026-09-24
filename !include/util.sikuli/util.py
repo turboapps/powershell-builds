@@ -55,16 +55,15 @@ def get_credentials(path):
 
 # Log in for Adobe Creative Cloud.
 def adobe_adminconsole_login(username, password, optional = False):
-    maximize_app("Admin Console")
-    maximize_app("Adobe ID")
+    maximize_app("Edge")
     if exists("adobe-login.png",20):
         click(Pattern("adobe-login.png").targetOffset(-113,-21))
         wait(3)
         paste(username)
         wait(3)
         type(Key.ENTER)
-        if exists("adobe_login_pass_continue.png",5):
-            click("adobe_login_pass_continue.png")
+        if exists(Pattern("adobe_login_pass_continue.png").similar(0.60),5):
+            click(Pattern("adobe_login_pass_continue.png").similar(0.60))
         elif exists("adobe_login_pass_dark.png",5):
             click("adobe_login_pass_dark.png")
         elif exists("adobe_login_pass.png",5):
