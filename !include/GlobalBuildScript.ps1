@@ -137,7 +137,10 @@ Function GetHubRevisions($HubOrg,$URL) {
 }
 
 # Get Current Hub Version of application
-Function GetCurrentHubVersion($HubOrg,$URL) {
+# -IgnoreAliasTags skips single-part tags (eg a "2022" year alias pushed next to the real
+# version). Such a tag sorts as 2022.0 and outranks every real version, so without the
+# switch the version check skips every build once an alias has been published.
+Function GetCurrentHubVersion($HubOrg,$URL,[switch]$IgnoreAliasTags) {
     $response = GetHubRevisions $HubOrg $URL
 
     # Repo not on the hub yet (first build): report 0.0 rather than an empty string.
@@ -151,7 +154,17 @@ Function GetCurrentHubVersion($HubOrg,$URL) {
         Return '0.0'
     }
 
-    $VersionList = $response.tags | Sort-Object {
+    $Tags = $response.tags
+    if ($IgnoreAliasTags) {
+        $Tags = $Tags | Where-Object { $_ -match '\.' }
+        # Only alias tags published (no dotted version yet) - build rather than abort
+        if (-not $Tags) {
+            WriteLog "HubVersion=0.0 (no version tags for $HubOrg, only aliases)"
+            Return '0.0'
+        }
+    }
+
+    $VersionList = $Tags | Sort-Object {
         $parts = ($_ -split '\.').Count
         if ($parts -eq 1) { [System.Version]("$_" + ".0") } else { [System.Version]$_ }
     } -Descending

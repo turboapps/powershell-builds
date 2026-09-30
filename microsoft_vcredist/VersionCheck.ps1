@@ -4,7 +4,7 @@ Function RunVersionCheck {
 ## Get the current Hub version for the app ##
 #############################################
 
-$HubVersion = GetCurrentHubVersion $HubOrg
+$HubVersion = GetCurrentHubVersion $HubOrg -IgnoreAliasTags  # Skip the year alias tag (eg 2022) - it sorts above every real version
 $HubVersion = $HubVersion.Split(" ")[-1]
 
 #############################################
@@ -15,7 +15,7 @@ $HubVersion = $HubVersion.Split(" ")[-1]
 # either from the vendor website or the downloaded installer file
 
 # Get installer link for latest version
-Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x86.exe -OutFile "$DownloadPath\vc_redist.x86.exe"
+Invoke-WebRequest -Uri https://aka.ms/vc14/vc_redist.x86.exe -OutFile "$DownloadPath\vc_redist.x86.exe"
 
 $LatestWebVersion = Get-VersionFromExe "$DownloadPath\vc_redist.x86.exe"
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
