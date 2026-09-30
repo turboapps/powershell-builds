@@ -53,8 +53,8 @@ CheckHubVersion
 WriteLog "Downloading the latest installer."
 
 # Get installers for latest version
-Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x86.exe -OutFile "$DownloadPath\vc_redist.x86.exe"
-Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile "$DownloadPath\vc_redist.x64.exe"
+Invoke-WebRequest -Uri https://aka.ms/vc14/vc_redist.x86.exe -OutFile "$DownloadPath\vc_redist.x86.exe"
+Invoke-WebRequest -Uri https://aka.ms/vc14/vc_redist.x64.exe -OutFile "$DownloadPath\vc_redist.x64.exe"
 
 $InstalledVersion = Get-VersionFromExe "$DownloadPath\vc_redist.x86.exe"
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
