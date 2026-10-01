@@ -451,7 +451,9 @@ Function RemoveXapplNode($Root, [string[]]$Names) {
 
 # The applab capture VMs run Grafana Alloy (the pipeline's log shipper) while a capture is
 # recording, so its data folder (positions.yml, WAL) lands in every image. None of it belongs
-# to the app. Applied to every capture after the app's own post-capture script.
+# to the app. Applied by default to every capture after the app's own post-capture script; an
+# app that needs these paths (eg one packaging Alloy itself) passes -SkipCaptureNoiseRemoval to
+# CustomizeTurboXappl.
 Function RemoveCaptureNoise($Xappl) {
     $layer      = $Xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']")
     $filesystem = $layer.SelectSingleNode("Filesystem")
@@ -464,7 +466,8 @@ Function RemoveCaptureNoise($Xappl) {
 }
 
 # Apply Customizations from a helper script to the XAPPL
-Function CustomizeTurboXappl($PostCaptureModificationsPath) {
+# Usage: CustomizeTurboXappl "$SupportFiles\PostCaptureModifications.ps1" [-SkipCaptureNoiseRemoval]
+Function CustomizeTurboXappl($PostCaptureModificationsPath, [switch]$SkipCaptureNoiseRemoval) {
     WriteLog "Applying post-capture modifications using: $PostCaptureModificationsPath"
     # Load snapshot xappl
     $Xappl = New-Object XML
@@ -474,7 +477,11 @@ Function CustomizeTurboXappl($PostCaptureModificationsPath) {
     # Print Errors
     WriteLog "Errors found while applying post-capture modifications: $NewLine"
     $result | ForEach-Object { If ($_.GetType().Name -eq 'ErrorRecord') {WriteLog "$($_.Exception)"; WriteLog "$($_.InvocationInfo.ScriptName)"; WriteLog "$($_.InvocationInfo.Line)"}} # Print details for each error found
-    RemoveCaptureNoise $Xappl
+    If ($SkipCaptureNoiseRemoval) {
+        WriteLog "Capture noise removal skipped (-SkipCaptureNoiseRemoval)."
+    } else {
+        RemoveCaptureNoise $Xappl
+    }
     # Save XAPPL
     $xappl.Save($FinalXapplPath)
     WriteLog "Processed output configuration: $FinalXapplPath. $NewLine"
