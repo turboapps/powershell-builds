@@ -424,6 +424,45 @@ Function StopTurboCapture() {
         } While ($XStudioRunning -ne 0)
 }
 
+# Returns the XAPPL node reached by following $Names (Directory/Key "name" attributes, matched
+# case-insensitively since captures mix "SOFTWARE" and "Software") from $Parent, or $null.
+Function GetXapplChild($Parent, [string[]]$Names) {
+    $node = $Parent
+    foreach ($n in $Names) {
+        if ($null -eq $node) { return $null }
+        $node = @($node.ChildNodes | Where-Object { $_.NodeType -eq 'Element' -and $_.GetAttribute('name') -eq $n }) | Select-Object -First 1
+    }
+    return $node
+}
+
+# Removes the node at $Names below $Root, then any parent it leaves empty (up to, not
+# including, the first segment, so a root folder or hive is never removed).
+Function RemoveXapplNode($Root, [string[]]$Names) {
+    $node = GetXapplChild $Root $Names
+    if ($null -eq $node) { return }
+    WriteLog "Removing capture noise: $($Names -join '\')"
+    for ($depth = $Names.Count - 1; $depth -ge 1; $depth--) {
+        $parent = $node.ParentNode
+        [void]$parent.RemoveChild($node)
+        if (@($parent.ChildNodes | Where-Object { $_.NodeType -eq 'Element' }).Count -gt 0) { break }
+        $node = $parent
+    }
+}
+
+# The applab capture VMs run Grafana Alloy (the pipeline's log shipper) while a capture is
+# recording, so its data folder (positions.yml, WAL) lands in every image. None of it belongs
+# to the app. Applied to every capture after the app's own post-capture script.
+Function RemoveCaptureNoise($Xappl) {
+    $layer      = $Xappl.Configuration.Layers.SelectSingleNode("Layer[@name='Default']")
+    $filesystem = $layer.SelectSingleNode("Filesystem")
+    $registry   = $layer.SelectSingleNode("Registry")
+    RemoveXapplNode $filesystem @('@APPDATACOMMON@', 'GrafanaLabs', 'Alloy')
+    RemoveXapplNode $filesystem @('@PROGRAMFILES@', 'GrafanaLabs', 'Alloy')
+    RemoveXapplNode $registry   @('@HKLM@', 'SOFTWARE', 'GrafanaLabs', 'Alloy')
+    RemoveXapplNode $registry   @('@HKLM@', 'SOFTWARE', 'WOW6432Node', 'GrafanaLabs', 'Alloy')
+    RemoveXapplNode $registry   @('@HKLM@', 'SYSTEM', 'CurrentControlSet', 'Services', 'Alloy')
+}
+
 # Apply Customizations from a helper script to the XAPPL
 Function CustomizeTurboXappl($PostCaptureModificationsPath) {
     WriteLog "Applying post-capture modifications using: $PostCaptureModificationsPath"
@@ -435,6 +474,7 @@ Function CustomizeTurboXappl($PostCaptureModificationsPath) {
     # Print Errors
     WriteLog "Errors found while applying post-capture modifications: $NewLine"
     $result | ForEach-Object { If ($_.GetType().Name -eq 'ErrorRecord') {WriteLog "$($_.Exception)"; WriteLog "$($_.InvocationInfo.ScriptName)"; WriteLog "$($_.InvocationInfo.Line)"}} # Print details for each error found
+    RemoveCaptureNoise $Xappl
     # Save XAPPL
     $xappl.Save($FinalXapplPath)
     WriteLog "Processed output configuration: $FinalXapplPath. $NewLine"
