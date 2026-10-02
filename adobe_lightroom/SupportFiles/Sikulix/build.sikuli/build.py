@@ -33,13 +33,13 @@ click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
 click("next-button.png")
 type("Lightroom_x64")
 click("create-package-button.png")
-app_downloader = os.path.join(os.environ['USERPROFILE'], "Downloads\\Lightroom_x64_en_US_WIN_64_Downloader.exe")
-if util.file_exists(app_downloader, 120):
-    wait(5)
-    run('explorer "' + app_downloader + '"')
-    click(wait("downloader-continue.png",30))
-    click(wait("downloader-close.png",600))
-else:
-    raise Exception("Timed out waiting for " + app_downloader)
-wait(10)
+setAutoWaitTimeout(90)
+if exists("folder-button.png"):
+    click("folder-button.png")
+setAutoWaitTimeout(600)
+
+adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\Lightroom_x64_en_US_WIN_64.zip")
+while not os.path.exists(adobefile_path):
+    wait(10)
+wait(15)
 closeApp("Edge")
