@@ -99,18 +99,14 @@ def find_file(folder_path, partial_name):
     # If no matching file is found, return None.
     return None
 
-# Check if a file exists and has finished downloading. It checks every 10 seconds until `timeout` seconds have passed.
-# The file counts as finished once its size is non-zero and unchanged between two checks.
-def file_exists(path, timeout):
-    start = time.time()
-    last_size = -1
-    while time.time() - start < timeout:
+# Check if a file exists. It checks every 10 seconds unitl `try_limit` is reached.
+def file_exists(path, try_limit):
+    tried = 0
+    while tried < try_limit:
         if os.path.exists(path):
-            size = os.path.getsize(path)
-            if size > 0 and size == last_size:
-                return True
-            last_size = size
-        wait(10) 
+            return True
+        tried += 1
+        time.sleep(10)
     return False
 
 # Close the Windows firewall alert prompt.
@@ -158,16 +154,9 @@ def build_ccd():
     click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
     click("next-button.png")
     paste("CreativeCloudDesktop_x64")
-    wait(3)
     click("create-package-button.png")
-    ccd_downloader = os.path.join(os.environ['USERPROFILE'], "Downloads\\CreativeCloudDesktop_x64_en_US_WIN_64_Downloader.exe")
-    if file_exists(ccd_downloader, 120):
-        wait(5)
-        run('explorer "' + ccd_downloader + '"')
-        click(wait("downloader-continue.png",30))
-        click(wait("downloader-close.png",300))
-    else:
-        raise Exception("Timed out waiting for " + ccd_downloader)
+    wait("folder-button.png",90)
+    waitVanish("wait-preparing.png")
 
 def get_adobeapp_version1(adobeApp):
     # Read credentials from the secrets file.
