@@ -125,6 +125,7 @@ def build_ccd():
     waitVanish("wait-preparing.png")
 
 def pick_adobe_app(adobe_app_name):
+    maximize_app("Edge")
     # Wait for the Packages link to load
     wait(Pattern("packages-link.png").similar(0.90),30)
     click(Pattern("packages-link.png").similar(0.90))
