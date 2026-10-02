@@ -11,7 +11,7 @@ resources_path = os.path.join(util_script_path, os.pardir, "resources")
 # Minimize a window
 def minimize_app(appName):
     appToMin = App().focus(appName)
-    if (appToMin.isValid(),10):
+    if appToMin.isValid():
         type(Key.DOWN, Key.WIN)
 
 # Maximize a window
@@ -54,7 +54,16 @@ def get_credentials(path):
     return credentials
 
 # Log in for Adobe Creative Cloud.
-def adobe_adminconsole_login(username, password, optional = False):
+def adobe_adminconsole_login():
+    # Read credentials from the secrets file.
+    credentials = get_credentials(os.path.join(resources_path, "secrets.txt"))
+    username = credentials.get("username")
+    password = credentials.get("password")    
+    # Launch the Adobe Admin Console, login and build the installer
+    run('explorer "https://adminconsole.adobe.com"')
+    # close_firewall_alert()
+    
+    # Login to the Admin Console
     maximize_app("Edge")
     if exists("adobe-login.png",20):
         click(Pattern("adobe-login.png").targetOffset(-113,-21))
@@ -62,20 +71,11 @@ def adobe_adminconsole_login(username, password, optional = False):
         paste(username)
         wait(3)
         type(Key.ENTER)
-        if exists(Pattern("adobe_login_pass_continue.png").similar(0.60),5):
-            click(Pattern("adobe_login_pass_continue.png").similar(0.60))
-        elif exists("adobe_login_pass_dark.png",5):
-            click("adobe_login_pass_dark.png")
-        elif exists("adobe_login_pass.png",5):
-            click("adobe_login_pass.png")
-        elif exists("adobe-password-new.png",5):
-            click("adobe-password-new.png")
-        wait(3)
+        wait(5)
         paste(password)
         wait(3)
         type(Key.ENTER)
-        if exists("save-password-prompt.png",5):
-            click("save-password-prompt.png")
+        wait(5)
 
 # Get the path of the shortcut for the apps that have different shortcut names for different versions.
 # Assume there is only one match inside the folder.
@@ -100,13 +100,16 @@ def find_file(folder_path, partial_name):
     return None
 
 # Check if a file exists. It checks every 10 seconds unitl `try_limit` is reached.
-def file_exists(path, try_limit):
-    tried = 0
-    while tried < try_limit:
+def file_exists(path, timeout):
+    start = time.time()
+    last_size = -1
+    while time.time() - start < timeout:
         if os.path.exists(path):
-            return True
-        tried += 1
-        time.sleep(10)
+            size = os.path.getsize(path)
+            if size > 0 and size == last_size:
+                return True
+            last_size = size
+        wait(10)
     return False
 
 # Close the Windows firewall alert prompt.
@@ -115,83 +118,56 @@ def close_firewall_alert():
         click(Pattern("firewall.png").targetOffset(212,67))
 
 def build_ccd():
-    # Read credentials from the secrets file.
-    credentials = get_credentials(os.path.join(resources_path, "secrets.txt"))
-    username = credentials.get("username")
-    password = credentials.get("password")    
-    # Launch the Adobe Admin Console, login and build the installer
-    run('explorer "https://adminconsole.adobe.com"')
-    close_firewall_alert()
     # Login to the Admin Console
-    adobe_adminconsole_login(username, password)
+    adobe_adminconsole_login()
+    build_adobe_app(Pattern("select-ccd-app.png").targetOffset(161,0),"creative cloud desktop","CreativeCloudDesktop_x64")
+    wait("folder-button.png",90)
+    waitVanish("wait-preparing.png")
+
+def pick_adobe_app(adobe_app_name):
     # Wait for the Packages link to load
-    wait("packages-link.png")
-    if exists("got-it.png"):
-        type(Key.ESC)
-    if exists("admin-console-welcome.png"):
-        type(Key.ESC)
-    wait(10)
-    click("packages-link.png")
+    wait(Pattern("packages-link.png").similar(0.90),30)
+    click(Pattern("packages-link.png").similar(0.90))
     wait(5)
     #Build package and download Creative Cloud Desktop
-    wait("create-a-package-button.png",10)
-    click("create-a-package-button.png")
-    click(Pattern("managed-package-checkbox.png").targetOffset(127,-2))
+    click(wait("create-a-package-button.png",10))
+    wait(2)
+    click(wait(Pattern("managed-package-checkbox.png").targetOffset(127,-2),10))
+    wait(2)
     click("next-button.png")
-    wait("select-platform-dropdown.png")
-    click(Pattern("select-platform-dropdown.png").targetOffset(72,8))
-    wait("64bit-dropdown.png")
-    click(Pattern("64bit-dropdown.png").targetOffset(-41,0))
+    wait(2)
+    click(wait(Pattern("select-platform-dropdown.png").targetOffset(72,8),10))
+    wait(2)
+    click(wait(Pattern("64bit-dropdown.png").targetOffset(-41,0),10))
+    wait(2)
     click("next-button.png")
-    wait("search-button.png")
-    click("search-button.png")
-    paste("creative cloud desktop")
-    click(Pattern("select-ccd-app.png").targetOffset(161,0))
+    wait(2)
+    click(wait(Pattern("search-button.png").targetOffset(-5,23),10))
+    wait(2)
+    paste(adobe_app_name)
+    wait(2)
+    
+def build_adobe_app(adobe_app_image,adobe_app_name,output_file_name):
+    pick_adobe_app(adobe_app_name)
+    click(adobe_app_image)
     click("next-button.png")
     click("next-button.png")
     click(Pattern("self-service-checkbox.png").targetOffset(-83,-2))
     click("scroll-down.png")
+    wait(2)
     click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
+    wait(2)
+    click(Pattern("create-folder-checkbox.png").targetOffset(-216,1))
     click("next-button.png")
-    paste("CreativeCloudDesktop_x64")
+    wait(3)
+    paste(output_file_name)
+    wait(3)
     click("create-package-button.png")
-    wait("folder-button.png",90)
-    waitVanish("wait-preparing.png")
 
-def get_adobeapp_version1(adobeApp):
-    # Read credentials from the secrets file.
-    credentials = get_credentials(os.path.join(resources_path, "secrets.txt"))
-    username = credentials.get("username")
-    password = credentials.get("password")    
-    # Launch the Adobe Admin Console, login and build the installer
-    run('explorer "https://adminconsole.adobe.com"')
-    close_firewall_alert()
-    # Login to the Admin Console
-    adobe_adminconsole_login(username, password)
-    # Wait for the Packages link to load
-    wait("packages-link.png")
-    if exists("admin-console-welcome.png"):
-        type(Key.ESC)
-    wait(10)
-    click("packages-link.png")
-    wait(5)
-    #Build package and download Creative Cloud Desktop
-    wait("create-a-package-button.png",10)
-    click("create-a-package-button.png")
-    wait("managed-package-checkbox.png",10)
-    click(Pattern("managed-package-checkbox.png").targetOffset(127,-2))
-    click("next-button.png")
-    wait("select-platform-dropdown.png")
-    click(Pattern("select-platform-dropdown.png").targetOffset(72,8))
-    wait("64bit-dropdown.png")
-    click(Pattern("64bit-dropdown.png").targetOffset(-41,0))
-    click("next-button.png")
-    wait("search-button.png")
-    click(Pattern("search-button.png").targetOffset(-4,24))
-    paste(adobeApp)
+def get_adobeapp_version(adobe_app_name,version_image):
+    pick_adobe_app(adobe_app_name)
     wait("version.png")
-
-def get_adobeapp_version2(adobeApp):
+    doubleClick(version_image)
     wait(3)
     type("c", Key.CTRL)
     wait(2)

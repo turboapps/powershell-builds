@@ -10,6 +10,5 @@ util.minimize_app("java")
 
 appname = "lightroom"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version1(appname)
-doubleClick(Pattern("version.png").targetOffset(45,0))
-util.get_adobeapp_version2(appname)
+util.adobe_adminconsole_login()
+util.get_adobeapp_version(appname,Pattern("version.png").targetOffset(45,0))

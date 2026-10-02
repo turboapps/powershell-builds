@@ -5,41 +5,14 @@ import util
 reload(util)
 addImagePath(util_path) # This is needed to include screenshots from "util".
 
-setAutoWaitTimeout(20)
 util.minimize_app("java")
-
+setAutoWaitTimeout(20)
 # Launch Admin Console, login and build the CreativeCloudDesktop installer
 util.build_ccd()
-
-# Build the applcation installer
-setAutoWaitTimeout(20)
-click("create-a-package-button.png")
-click(Pattern("managed-package-checkbox.png").targetOffset(127,-2))
-click("next-button.png")
-wait("select-platform-dropdown.png")
-click(Pattern("select-platform-dropdown.png").targetOffset(72,8))
-wait("64bit-dropdown.png")
-click(Pattern("64bit-dropdown.png").targetOffset(-41,0))
-click("next-button.png")
-wait("search-button.png")
-click(Pattern("search-button.png").targetOffset(-4,24))
-type("lightroom")
-click(Pattern("select-app.png").targetOffset(157,-2))
-click("next-button.png")
-click("next-button.png")
-click(Pattern("self-service-checkbox.png").targetOffset(-83,-2))
-click(Pattern("scroll-down.png").targetOffset(1,35))
-click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
-click("next-button.png")
-type("Lightroom_x64")
-click("create-package-button.png")
-setAutoWaitTimeout(90)
-if exists("folder-button.png"):
-    click("folder-button.png")
-setAutoWaitTimeout(600)
+util.build_adobe_app(Pattern("select-app.png").targetOffset(157,-2),"lightroom","Lightroom_x64")
+click(wait("folder-button.png",90))
 
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\Lightroom_x64_en_US_WIN_64.zip")
-while not os.path.exists(adobefile_path):
-    wait(10)
+assert util.file_exists(adobefile_path, 600), "File not found after 5 minutes"
 wait(15)
 closeApp("Edge")
