@@ -10,6 +10,9 @@ $LogFile = "$LogPath\log-$LogTimeStamp.log"  # Set path of log file
 $NewLine = "`r`n"  #  Adds a blank line to the Log file
 $DownloadPath = New-Item -Path $packagePath -Name "Installer" -ItemType "directory" -Force # create an Installer directory in the Desktop Package folder
 
+# Turbo Server sign-in for servers before and after 2.0 (Connect-TurboServer, Get-TurboHubRevisions).
+. "$PSScriptRoot\HubAuth.ps1"
+
 
 # WriteLog - writes string message parameter to log file and console.
 Function WriteLog([String]$message) {
@@ -98,40 +101,16 @@ Function GetHubRevisions($HubOrg,$URL) {
     $repoOwner, $repoName = $HubOrg -split "[_/]", 2
     WriteLog "Getting the current $HubOrg version from $URL"
     
-    # Get token from API Key
-    $headers = @{}
-    $headers.Add("X-Turbo-Api-Key", $APIKey)
-    $reqUrl = $URL + '/0.1/api-keys/login'
-    $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers  
-
-    # Get all repos from Hub
-    $headers = @{}
-    $headers.Add("X-Turbo-Ticket", $response)
-    $headers.Add("X-Turbo-Api-Id", "turbo.net")
-    $headers.Add("X-Turbo-Api-Version", "1")
-
-    # Get the revisions array for the repo
-    # A 404 here means the repo has never been published: a brand-new app or variant
-    # whose first build has to create it. That is the bootstrap case, not an error, so
-    # return $null and let the caller decide. Only this call is guarded -- a 404 from
-    # the login endpoint above is a bad hub URL and must still fail loudly. Any other
-    # status (401, 5xx, network) is rethrown so real outages are never mistaken for a
-    # new repo.
-    $reqUrl = $URL + '/io/_hub/repo/' + $repoOwner + '/' + $repoName + '/revisions?withTags'
-    try {
-        $response = Invoke-RestMethod -Uri $reqUrl -Method Get -Headers $headers
-    } catch {
-        $statusCode = $null
-        if ($_.Exception.Response) {
-            # Windows PowerShell 5.1 exposes HttpStatusCode (value__ for the int);
-            # PowerShell 7 exposes HttpResponseMessage. Both cast cleanly to int.
-            $statusCode = [int]$_.Exception.Response.StatusCode
-        }
-        if ($statusCode -eq 404) {
-            WriteLog "Repo $HubOrg does not exist on $URL. Treating as a first build."
-            Return $null
-        }
-        throw
+    # $APIKey is an API key (a server before 2.0) or client:<id>:<secret> (a registered OAuth
+    # client of a 2.0 server); see HubAuth.ps1.
+    # A 404 for the revisions means the repo has never been published: a brand-new app or
+    # variant whose first build has to create it. That is the bootstrap case, not an error, so
+    # return $null and let the caller decide. Only that request is mapped -- a failure to sign
+    # in is a bad hub URL or credential and must still fail loudly. Any other status (401, 5xx,
+    # network) is rethrown so real outages are never mistaken for a new repo.
+    $response = Get-TurboHubRevisions -Server $URL -Credential $APIKey -Owner $repoOwner -Name $repoName
+    if ($null -eq $response) {
+        WriteLog "Repo $HubOrg does not exist on $URL. Treating as a first build."
     }
     Return $response
 }
@@ -505,7 +484,7 @@ Function PushImage($PushVersion) {
     If ($Import -eq $true) {
         WriteLog "Importing image: $HubOrg`:$PushVersion"
         WriteLog "Push URL parameter = $PushURL"
-        WriteLog "ApiKey parameter = $ApiKey"
+        WriteLog "ApiKey parameter = $(if ($ApiKey) { '(set)' } else { '(not set)' })"
         $ProcessExitCode = RunProcess $Turbo "import svm $SVM --overwrite --name=$HubOrg`:$PushVersion" $True
         CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo import failure
        # $ProcessExitCode = RunProcess $Turbo "check $HubOrg" $True
@@ -513,10 +492,10 @@ Function PushImage($PushVersion) {
 
         If ($PushURL -like 'http*') {
             WriteLog "Pushing image to Turbo Server: $PushURL"
-            $ProcessExitCode = RunProcess $Turbo "config --domain=$PushURL" $True
-            CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo config failure
-            $ProcessExitCode = RunProcess $Turbo "login --api-key $ApiKey" $True
-            CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo login failure
+            # Not through RunProcess, which logs the command line - and the credential with it.
+            if (-not (Connect-TurboServer -Server $PushURL -Credential $ApiKey -Turbo $Turbo)) {
+                CheckForError "Signing in to $PushURL" 0 1 $True # Fail on turbo config/login failure
+            }
             $ProcessExitCode = RunProcess $Turbo "push $HubOrg`:$PushVersion $HubOrg`:$PushVersion" $True
             CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on turbo login failure
             WriteLog "PushResult=Success"
