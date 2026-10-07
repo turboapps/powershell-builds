@@ -79,8 +79,10 @@ function Get-TurboHubRevisions {
         $url = "$base/io/_hub/repo/$Owner/$Name/revisions?withTags"
     }
     try {
-        $revisions = @(Invoke-RestMethod -Uri $url -Method Get -Headers $headers -ErrorAction Stop |
-                           Where-Object { $_ })
+        # Assigned before piping: Windows PowerShell 5.1 writes a JSON array to the pipeline as
+        # one object, and only a variable holding it unrolls into one item per revision.
+        $response  = Invoke-RestMethod -Uri $url -Method Get -Headers $headers -ErrorAction Stop
+        $revisions = @($response | Where-Object { $_ })
         if ($revisions.Count -eq 0) { return $null }
         return $revisions
     } catch {
@@ -90,6 +92,17 @@ function Get-TurboHubRevisions {
         if ($status -eq 404) { return $null }
         throw
     }
+}
+
+# The client's version from `turbo version` (first dotted number in its output), or $null when it
+# cannot be read.
+function Get-TurboClientVersion {
+    param ([string]$Turbo = 'turbo')
+    try {
+        $out = (& $Turbo version 2>$null | Out-String)
+        if ($out -match '(\d+\.\d+(?:\.\d+){0,2})') { return [version]$Matches[1] }
+    } catch {}
+    return $null
 }
 
 # Points the client at $Server and signs in with $Credential (see the top of this file). Returns
@@ -119,10 +132,21 @@ function Connect-TurboServer {
         return $true
     }
 
-    & $Turbo login --api-key $cred.ApiKey | Out-Host
-    if ($global:LASTEXITCODE -eq 0) { return $true }
+    # The client generation decides the path, not a failed --api-key login: a client before 26.10
+    # ignores TURBO_ACCESS_TOKEN, so falling back to the ticket after any failure (network, server,
+    # locked config) would report it signed in when it is not.
+    $clientVersion = Get-TurboClientVersion -Turbo $Turbo
+    if (-not $clientVersion -or $clientVersion -lt [version]'26.10') {
+        & $Turbo login --api-key $cred.ApiKey | Out-Host
+        if ($global:LASTEXITCODE -eq 0) { return $true }
+        if ($clientVersion) {
+            Write-Host "turbo login --api-key to $Server failed with exit code $global:LASTEXITCODE (Turbo Client $clientVersion)"
+            return $false
+        }
+        # Version unreadable: a 26.10+ client rejects --api-key, so the ticket is still worth a try.
+        Write-Host "turbo login --api-key failed (exit $global:LASTEXITCODE) and the client version is unknown; exchanging the key for a ticket"
+    }
 
-    Write-Host "turbo login --api-key failed (exit $global:LASTEXITCODE); exchanging the key for a ticket, as Turbo Client 26.10+ requires"
     try {
         $env:TURBO_ACCESS_TOKEN = Get-TurboApiKeyTicket -Server $Server -ApiKey $cred.ApiKey
     } catch {
