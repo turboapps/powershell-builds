@@ -68,8 +68,8 @@ AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[
 AddRegKey "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']" "https" "Full" "False" "False"
 AddRegValue "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='Classes']/Key[@name='https']" "URL Protocol" "Full" "False" "False" "String" ""
 
-# Clone the MSEdgeBHTM (Edge Beta) ProgID node to http and https
-$EdgeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='MSEdgeBHTM']").CloneNode($true)
+# Clone the MSEdgeBHTML (Edge Beta) ProgID node to http and https
+$EdgeHtmlNode = $xappl.SelectSingleNode("//ProgId[@name='MSEdgeBHTML']").CloneNode($true)
 # Modify the ProgId name and description for HTTP and HTTPS
 $httpNode = $EdgeHtmlNode.Clone()
 $httpNode.SetAttribute("name", "http")
