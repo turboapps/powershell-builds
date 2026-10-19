@@ -166,6 +166,7 @@ def build_adobe_app(adobe_app_image,adobe_app_name,output_file_name):
     click("create-package-button.png")
 
 def get_adobeapp_version1(adobe_app_name,version_image):
+    adobe_adminconsole_login()
     pick_adobe_app(adobe_app_name)
     wait("version.png")
     doubleClick(version_image)
