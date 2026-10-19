@@ -10,12 +10,12 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-$URL = 'https://posit.co/download/rstudio-desktop/'
+$URL = 'https://docs.posit.co/ide/user/download.html'
 
 # Get main download page for application.
 $Page = curl $URL -UseBasicParsing
 
-$DownloadLink = $Page.Links | Where-Object { $_.href -like '*windows/rstudio*' } | Select-Object -ExpandProperty href -First 1
+$DownloadLink = $Page.Links | Where-Object { $_.href -like '*electron/windows/rstudio*' } | Select-Object -ExpandProperty href -First 1
 
 $InstallerName = Split-Path -Path $DownloadLink -Leaf
 
