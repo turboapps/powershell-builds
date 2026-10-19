@@ -105,7 +105,7 @@ Copy-Item -Path "$SupportFiles\NoMachine" -Destination "$env:ALLUSERSPROFILE\" -
 ###############################################################
 
 # Launch nxrunner.exe to create player.cfg file
-. "C:\Program Files\NoMachine Enterprise Client\bin\nxrunner.exe"
+. "C:\Program Files\NoMachine Player\bin\nxrunner.exe"
 
 # Wait for player.cfg file to be created
 Start-Sleep -Seconds 5
