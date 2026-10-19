@@ -10,6 +10,4 @@ util.minimize_app("java")
 
 appname = "creative cloud desktop"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version1(appname)
-doubleClick(Pattern("version.png").targetOffset(39,10))
-util.get_adobeapp_version2(appname)
+util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(39,10))
