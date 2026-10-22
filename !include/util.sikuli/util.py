@@ -159,6 +159,7 @@ def build_adobe_app(adobe_app_image,adobe_app_name,output_file_name):
     click(Pattern("remote-update-checkbox.png").targetOffset(-105,-1))
     wait(2)
     click(Pattern("create-folder-checkbox.png").targetOffset(-216,1))
+    wait(2)
     click("next-button.png")
     wait(3)
     paste(output_file_name)
