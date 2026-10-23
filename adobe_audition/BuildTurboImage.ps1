@@ -108,6 +108,9 @@ WriteLog "Performing post-install customizations."
 
 $InstalledVersion = GetVersionFromRegistry "Adobe Audition"
 
+# Remove the Home screen (Onboarding) CEP extension. Its CEPHtmlEngine.exe crashes in libcef.dll when the Home screen closes inside the container.
+Remove-Item -Path "C:\Program Files\Adobe\Adobe Audition*\CEP\extensions\com.adobe.audition.Onboarding" -Recurse -Force
+
 #########################
 ## Stop Turbo Capture  ##
 #########################
