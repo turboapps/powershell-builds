@@ -5,18 +5,13 @@ import util
 reload(util)
 addImagePath(util_path) # This is needed to include screenshots from "util".
 
-setAutoWaitTimeout(20)
 util.minimize_app("java")
-
+setAutoWaitTimeout(20)
 # Launch Admin Console, login and build the CreativeCloudDesktop installer
 util.build_ccd()
-setAutoWaitTimeout(90)
-if exists("folder-button.png"):
-    click("folder-button.png")
-#setAutoWaitTimeout(600)
+click(wait("folder-button.png",90))
 
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\CreativeCloudDesktop_x64_en_US_WIN_64.zip")
-while not os.path.exists(adobefile_path):
-    wait(20)
+assert util.file_exists(adobefile_path, 600), "File not found after 5 minutes"
 wait(15)
 closeApp("Edge")
