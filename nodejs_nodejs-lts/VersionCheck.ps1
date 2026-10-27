@@ -10,12 +10,8 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Use the vendor index to get the version
-$nodejsIndex = Invoke-WebRequest -Uri "https://nodejs.org/dist/index.json" -UseBasicParsing | ConvertFrom-Json
-
-# Find the first version where the .lts property is not $false
-$firstLTSVersion = $nodejsIndex | Where-Object { $_.lts -ne $false } | Select-Object -First 1
-$LTSVersion = $firstLTSVersion.version
+# Pinned to 22.23.4 on this branch instead of the newest LTS from the vendor index
+$LTSVersion = "v22.23.4"
 
 $DownloadLink = "https://nodejs.org/dist/$LTSVersion/node-$LTSVersion-x64.msi"
 $InstallerName = "node-$LTSVersion-x64.msi"
@@ -32,6 +28,8 @@ WriteLog "WebVersion=$LatestWebVersion"
 ## Compare latest version to hub version ##
 ###########################################
 
-Compare-Versions $HubVersion $LatestWebVersion #Script will exit if Hub version is the same or newer.
+# No Compare-Versions on this branch: the hub already holds a newer LTS (24.x), which
+# would exit the build before the pinned 22.23.4 is captured.
+WriteLog "Version compare skipped: building pinned $LatestWebVersion (hub has $HubVersion)."
 
 }

@@ -53,11 +53,8 @@ CheckHubVersion
 WriteLog "Downloading the latest MSI installer."
 
 # Use the vendor index to get the version
-$nodejsIndex = Invoke-WebRequest -Uri "https://nodejs.org/dist/index.json" -UseBasicParsing | ConvertFrom-Json
-
-# Find the first version where the .lts property is not $false
-$firstLTSVersion = $nodejsIndex | Where-Object { $_.lts -ne $false } | Select-Object -First 1
-$LTSVersion = $firstLTSVersion.version
+# Pinned to 22.23.4 on this branch instead of the newest LTS from the vendor index
+$LTSVersion = "v22.23.4"
 
 $DownloadLink = "https://nodejs.org/dist/$LTSVersion/node-$LTSVersion-x64.msi"
 $InstallerName = "node-$LTSVersion-x64.msi"
