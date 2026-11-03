@@ -93,7 +93,8 @@ WriteLog "Installing the application."
 
 New-Item -Path "c:\Program Files" -Name "Eclipse Adoptium" -ItemType Directory
 # Extract the zip file for the install
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\Program Files\Eclipse Adoptium"
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\Program Files\Eclipse Adoptium`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 ################################
 ## Customize the application  ##

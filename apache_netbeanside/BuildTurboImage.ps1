@@ -103,7 +103,8 @@ WriteLog "Installing the application."
 #Install the JDK
 New-Item -Path "c:\Program Files" -Name "Eclipse Adoptium" -ItemType Directory
 # Extract the zip file for the install
-Expand-Archive -Path $DownloadPath\$JDKInstallerName -DestinationPath "C:\Program Files\Eclipse Adoptium"
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$JDKInstallerName`" -C `"C:\Program Files\Eclipse Adoptium`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 $JDKDir = Get-ChildItem -Path "c:\Program Files\Eclipse Adoptium" -Directory | Where-Object { $_.Name -like 'jdk*' }
 $JDKPath = $JDKDir.FullName
 

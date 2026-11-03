@@ -87,7 +87,8 @@ WriteLog "Installing the application."
 # The DLLs are ARM64EC: they report x64 in the PE header but run natively on ARM64.
 # The x64 recipe's pre-seeded registry key is not needed since no installer runs.
 New-Item -ItemType Directory -Force -Path "C:\Program Files\IrfanViewARM\Plugins"
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\Program Files\IrfanViewARM\Plugins"
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\Program Files\IrfanViewARM\Plugins`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 ################################
 ## Customize the application  ##

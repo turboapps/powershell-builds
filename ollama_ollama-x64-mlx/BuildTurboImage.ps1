@@ -73,7 +73,9 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 # Extract ZIP archive.
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\ollama"
+New-Item -ItemType Directory -Force -Path "C:\ollama" | Out-Null
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\ollama`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 #########################
 ## Stop Turbo Capture  ##

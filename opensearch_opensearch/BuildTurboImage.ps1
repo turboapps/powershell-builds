@@ -69,7 +69,8 @@ $InstallerName = [System.IO.Path]::GetFileName($DownloadLink)
 $Installer = wget $DownloadLink -O $DownloadPath\$InstallerName
 
 # Extract ZIP archive.
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\"
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\.`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 #########################
 ## Start Turbo Capture ##

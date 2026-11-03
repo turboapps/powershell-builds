@@ -65,7 +65,9 @@ Write-Host $InstallerName
 $Archive = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 # Extract .zip
-Expand-Archive -Path $Archive -DestinationPath "$DownloadPath\MobaXterm"
+New-Item -ItemType Directory -Force -Path "$DownloadPath\MobaXterm" | Out-Null
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$Archive`" -C `"$DownloadPath\MobaXterm`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 #########################
 ## Start Turbo Capture ##

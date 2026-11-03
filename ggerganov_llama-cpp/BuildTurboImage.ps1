@@ -75,7 +75,9 @@ foreach ($Build in $Builds) {
     Start-Sleep -Seconds 20
     
     # Extract .zip
-    Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $BuildFiles\$Build
+    New-Item -ItemType Directory -Force -Path "$BuildFiles\$Build" | Out-Null
+    $ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"$BuildFiles\$Build`"" $True
+    CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 }
 
 #########################
