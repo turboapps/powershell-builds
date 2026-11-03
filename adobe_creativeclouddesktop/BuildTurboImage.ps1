@@ -78,7 +78,8 @@ $ProcessExitCode = RunProcess "turbo.exe" $turboArgs $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 # Extract the downloaded packages
-Expand-Archive -Path $DownloadPath\CreativeCloudDesktop_x64_en_US_WIN_64.zip -DestinationPath $DownloadPath
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\CreativeCloudDesktop_x64_en_US_WIN_64.zip`" -C `"$DownloadPath`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 # Delete the zip files to free up disk space
 
