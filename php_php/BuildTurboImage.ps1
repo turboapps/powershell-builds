@@ -114,7 +114,9 @@ if (Test-Path -Path $PhpRoot) {
     WriteLog "Removing existing $PhpRoot"
     Remove-Item -Path $PhpRoot -Recurse -Force
 }
-Expand-Archive -LiteralPath $Installer -DestinationPath $PhpRoot -Force
+New-Item -ItemType Directory -Force -Path "$PhpRoot" | Out-Null
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$Installer`" -C `"$PhpRoot`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 # Confirm the payload actually landed rather than letting the capture carry on and produce an
 # image with no PHP in it.

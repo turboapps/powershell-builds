@@ -66,7 +66,9 @@ $InstallerName = "HtmlAgilityPack.nupkg.zip"
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 # Extract .zip
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\temp"
+New-Item -ItemType Directory -Force -Path "C:\temp" | Out-Null
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\temp`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 # Set this image version to whatever the script version is
 $version = Get-Content "$SupportFiles\version.txt"

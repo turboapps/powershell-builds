@@ -116,7 +116,9 @@ if ($ProcessExitCode -eq 1638 -or $ProcessExitCode -eq 3010) {
 # that none of that ends up in the image.
 $Staging = "$env:TEMP\ApacheLoungeStaging"
 if (Test-Path -Path $Staging) { Remove-Item -Path $Staging -Recurse -Force }
-Expand-Archive -LiteralPath $Installer -DestinationPath $Staging -Force
+New-Item -ItemType Directory -Force -Path "$Staging" | Out-Null
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$Installer`" -C `"$Staging`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 # C:\Apache24 is the path the Apache Lounge ReadMe documents, so it may already exist on a re-run
 # or a dirty VM. Clear it first - Move-Item would otherwise nest the payload inside it.
 if (Test-Path -Path $ServerRoot) {

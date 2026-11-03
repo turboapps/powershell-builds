@@ -80,7 +80,8 @@ StartTurboCapture
 WriteLog "Installing the application."
 
 # Extract .zip and rename folder to remove specific version in path
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath "C:\"
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\.`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 Rename-Item -Path "C:\ffmpeg-$latestVersion-full_build-shared" -NewName "ffmpeg"
 
 ################################

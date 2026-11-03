@@ -56,7 +56,8 @@ WriteLog "Downloading the latest installer."
 $DownloadLink = "https://github.com/pgvector/pgvector/archive/refs/heads/master.zip"
 $InstallerName = "master.zip"
 $Installer = wget $DownloadLink -UseBasicParsing -O $DownloadPath\$InstallerName
-Expand-Archive -Path $DownloadPath\$InstallerName -DestinationPath $DownloadPath
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"$DownloadPath`"" $True
+CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
 WriteLog "Pulling latest vsbuildtools and postgresql images from Hub."
 WriteLog "> turbo pull --format=json microsoft/vsbuildtools,postgresql/postgresql"
