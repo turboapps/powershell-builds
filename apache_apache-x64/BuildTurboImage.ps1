@@ -112,7 +112,7 @@ if ($ProcessExitCode -eq 1638 -or $ProcessExitCode -eq 3010) {
 }
 
 # The .zip root holds Apache24 plus an architecture marker file, a ReadMe and - on the win32 build -
-# a stray copy of the Win64 .zip. Expand to a staging folder and move only Apache24 into place so
+# a stray copy of the Win64 .zip. Expand to a staging folder and copy only Apache24 into place so
 # that none of that ends up in the image.
 $Staging = "$env:TEMP\ApacheLoungeStaging"
 if (Test-Path -Path $Staging) { Remove-Item -Path $Staging -Recurse -Force }
@@ -120,20 +120,27 @@ New-Item -ItemType Directory -Force -Path "$Staging" | Out-Null
 $ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$Installer`" -C `"$Staging`"" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 # C:\Apache24 is the path the Apache Lounge ReadMe documents, so it may already exist on a re-run
-# or a dirty VM. Clear it first - Move-Item would otherwise nest the payload inside it.
+# or a dirty VM. Clear it first - Copy-Item would otherwise nest the payload inside it.
 if (Test-Path -Path $ServerRoot) {
     WriteLog "Removing existing $ServerRoot"
     Remove-Item -Path $ServerRoot -Recurse -Force
 }
-Move-Item -LiteralPath "$Staging\Apache24" -Destination $ServerRoot -Force
+# Copy, do not move. Staging is on the same volume, so Move-Item is a single directory rename and
+# Turbo Studio does not capture the files inside a renamed directory - only the ones touched again
+# afterwards (httpd.exe, httpd.conf). An image built that way has no DLLs, and httpd.exe dies on
+# start with STATUS_DLL_NOT_FOUND for libhttpd.dll. See opensearch_opensearch for the same issue.
+Copy-Item -LiteralPath "$Staging\Apache24" -Destination $ServerRoot -Recurse -Force
 Remove-Item -Path $Staging -Recurse -Force
 
-# Move-Item raises a non-terminating error, so confirm the payload actually landed rather than
-# letting the capture carry on and produce an image with no Apache in it.
-if (-not (Test-Path -Path "$ServerRoot\bin\httpd.exe")) {
-    WriteLog "Expected $ServerRoot\bin\httpd.exe after extraction but it is missing. Exiting."
-    WriteLog "BuildResult=Failed"
-    Exit 1
+# Copy-Item raises a non-terminating error, so confirm the payload actually landed rather than
+# letting the capture carry on and produce an image with no Apache in it. libhttpd.dll is checked
+# too because an image with httpd.exe but not its DLLs builds fine and then cannot start.
+foreach ($Required in @("$ServerRoot\bin\httpd.exe", "$ServerRoot\bin\libhttpd.dll")) {
+    if (-not (Test-Path -Path $Required)) {
+        WriteLog "Expected $Required after extraction but it is missing. Exiting."
+        WriteLog "BuildResult=Failed"
+        Exit 1
+    }
 }
 WriteLog "Extracted Apache to $ServerRoot"
 
