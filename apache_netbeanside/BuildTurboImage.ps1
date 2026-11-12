@@ -52,38 +52,20 @@ CheckHubVersion
 ##########################################
 WriteLog "Downloading the latest installer."
 
-# Download and Install the Ecplipse Temurin JDK
-# We will use the Ecplipse Temurin JDK image from Turbo.net to download and install this app
-# Get major version of the latest release
-$url = "https://api.adoptium.net/v3/info/available_releases"
-$response = curl -Uri $url -UseBasicParsing
-$jsonData = $response.Content | ConvertFrom-Json
-$latestMajorVersion = $jsonData.available_releases[-1]
-
-# Use the vendor API to get the latest release given the major version
-$Platform = 'windows'
-$Type = 'jdk'
-$ReleaseInfo = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/latest/$latestMajorVersion/hotspot?architecture=x64&image_type=$Type&os=$Platform&vendor=eclipse" -UseBasicParsing | ConvertFrom-Json
-
-# Download the zip
-$JDKInstallerName = $ReleaseInfo.binary.package.name
-$JDKDownloadLink = "https://api.adoptium.net/v3/binary/latest/$latestMajorVersion/ga/$Platform/x64/$Type/hotspot/normal/eclipse"
-$JDKInstaller = DownloadInstaller $JDKDownloadLink $DownloadPath $JDKInstallerName
-
 # Download Netbeans
-# Get download page for latest Netbeans version.
-$URL = "https://dlcdn.apache.org/netbeans/netbeans-installers/"
-$response = Invoke-WebRequest -Uri $URL -UseBasicParsing
-$Page = $response.Links.Href[-1]
-$URL = $URL + $Page
-$Page2 = Invoke-WebRequest -Uri $URL -UseBasicParsing
-
-# Get the URL for the latest 64bit exe
-$LatestLink = $Page2.Links | Where-Object {$_.href -like "*windows-x64.exe"}
-$DownloadLink = $URL + $LatestLink.href
+# Apache stopped publishing Windows installers after NetBeans 25. The Windows installer is now
+# published by Friends of Apache NetBeans (FoAN) on GitHub. It is an Inno Setup installer that bundles its own Temurin JDK.
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$Release = Invoke-RestMethod -Uri "https://api.github.com/repos/Friends-of-Apache-NetBeans/netbeans-installers/releases/latest" -UseBasicParsing
+$Asset = $Release.assets | Where-Object { $_.name -match '^Apache-NetBeans-[\d\.]+\.exe$' } | Select-Object -First 1
+if (-not $Asset) {
+    WriteLog "Could not find the Windows installer in the latest FoAN release ($($Release.tag_name)). Exiting."
+    exit 1
+}
+$DownloadLink = $Asset.browser_download_url
 
 # Name of the downloaded installer file
-$InstallerName = $LatestLink.href
+$InstallerName = $Asset.name
 
 # Download the installer
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
@@ -100,16 +82,8 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-#Install the JDK
-New-Item -Path "c:\Program Files" -Name "Eclipse Adoptium" -ItemType Directory
-# Extract the zip file for the install
-$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$JDKInstallerName`" -C `"C:\Program Files\Eclipse Adoptium`"" $True
-CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
-$JDKDir = Get-ChildItem -Path "c:\Program Files\Eclipse Adoptium" -Directory | Where-Object { $_.Name -like 'jdk*' }
-$JDKPath = $JDKDir.FullName
-
-# Install Apache Netbeans silently using the Eclipse Temurin JDK
-$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "--javahome `"$JDKPath`" --silent" $True
+# Install Apache Netbeans silently for all users (Inno Setup installer with bundled JDK)
+$ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /ALLUSERS /SP-" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
