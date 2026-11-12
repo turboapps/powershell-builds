@@ -40,7 +40,7 @@ $HubOrg = (Split-Path $scriptPath -Leaf) -replace '_', '/' # Set the repo name b
 $Vendor = "ggerganov"
 $AppDesc = "LLM inference in C/C++."
 $AppName = "llama-cpp"
-$VendorURL = "https://github.com/ggerganov/llama.cpp"
+$VendorURL = "https://github.com/ggml-org/llama.cpp"
 
 ########################################
 ## Compare Hub Version to Web Version ##
@@ -53,18 +53,20 @@ CheckHubVersion
 WriteLog "Downloading the latest .ZIPs."
 
 # Get latest version tag from repo
-$URL = "https://api.github.com/repos/ggerganov/llama.cpp/releases/latest"
+# Since 2026-11 llama.cpp marks its bNNNNN builds as prereleases, and releases/latest
+# points at a vX.Y.Z tag with no Windows binaries. Take the newest bNNNNN tag instead.
+$URL = "https://api.github.com/repos/ggml-org/llama.cpp/releases?per_page=30"
 $response = Invoke-WebRequest -Uri $URL -UseBasicParsing
-$latest = (ConvertFrom-Json $response.Content).tag_name
-$latest -match "b(\d+)"
+$latest = (ConvertFrom-Json $response.Content) | ForEach-Object { $_.tag_name } | Where-Object { $_ -match '^b\d+$' } | Select-Object -First 1
+if (-not $latest) { throw "No bNNNNN release tag found at $URL" }
 
-$InstalledVersion = $matches[1] + ".0"
+$InstalledVersion = $latest.Substring(1) + ".0"
 
 $BuildFiles = "C:\build_files"
 $Builds = "cpu","cuda-12.4"
 foreach ($Build in $Builds) {
     # Get download link for latest version for build
-    $DownloadLink = "https://github.com/ggerganov/llama.cpp/releases/download/$latest/llama-$latest-bin-win-$Build-x64.zip"
+    $DownloadLink = "https://github.com/ggml-org/llama.cpp/releases/download/$latest/llama-$latest-bin-win-$Build-x64.zip"
 
     # Name of the .zip file
     $InstallerName = [System.IO.Path]::GetFileName($DownloadLink)
