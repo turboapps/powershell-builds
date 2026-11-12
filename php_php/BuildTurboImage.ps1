@@ -66,8 +66,9 @@ $Page = Invoke-WebRequest -Uri $PhpDownloadPage -UseBasicParsing
 # Zips live at downloads.php.net/~windows/releases/archives/php-<version>-nts-Win32-vs<nn>-x64.zip.
 # The debug and devel packs share the suffix but are prefixed php-debug-pack- / php-devel-pack-, so
 # requiring the version straight after "php-" skips them. The vs number changes with each toolchain
-# bump, so match any.
-$PhpMatch = [regex]::Match($Page.Content, 'href="(?<url>https://[^"]+/php-(?<ver>\d+(?:\.\d+)+)-nts-Win32-vs\d+-x64\.zip)"', 'IgnoreCase')
+# bump, so match any. A rebuild of a release carries a -<n> build suffix (php-8.5.12-1-nts-...);
+# match it but keep it out of <ver>.
+$PhpMatch = [regex]::Match($Page.Content, 'href="(?<url>https://[^"]+/php-(?<ver>\d+(?:\.\d+)+)(?:-\d+)?-nts-Win32-vs\d+-x64\.zip)"', 'IgnoreCase')
 if (-not $PhpMatch.Success) {
     WriteLog "Could not find an x64 NTS .zip link on $PhpDownloadPage. Exiting."
     WriteLog "BuildResult=Failed"
