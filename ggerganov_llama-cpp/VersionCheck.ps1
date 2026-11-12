@@ -11,12 +11,14 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 #############################################
 
 # Get latest version tag from repo
-$URL = "https://api.github.com/repos/ggerganov/llama.cpp/releases/latest"
+# Since 2026-11 llama.cpp marks its bNNNNN builds as prereleases, and releases/latest
+# points at a vX.Y.Z tag with no Windows binaries. Take the newest bNNNNN tag instead.
+$URL = "https://api.github.com/repos/ggml-org/llama.cpp/releases?per_page=30"
 $response = Invoke-WebRequest -Uri $URL -UseBasicParsing
-$latest = (ConvertFrom-Json $response.Content).tag_name
-$latest -match "b(\d+)"
+$latest = (ConvertFrom-Json $response.Content) | ForEach-Object { $_.tag_name } | Where-Object { $_ -match '^b\d+$' } | Select-Object -First 1
+if (-not $latest) { throw "No bNNNNN release tag found at $URL" }
 
-$LatestWebVersion = $matches[1] + ".0"
+$LatestWebVersion = $latest.Substring(1) + ".0"
 
 WriteLog "WebVersion=$LatestWebVersion"
 
