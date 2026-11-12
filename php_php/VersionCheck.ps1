@@ -15,8 +15,9 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 # downloads.php defaults to Linux instructions, so ask for the Windows ZIP list explicitly.
 $Page = Invoke-WebRequest -Uri 'https://www.php.net/downloads.php?os=windows&osvariant=windows-downloads&version=default' -UseBasicParsing
 
-# Read the version out of the x64 NTS .zip name.
-$PhpMatch = [regex]::Match($Page.Content, 'href="https://[^"]+/php-(?<ver>\d+(?:\.\d+)+)-nts-Win32-vs\d+-x64\.zip"', 'IgnoreCase')
+# Read the version out of the x64 NTS .zip name. A rebuild of a release carries a -<n> build
+# suffix (php-8.5.12-1-nts-...); match it but keep it out of <ver> so it compares to the Hub tag.
+$PhpMatch = [regex]::Match($Page.Content, 'href="https://[^"]+/php-(?<ver>\d+(?:\.\d+)+)(?:-\d+)?-nts-Win32-vs\d+-x64\.zip"', 'IgnoreCase')
 if (-not $PhpMatch.Success) {
     WriteLog "Could not find an x64 NTS .zip link on the PHP downloads page. Exiting."
     WriteLog "BuildResult=Failed"
