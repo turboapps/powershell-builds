@@ -71,8 +71,14 @@ $Installer = wget $DownloadLink -O $DownloadPath\$InstallerName
 $ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"$DownloadPath`"" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
 
-# Update InstallerName to extracted MSI.
-$InstallerName = $installername.substring(0,$installername.length-3) + "msi"
+# Update InstallerName to the MSI extracted from the ZIP (its name does not always match the ZIP name).
+$ExtractedMsi = Get-ChildItem -Path $DownloadPath -Filter "*.msi" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+if (-not $ExtractedMsi) {
+    WriteLog "Error: No MSI found in $DownloadPath after extracting $InstallerName."
+    exit 1
+}
+$InstallerName = $ExtractedMsi.Name
+WriteLog "Extracted MSI installer: $InstallerName"
 
 #########################
 ## Start Turbo Capture ##
@@ -85,7 +91,7 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-$ProcessExitCode = RunProcess "msiexec.exe" "/I $DownloadPath\$InstallerName ALLUSERS=1 /qn" $True
+$ProcessExitCode = RunProcess "msiexec.exe" "/I `"$DownloadPath\$InstallerName`" ALLUSERS=1 /qn" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
 ################################
