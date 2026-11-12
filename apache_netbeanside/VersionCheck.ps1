@@ -10,12 +10,12 @@ $HubVersion = GetCurrentHubVersion $HubOrg
 ## Get latest version from the vendor site ##
 #############################################
 
-# Get main download page for application.
-$URL = "https://dlcdn.apache.org/netbeans/netbeans-installers/"
-$response = Invoke-WebRequest -Uri $URL -UseBasicParsing
-$Page = $response.Links.Href[-1]
+# Apache stopped publishing Windows installers after NetBeans 25 (dlcdn netbeans-installers/ is now empty).
+# The Windows installer is now published by Friends of Apache NetBeans (FoAN) on GitHub, tagged nbXX.
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$Release = Invoke-RestMethod -Uri "https://api.github.com/repos/Friends-of-Apache-NetBeans/netbeans-installers/releases/latest" -UseBasicParsing
 
-$LatestWebVersion = $Page.Split("/")[0]
+$LatestWebVersion = $Release.tag_name -replace '^nb', ''
 $LatestWebVersion = RemoveTrailingZeros "$LatestWebVersion"
 
 WriteLog "WebVersion=$LatestWebVersion"
