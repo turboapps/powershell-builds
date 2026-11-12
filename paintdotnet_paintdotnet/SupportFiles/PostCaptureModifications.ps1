@@ -28,7 +28,10 @@ $node.SetAttribute("isolation","Full")
 $node.SetAttribute("readOnly","False")
 $node.SetAttribute("hide","False")
 $node.SetAttribute("noSync","False")
-$Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']").AppendChild($node)
+## Captures name this key "Software" or "SOFTWARE" from run to run, so match it case-insensitively.
+$hkcuSoftware = $Registry.SelectSingleNode("Key[@name='@HKCU@']/Key[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='software']")
+if (-not $hkcuSoftware) { throw "Registry key not found in capture: HKCU\Software" }
+$hkcuSoftware.AppendChild($node) | Out-Null
 
 ## Set HKLM\SOFTWARE\Paint.NET registry key and its children to full isolation
 ## XPath is case-sensitive and the installer's key casing has changed (paint.net -> Paint.NET), so match the name case-insensitively.
