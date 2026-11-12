@@ -30,14 +30,16 @@ $node.SetAttribute("hide","False")
 $node.SetAttribute("noSync","False")
 $Registry.SelectNodes("Key[@name='@HKCU@']/Key[@name='Software']").AppendChild($node)
 
-## Set HKLM\SOFTWARE\paint.net registry key and its children to full isolation
-## Null-guarded: arm64 captures don't always produce the same registry tree as x64
+## Set HKLM\SOFTWARE\Paint.NET registry key and its children to full isolation
+## XPath is case-sensitive and the installer's key casing has changed (paint.net -> Paint.NET), so match the name case-insensitively.
+$paintNet = "Key[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='paint.net']"
 $paintKeys = @(
-    "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='paint.net']",
-    "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='paint.net']/Key[@name='Capabilities']",
-    "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/Key[@name='paint.net']/Key[@name='Capabilities']/Key[@name='FileAssociations']"
+    "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/$paintNet",
+    "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/$paintNet/Key[@name='Capabilities']",
+    "Key[@name='@HKLM@']/Key[@name='SOFTWARE']/$paintNet/Key[@name='Capabilities']/Key[@name='FileAssociations']"
 )
 foreach ($keyPath in $paintKeys) {
     $keyNode = $Registry.SelectSingleNode($keyPath)
-    if ($keyNode) { $keyNode.isolation = "Full" }
+    if (-not $keyNode) { throw "Registry key not found in capture: $keyPath" }
+    $keyNode.SetAttribute("isolation","Full")
 }
