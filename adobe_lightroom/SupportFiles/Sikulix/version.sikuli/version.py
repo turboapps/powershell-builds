@@ -9,4 +9,4 @@ setAutoWaitTimeout(20)
 util.minimize_app("java")
 
 appname = "lightroom"
-util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(45,0))
+util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(51,0))

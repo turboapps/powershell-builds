@@ -10,4 +10,4 @@ util.minimize_app("java")
 
 appname = "dreamweaver"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(63,-1))
+util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(61,0))

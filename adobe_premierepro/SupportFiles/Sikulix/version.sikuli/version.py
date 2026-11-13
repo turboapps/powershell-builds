@@ -10,4 +10,4 @@ util.minimize_app("java")
 
 appname = "premiere"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(47,0))
+util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(49,-1))

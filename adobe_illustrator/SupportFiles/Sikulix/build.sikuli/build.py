@@ -9,7 +9,7 @@ util.minimize_app("java")
 setAutoWaitTimeout(20)
 # Launch Admin Console, login and build the CreativeCloudDesktop installer
 util.build_ccd()
-util.build_adobe_app(Pattern("select-app.png").targetOffset(160,-1),"illustrator","Illustrator_x64")
+util.build_adobe_app("select-app.png","illustrator","Illustrator_x64")
 click(wait("folder-button.png",90))
 
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\Illustrator_x64_en_US_WIN_64.zip")

@@ -9,7 +9,7 @@ util.minimize_app("java")
 setAutoWaitTimeout(20)
 # Launch Admin Console, login and build the CreativeCloudDesktop installer
 util.build_ccd()
-util.build_adobe_app(Pattern("select-app.png").targetOffset(161,0),"audition","Audition_x64")
+util.build_adobe_app("select-app.png","audition","Audition_x64")
 click(wait("folder-button.png",90))
 
 adobefile_path = os.path.join(os.environ['USERPROFILE'], "Downloads\\Audition_x64_en_US_WIN_64.zip")

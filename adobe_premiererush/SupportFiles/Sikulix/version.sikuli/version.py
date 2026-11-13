@@ -10,5 +10,5 @@ util.minimize_app("java")
 
 appname = "premiere rush"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(63,-1))
+util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(65,-1))
 

@@ -10,5 +10,5 @@ util.minimize_app("java")
 
 appname = "character animator"
 # Launch Admin Console, login and get the version for the app
-util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(78,2))
+util.get_adobeapp_version1(appname,Pattern("version.png").targetOffset(84,0))
 
