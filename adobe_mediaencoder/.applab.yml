@@ -1,3 +1,5 @@
 labels: [mem-8gb]
 concurrency_group: adobe-cc-login
 os: win11
+gpu: nvidia
+disable: true
