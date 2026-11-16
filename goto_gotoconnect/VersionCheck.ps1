@@ -18,7 +18,7 @@ turbo pull --format=json turbo/headless-extractor
 turbo run turbo/headless-extractor --isolate=merge-user --startup-file=powershell -- C:\extractor\Extract.ps1 -OutputDir $outputdir -Url $url -DOM -ExtractLinks
 
 # Get the per-machine 64-bit installer link for the latest version
-$DownloadLink = Get-Content -Path "$outputdir\links.txt" | Where-Object { $_ -match '/GoToSetupMachine-[\d.]+-x64.msi$' } | Select-Object -First 1
+$DownloadLink = Get-Content -Path "$outputdir\links.txt" | Where-Object { $_ -match '/GoToSetupMachine-[\d.]+-x64\.msi$' } | Select-Object -First 1
 if (-not $DownloadLink) { throw "No GoToSetupMachine x64 .msi link found on $url (see $outputdir\dom.html)" }
 
 $InstallerName = $DownloadLink.Split("/")[-1]
