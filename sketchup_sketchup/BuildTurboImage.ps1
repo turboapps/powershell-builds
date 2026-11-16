@@ -64,7 +64,16 @@ $InstallerName = $DownloadLink.split("/")[-1]
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
 # Get the latest version tag.
-$InstalledVersion = Get-VersionFromExe "$Installer"
+# The exe's version resource only contains a short version (e.g. 25.0.660) without the build number,
+# so get the full version (e.g. 2025.0.660.288) from the downloaded exe's file name (e.g. SketchUp-2025-0-660-288.exe).
+if ((Split-Path "$Installer" -Leaf) -match '(\d+)-(\d+)-(\d+)-(\d+)\.exe$') {
+    $InstalledVersion = "$($Matches[1]).$($Matches[2]).$($Matches[3]).$($Matches[4])"
+} else {
+    # Fall back to the exe version info, converting the 2-digit major version (25) to the year format (2025).
+    $ExeVersion = (Get-VersionFromExe "$Installer").Split(".")
+    if ([int]$ExeVersion[0] -lt 100) { $ExeVersion[0] = [string](2000 + [int]$ExeVersion[0]) }
+    $InstalledVersion = $ExeVersion -join "."
+}
 $InstalledVersion = RemoveTrailingZeros "$InstalledVersion"
 
 $LatestMajorVer = ($InstalledVersion -split '\.')[0]
