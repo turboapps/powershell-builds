@@ -150,7 +150,7 @@ def pick_adobe_app(adobe_app_name):
     
 def build_adobe_app(adobe_app_image,adobe_app_name,output_file_name):
     pick_adobe_app(adobe_app_name)
-    click(adobe_app_image)
+    click(wait(adobe_app_image),10)
     click("next-button.png")
     click("next-button.png")
     click("self-service-checkbox.png")
