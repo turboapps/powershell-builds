@@ -126,7 +126,7 @@ Function GetCurrentHubVersion($HubOrg,$URL,[switch]$IgnoreAliasTags) {
     # Compare-Versions treats null/""/".0" as "failed to read the hub" and aborts the
     # build, which is right for a lookup failure but wrong here -- nothing is published,
     # so any real web version is newer and the build should proceed. 0.0 casts to
-    # [Version] and loses that comparison to every real version, so the existing
+    # a version and loses that comparison to every real version, so the existing
     # comparison logic handles this case unchanged.
     if ($null -eq $response) {
         WriteLog "HubVersion=0.0 (nothing published for $HubOrg yet)"
@@ -143,11 +143,22 @@ Function GetCurrentHubVersion($HubOrg,$URL,[switch]$IgnoreAliasTags) {
         }
     }
 
-    $VersionList = $Tags | Sort-Object {
-        $parts = ($_ -split '\.').Count
-        if ($parts -eq 1) { [System.Version]("$_" + ".0") } else { [System.Version]$_ }
-    } -Descending
-    $LatestHubVer = $VersionList | Select-Object -First 1
+    # Pick the highest tag with Compare-VersionStrings rather than sorting on a
+    # [System.Version] cast. The cast only takes 2-4 parts, so a 5-part tag such as
+    # Adobe's 6.11.0.478.6 failed to convert, sorted to the bottom, and an older 4-part
+    # tag was reported as the latest. Tags that are not dotted numbers (eg "latest") are
+    # skipped, as the cast also dropped them to the bottom. If no tag is a dotted number,
+    # keep the old result (the first tag) so behaviour for such repos is unchanged.
+    $LatestHubVer = $null
+    foreach ($Tag in $Tags) {
+        if ($null -eq (Compare-VersionStrings $Tag $Tag)) { continue }
+        if ($null -eq $LatestHubVer -or (Compare-VersionStrings $Tag $LatestHubVer) -gt 0) {
+            $LatestHubVer = "$Tag".Trim()
+        }
+    }
+    if ($null -eq $LatestHubVer) {
+        $LatestHubVer = $Tags | Select-Object -First 1
+    }
     $LatestHubVer = RemoveTrailingZeros $LatestHubVer
     WriteLog "HubVersion=$LatestHubVer"
     
@@ -244,6 +255,32 @@ Function StartTurboCapture() {
 
 }
 
+# Compare two dotted version strings of any length. [System.Version] only accepts 2-4
+# parts, so it throws on a 5-part version such as Adobe Creative Cloud's 6.11.0.478.6.
+# Parts are compared as integers, and a missing part counts as 0 (6.11 equals 6.11.0).
+# Returns -1 if Version1 is lower, 0 if equal, 1 if higher, or $null if either value is
+# not a dotted number (eg "latest" or "1.2-beta").
+function Compare-VersionStrings($Version1, $Version2) {
+    $Pattern = '^\d+(\.\d+)*$'
+    $V1 = "$Version1".Trim()
+    $V2 = "$Version2".Trim()
+    if ($V1 -notmatch $Pattern -or $V2 -notmatch $Pattern) {
+        return $null
+    }
+
+    $Parts1 = $V1 -split '\.'
+    $Parts2 = $V2 -split '\.'
+    $Count = [Math]::Max($Parts1.Count, $Parts2.Count)
+    for ($i = 0; $i -lt $Count; $i++) {
+        # [decimal] rather than [int] so long build numbers (eg 20261119) cannot overflow.
+        $Part1 = if ($i -lt $Parts1.Count) { [decimal]$Parts1[$i] } else { [decimal]0 }
+        $Part2 = if ($i -lt $Parts2.Count) { [decimal]$Parts2[$i] } else { [decimal]0 }
+        if ($Part1 -lt $Part2) { return -1 }
+        if ($Part1 -gt $Part2) { return 1 }
+    }
+    return 0
+}
+
 function RemoveTrailingZeros {
     param (
         [string[]]$version
@@ -319,7 +356,13 @@ function Compare-Versions($Version1, $Version2) {
          WriteLog "BuildResult=failed"
          Exit 1
     } 
-    If ([Version]$Version1 -lt [Version]$Version2) {
+    $Comparison = Compare-VersionStrings $Version1 $Version2
+    If ($null -eq $Comparison) {
+         WriteLog "Could not compare Hub version '$Version1' to Web version '$Version2': both must be dotted numbers. Exiting."
+         WriteLog "BuildResult=failed"
+         Exit 1
+    }
+    If ($Comparison -lt 0) {
          WriteLog "A newer version is available."
          Return 1
     } Else {
