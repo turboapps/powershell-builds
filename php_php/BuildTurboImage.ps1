@@ -43,7 +43,6 @@ $AppName = "PHP"
 $VendorURL = "https://www.php.net/"
 
 # php.net publishes the Windows binaries as a .zip, so this build extracts rather than installs.
-$VcRedistUrl = "https://aka.ms/vs/17/release/vc_redist.x64.exe"  # VC++ 2015-2022 runtime the vs16/vs17 builds link against
 $PhpRoot     = "C:\php"                                          # install target
 
 ########################################
@@ -68,7 +67,7 @@ $Page = Invoke-WebRequest -Uri $PhpDownloadPage -UseBasicParsing
 # requiring the version straight after "php-" skips them. The vs number changes with each toolchain
 # bump, so match any. A rebuild of a release carries a -<n> build suffix (php-8.5.12-1-nts-...);
 # match it but keep it out of <ver>.
-$PhpMatch = [regex]::Match($Page.Content, 'href="(?<url>https://[^"]+/php-(?<ver>\d+(?:\.\d+)+)(?:-\d+)?-nts-Win32-vs\d+-x64\.zip)"', 'IgnoreCase')
+$PhpMatch = [regex]::Match($Page.Content, 'href="(?<url>https://[^"]+/php-(?<ver>\d+(?:\.\d+)+)(?:-\d+)?-nts-Win32-vs(?<vs>\d+)-x64\.zip)"', 'IgnoreCase')
 if (-not $PhpMatch.Success) {
     WriteLog "Could not find an x64 NTS .zip link on $PhpDownloadPage. Exiting."
     WriteLog "BuildResult=Failed"
@@ -85,9 +84,14 @@ $InstallerName = [System.IO.Path]::GetFileName($DownloadLink)
 # Download the install file
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 
-# The PHP Windows builds do not ship the C runtime - the downloads page requires the Visual C++
-# Redistributable for Visual Studio 2015-2022. Baking it into the image keeps the container self contained.
-$VcRedist = DownloadInstaller $VcRedistUrl $DownloadPath "vc_redist.x64.exe"
+# The PHP Windows builds do not ship the C runtime, so the Visual C++ Redistributable is baked into the
+# image to keep the container self contained. PHP refuses to start when vcruntime140.dll is older than
+# the toolchain it was built with (e.g. vs18 builds need 14.5x, which the vs/17 redist does not provide),
+# so pick the redist that matches the zip's vs<nn>. vs16 has no newer channel than vs/17, which covers it.
+# The toolchain number is part of the file name so a cached older redist is not reused.
+$VcToolchain = [Math]::Max(17, [int]$PhpMatch.Groups['vs'].Value)
+$VcRedistUrl = "https://aka.ms/vs/$VcToolchain/release/vc_redist.x64.exe"
+$VcRedist = DownloadInstaller $VcRedistUrl $DownloadPath "vc_redist.vs$VcToolchain.x64.exe"
 
 #########################
 ## Start Turbo Capture ##
@@ -165,6 +169,9 @@ $LoadedModules = & "$PhpRoot\php.exe" -c $PhpIni -m 2>&1 | ForEach-Object { "$_"
 $MissingModules = $PhpExtensions | Where-Object { $LoadedModules -notcontains $_ }
 if ($MissingModules) {
     WriteLog "PHP failed to load extension(s): $($MissingModules -join ', '). Exiting."
+    # Log what php printed - when php.exe cannot start at all (e.g. VC++ runtime too old) every
+    # extension shows as missing and the real reason is only in this output.
+    WriteLog "php.exe -m output: $($LoadedModules -join ' | ')"
     WriteLog "BuildResult=Failed"
     Exit 1
 }
