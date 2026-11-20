@@ -68,9 +68,16 @@ $InstallerName = [System.IO.Path]::GetFileName($DownloadLink)
 
 $Installer = wget $DownloadLink -O $DownloadPath\$InstallerName
 
-# Extract ZIP archive.
-$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"C:\.`"" $True
+# Extract ZIP archive into a folder that already exists.
+# tar.exe cannot create a missing top-level folder directly under the drive root (e.g. C:\opensearch-x.y.z),
+# so extracting with -C "C:\." fails with "Can't create" for every file.
+$ExtractPath = "$DownloadPath\Extract"
+New-Item -ItemType Directory -Force -Path $ExtractPath | Out-Null
+$ProcessExitCode = RunProcess "$env:SystemRoot\System32\tar.exe" "-xf `"$DownloadPath\$InstallerName`" -C `"$ExtractPath`"" $True
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on extract error
+
+# The ZIP contains a single versioned folder (e.g. opensearch-3.10.0).
+$ExtractedFolder = (Get-ChildItem -Path $ExtractPath -Directory | Select-Object -First 1).FullName
 
 #########################
 ## Start Turbo Capture ##
@@ -83,13 +90,10 @@ StartTurboCapture
 #############################
 WriteLog "Installing the application."
 
-# Rename verseioned opensearch-[vers] to opensearch folder.
-# This will also capture the files because it is a change.
-# Move-Item is not captured by Studio.
-# Move-Item (Get-Item "C:\opensearch-*") C:\opensearch\
-
-# Copy the files instead of using Move-Item.
-. xcopy /s/e/h (Get-Item "C:\opensearch-*").FullName C:\opensearch\
+# Copy the extracted versioned opensearch-[vers] folder to C:\opensearch.
+# Copying is a change, so the files are captured.
+# Move-Item is not captured by Studio, so copy instead.
+. xcopy /s/e/h $ExtractedFolder C:\opensearch\
 
 ################################
 ## Customize the application  ##
