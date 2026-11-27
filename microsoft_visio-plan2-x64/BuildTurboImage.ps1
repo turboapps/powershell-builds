@@ -19,6 +19,7 @@ param(
 $scriptPath = $PSScriptRoot  # The folder path the script was launched from
 $GlobalScriptPath = Join-Path -Path $scriptPath -ChildPath "..\!include\GlobalBuildScript.ps1"  #Get the path to the GlobalBuildScript.ps1
 . $GlobalScriptPath  # Include the script that contains global variables and functions
+. (Join-Path -Path $scriptPath -ChildPath "..\!include\OfficeHelpers.ps1")  # Shared Microsoft 365 Apps (ODT) helpers
 $SupportFiles = "$scriptPath\SupportFiles"  # The folder path contains files specific to this application build
 
 # Check if the current script is running with elevated privileges
@@ -47,6 +48,12 @@ $VendorURL = "www.office.com"
 ########################################
 CheckHubVersion
 
+# Pin ODT to the exact Current Channel build. Without a Version, ODT has been installing an older
+# Semi-Annual Enterprise build on the runners, which was then pushed as the new image.
+$OfficeVersion = Get-LatestOfficeCurrentChannelVersion
+WriteLog "OfficeTargetVersion=$OfficeVersion"
+Assert-NoOfficeInstalled  # Office already on the runner would make this a partial, wrong-version capture
+
 ##########################################
 ## Download latest version of installer ##
 ##########################################
@@ -62,9 +69,10 @@ $InstallerName = $DownloadLink.Split("/")[-1]
 $Installer = DownloadInstaller $DownloadLink $DownloadPath $InstallerName
 # Extract the ODT
 $ProcessExitCode = RunProcess "$DownloadPath\$InstallerName" "/extract:$DownloadPath /quiet" $True
+$OfficeConfig = New-PinnedOfficeConfig "$SupportFiles\Configuration.xml" $OfficeVersion $DownloadPath
 # Launch ODT to download the Office installer
 &pushd $DownloadPath
-$ProcessExitCode = RunProcess "$DownloadPath\Setup.exe" "/download `"$SupportFiles\Configuration.xml`"" $True
+$ProcessExitCode = RunProcess "$DownloadPath\Setup.exe" "/download `"$OfficeConfig`"" $True
 
 #########################
 ## Start Turbo Capture ##
@@ -79,7 +87,7 @@ WriteLog "Installing the application."
 
 # Launch ODT to install Office
 &pushd $DownloadPath
-$ProcessExitCode = RunProcess "$DownloadPath\Setup.exe" "/configure `"$SupportFiles\Configuration.xml`"" $True
+$ProcessExitCode = RunProcess "$DownloadPath\Setup.exe" "/configure `"$OfficeConfig`"" $True
 
 CheckForError "Checking process exit code:" 0 $ProcessExitCode $True # Fail on install error
 
@@ -92,6 +100,7 @@ WriteLog "Performing post-install customizations."
 
 
 $InstalledVersion = GetVersionFromRegistry "Microsoft Visio - en-us"
+Assert-OfficeInstalledVersion $OfficeVersion $InstalledVersion  # Never push a build other than the one requested
 
 #########################
 ## Stop Turbo Capture  ##
