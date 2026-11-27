@@ -1,4 +1,6 @@
 function RunVersionCheck {
+    $HubVersion = GetCurrentHubVersion $HubOrg
+
     $LatestWebVersion = $null
     try {
         $downloadPage = "https://www.klayout.de/build.html"
@@ -25,7 +27,7 @@ function RunVersionCheck {
         WriteLog "Unable to check KLayout version from website: $($_.Exception.Message)"
     }
 
-    if (-not [string]::IsNullOrWhiteSpace($LatestWebVersion)) {
-        WriteLog "WebVersion=$LatestWebVersion"
-    }
+    WriteLog "WebVersion=$LatestWebVersion"
+
+    Compare-Versions $HubVersion $LatestWebVersion # Exits if the Hub version is the same or newer; BuildResult=failed if either version is missing.
 }
